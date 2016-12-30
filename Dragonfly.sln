@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dragonfly", "Dragonfly\Dragonfly.csproj", "{D601CB34-5F99-4991-8011-D5C463FB2B8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dragonfly.Tests", "Dragonfly.Tests\Dragonfly.Tests.csproj", "{83EB4173-5EA0-4660-8E58-01F690C9ACD8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D601CB34-5F99-4991-8011-D5C463FB2B8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D601CB34-5F99-4991-8011-D5C463FB2B8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D601CB34-5F99-4991-8011-D5C463FB2B8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D601CB34-5F99-4991-8011-D5C463FB2B8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83EB4173-5EA0-4660-8E58-01F690C9ACD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83EB4173-5EA0-4660-8E58-01F690C9ACD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83EB4173-5EA0-4660-8E58-01F690C9ACD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83EB4173-5EA0-4660-8E58-01F690C9ACD8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

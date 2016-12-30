@@ -1,0 +1,26 @@
+﻿@model Dragonfly.Models.AuthenticateModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Dragonfly - Authorization</title>
+</head>
+<body>
+    <div> 
+        @using (Html.BeginForm())
+        {
+            <p>Login @Html.TextBoxFor(x=> x.Login)</p>
+            //TODO change to crypto password
+            <p>Password @Html.TextBoxFor(x => x.Password)</p>
+            <p>Keep login @Html.CheckBoxFor(x=> x.KeepLogin)</p>
+            <input type="submit" value="Login" />
+        }
+    </div>
+</body>
+</html>
