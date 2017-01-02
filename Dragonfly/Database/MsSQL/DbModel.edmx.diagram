@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="1e8b8db621104850bfaced018bf87610" Name="Diagram1" ZoomLevel="87">
+        <EntityTypeShape EntityType="DragonflyModel.Access_Function" Width="1.5" PointX="1.125" PointY="2" />
+        <EntityTypeShape EntityType="DragonflyModel.Global_User_Role" Width="2" PointX="4.625" PointY="2.25" />
+        <EntityTypeShape EntityType="DragonflyModel.User" Width="1.5" PointX="8.625" PointY="1.75" />
+        <AssociationConnector Association="DragonflyModel.User_And_His_Role" />
+        <AssociationConnector Association="DragonflyModel.User_Role_Access_Function" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

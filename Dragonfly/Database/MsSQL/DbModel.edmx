@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DragonflyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Access_Function">
+          <Key>
+            <PropertyRef Name="ID_Access_Function" />
+          </Key>
+          <Property Name="ID_Access_Function" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Function_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Global_User_Role">
+          <Key>
+            <PropertyRef Name="ID_User_Role" />
+          </Key>
+          <Property Name="ID_User_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID_User" />
+          </Key>
+          <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="255" />
+          <Property Name="Password" Type="nvarchar" MaxLength="255" />
+          <Property Name="Is_Ldap_User" Type="bit" Nullable="false" />
+          <Property Name="E-mail" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Date_Creation" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User_And_His_Role">
+          <Key>
+            <PropertyRef Name="ID_User" />
+            <PropertyRef Name="ID_User_Role" />
+          </Key>
+          <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_User_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="User_Role_Access_Function">
+          <Key>
+            <PropertyRef Name="ID_User_Role" />
+            <PropertyRef Name="ID_Access_Function" />
+          </Key>
+          <Property Name="ID_User_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Access_Function" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_User_And_His_Role_Global_User_Role">
+          <End Role="Global_User_Role" Type="Self.Global_User_Role" Multiplicity="1" />
+          <End Role="User_And_His_Role" Type="Self.User_And_His_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Global_User_Role">
+              <PropertyRef Name="ID_User_Role" />
+            </Principal>
+            <Dependent Role="User_And_His_Role">
+              <PropertyRef Name="ID_User_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_And_His_Role_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="User_And_His_Role" Type="Self.User_And_His_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_And_His_Role">
+              <PropertyRef Name="ID_User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Role_Access_Function_Access_Function">
+          <End Role="Access_Function" Type="Self.Access_Function" Multiplicity="1" />
+          <End Role="User_Role_Access_Function" Type="Self.User_Role_Access_Function" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Access_Function">
+              <PropertyRef Name="ID_Access_Function" />
+            </Principal>
+            <Dependent Role="User_Role_Access_Function">
+              <PropertyRef Name="ID_Access_Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Role_Access_Function_User_Role">
+          <End Role="Global_User_Role" Type="Self.Global_User_Role" Multiplicity="1" />
+          <End Role="User_Role_Access_Function" Type="Self.User_Role_Access_Function" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Global_User_Role">
+              <PropertyRef Name="ID_User_Role" />
+            </Principal>
+            <Dependent Role="User_Role_Access_Function">
+              <PropertyRef Name="ID_User_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DragonflyModelStoreContainer">
+          <EntitySet Name="Access_Function" EntityType="Self.Access_Function" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Global_User_Role" EntityType="Self.Global_User_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_And_His_Role" EntityType="Self.User_And_His_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Role_Access_Function" EntityType="Self.User_Role_Access_Function" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [User_Role_Access_Function].[ID_User_Role] AS [ID_User_Role], 
+    [User_Role_Access_Function].[ID_Access_Function] AS [ID_Access_Function]
+    FROM [dbo].[User_Role_Access_Function] AS [User_Role_Access_Function]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_User_And_His_Role_Global_User_Role" Association="Self.FK_User_And_His_Role_Global_User_Role">
+            <End Role="Global_User_Role" EntitySet="Global_User_Role" />
+            <End Role="User_And_His_Role" EntitySet="User_And_His_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_And_His_Role_User" Association="Self.FK_User_And_His_Role_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_And_His_Role" EntitySet="User_And_His_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Role_Access_Function_Access_Function" Association="Self.FK_User_Role_Access_Function_Access_Function">
+            <End Role="Access_Function" EntitySet="Access_Function" />
+            <End Role="User_Role_Access_Function" EntitySet="User_Role_Access_Function" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Role_Access_Function_User_Role" Association="Self.FK_User_Role_Access_Function_User_Role">
+            <End Role="Global_User_Role" EntitySet="Global_User_Role" />
+            <End Role="User_Role_Access_Function" EntitySet="User_Role_Access_Function" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DragonflyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DragonflyEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Access_Function" EntityType="DragonflyModel.Access_Function" />
+          <EntitySet Name="Global_User_Role" EntityType="DragonflyModel.Global_User_Role" />
+          <EntitySet Name="User" EntityType="DragonflyModel.User" />
+          <AssociationSet Name="User_And_His_Role" Association="DragonflyModel.User_And_His_Role">
+            <End Role="Global_User_Role" EntitySet="Global_User_Role" />
+            <End Role="User" EntitySet="User" />
+          </AssociationSet>
+          <AssociationSet Name="User_Role_Access_Function" Association="DragonflyModel.User_Role_Access_Function">
+            <End Role="Access_Function" EntitySet="Access_Function" />
+            <End Role="Global_User_Role" EntitySet="Global_User_Role" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Access_Function">
+          <Key>
+            <PropertyRef Name="ID_Access_Function" />
+          </Key>
+          <Property Name="ID_Access_Function" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Function_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Global_User_Role" Relationship="DragonflyModel.User_Role_Access_Function" FromRole="Access_Function" ToRole="Global_User_Role" />
+        </EntityType>
+        <EntityType Name="Global_User_Role">
+          <Key>
+            <PropertyRef Name="ID_User_Role" />
+          </Key>
+          <Property Name="ID_User_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="User" Relationship="DragonflyModel.User_And_His_Role" FromRole="Global_User_Role" ToRole="User" />
+          <NavigationProperty Name="Access_Function" Relationship="DragonflyModel.User_Role_Access_Function" FromRole="Global_User_Role" ToRole="Access_Function" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID_User" />
+          </Key>
+          <Property Name="ID_User" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Surname" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Ldap_User" Type="Boolean" Nullable="false" />
+          <Property Name="E_mail" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Creation" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Global_User_Role" Relationship="DragonflyModel.User_And_His_Role" FromRole="User" ToRole="Global_User_Role" />
+        </EntityType>
+        <Association Name="User_And_His_Role">
+          <End Type="DragonflyModel.Global_User_Role" Role="Global_User_Role" Multiplicity="*" />
+          <End Type="DragonflyModel.User" Role="User" Multiplicity="*" />
+        </Association>
+        <Association Name="User_Role_Access_Function">
+          <End Type="DragonflyModel.Access_Function" Role="Access_Function" Multiplicity="*" />
+          <End Type="DragonflyModel.Global_User_Role" Role="Global_User_Role" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DragonflyModelStoreContainer" CdmEntityContainer="DragonflyEntities">
+          <EntitySetMapping Name="Access_Function">
+            <EntityTypeMapping TypeName="DragonflyModel.Access_Function">
+              <MappingFragment StoreEntitySet="Access_Function">
+                <ScalarProperty Name="Function_Name" ColumnName="Function_Name" />
+                <ScalarProperty Name="ID_Access_Function" ColumnName="ID_Access_Function" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Global_User_Role">
+            <EntityTypeMapping TypeName="DragonflyModel.Global_User_Role">
+              <MappingFragment StoreEntitySet="Global_User_Role">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_User_Role" ColumnName="ID_User_Role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User">
+            <EntityTypeMapping TypeName="DragonflyModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Date_Creation" ColumnName="Date_Creation" />
+                <ScalarProperty Name="E_mail" ColumnName="E-mail" />
+                <ScalarProperty Name="Is_Ldap_User" ColumnName="Is_Ldap_User" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_User" ColumnName="ID_User" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="User_And_His_Role" TypeName="DragonflyModel.User_And_His_Role" StoreEntitySet="User_And_His_Role">
+            <EndProperty Name="User">
+              <ScalarProperty Name="ID_User" ColumnName="ID_User" />
+            </EndProperty>
+            <EndProperty Name="Global_User_Role">
+              <ScalarProperty Name="ID_User_Role" ColumnName="ID_User_Role" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="User_Role_Access_Function" TypeName="DragonflyModel.User_Role_Access_Function" StoreEntitySet="User_Role_Access_Function">
+            <EndProperty Name="Global_User_Role">
+              <ScalarProperty Name="ID_User_Role" ColumnName="ID_User_Role" />
+            </EndProperty>
+            <EndProperty Name="Access_Function">
+              <ScalarProperty Name="ID_Access_Function" ColumnName="ID_Access_Function" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
