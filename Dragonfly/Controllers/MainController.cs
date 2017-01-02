@@ -18,6 +18,7 @@ namespace Dragonfly.Controllers
             {
                 ViewBag.Greeting = "Please log in";
                 ViewBag.Logged = false;
+                return RedirectToAction(nameof(Authorization));
             }
             else
             {
@@ -37,16 +38,18 @@ namespace Dragonfly.Controllers
         public ActionResult Authorization(AuthenticateModel authParameters)
         {
             UserModel user = null;
-            if (!string.IsNullOrWhiteSpace(authParameters.Login) &&
-                !string.IsNullOrWhiteSpace(authParameters.Password))
+            if (ModelState.IsValid)
+            //if (!string.IsNullOrWhiteSpace(authParameters.Login) &&
+            //    !string.IsNullOrWhiteSpace(authParameters.Password))
             {
                 UserStateManager.IsUserLogged = true;
                 UserStateManager.UserName = authParameters.Login;
                 user = new UserModel() { Login = authParameters.Login };
+                return RedirectToAction("Index");
             }
             else
                 UserStateManager.IsUserLogged = false;
-            return RedirectToAction("Index");
+            return View();
         }
     }
 }
