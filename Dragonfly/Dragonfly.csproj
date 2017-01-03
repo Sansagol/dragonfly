@@ -142,7 +142,10 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\MainController.cs" />
-    <Compile Include="Core\DatabaseAccessConfiguration.cs" />
+    <Compile Include="Core\BaseBindings.cs" />
+    <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
+    <Compile Include="Core\Settings\ISettingsReader.cs" />
+    <Compile Include="Core\Settings\StubSettingsReader.cs" />
     <Compile Include="Core\UserStateManager.cs" />
     <Compile Include="Database\IDataBaseProvider.cs" />
     <Compile Include="Database\MsSQL\Access_Function.cs">

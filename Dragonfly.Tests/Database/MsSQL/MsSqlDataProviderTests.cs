@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Dragonfly.Core;
 using Dragonfly.Database.MsSQL;
 using System.Data.Entity;
+using Dragonfly.Core.Settings;
 
 namespace Dragonfly.Tests.Database.MsSQL
 {
@@ -21,7 +22,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void InitializeConnection()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.GetNewContext(_Connectionconfig);
+            DbContext context = provider.Initizlize(_Connectionconfig);
             try
             {
                 Assert.IsNotNull(context, "Context not created.");
@@ -38,7 +39,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             _Connectionconfig.DbName = "Dragonfly";
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context= provider.GetNewContext(_Connectionconfig);
+            DbContext context= provider.Initizlize(_Connectionconfig);
             try
             {
                 Assert.IsNull(context, "Context created - is wrong.");

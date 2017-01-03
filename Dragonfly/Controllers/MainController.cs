@@ -39,9 +39,9 @@ namespace Dragonfly.Controllers
         {
             UserModel user = null;
             if (ModelState.IsValid)
-            //if (!string.IsNullOrWhiteSpace(authParameters.Login) &&
-            //    !string.IsNullOrWhiteSpace(authParameters.Password))
             {
+
+
                 UserStateManager.IsUserLogged = true;
                 UserStateManager.UserName = authParameters.Login;
                 user = new UserModel() { Login = authParameters.Login };
