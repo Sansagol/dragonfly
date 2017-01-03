@@ -10,35 +10,28 @@ using System.Data.SqlClient;
 
 namespace Dragonfly.Database.MsSQL
 {
-    internal class MsSqlDataProvider : IDataBaseProvider
+    internal class MsSqlDataProvider: IDataBaseProvider
     {
-        DragonflyEntities _Context = null;
-        public DbContext Context { get { return _Context; } }
-
-        public void Dispose()
+        /// <summary>Method create and open context for database.</summary>
+        /// <param name="accessConfigurations">Parameters to database connect.</param>
+        /// <returns>Created context. null if fail.</returns>
+        public DbContext GetNewContext(DatabaseAccessConfiguration accessConfigurations)
         {
-            lock (_Context)
-                if (_Context != null)
-                {
-                    _Context.Dispose();
-                    _Context = null;
-                }
-        }
-
-        public bool InitializeConnection(DatabaseAccessConfiguration accessConfigurations)
-        {
+            DbContext context = null;
             EntityConnectionStringBuilder connection = UpdateConnectionParameters(accessConfigurations);
 
             try
             {
-                _Context = new DragonflyEntities(connection.ToString());
-                _Context.Database.Connection.Open();
+                context = new DragonflyEntities(connection.ToString());
+                context.Database.Connection.Open();
             }
             catch (Exception ex)
             {
-                return false;
+                if (context != null)
+                    context.Dispose();
+                return null;
             }
-            return true;
+            return context;
         }
 
         private EntityConnectionStringBuilder UpdateConnectionParameters(
