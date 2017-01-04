@@ -148,6 +148,7 @@
     <Compile Include="Core\Settings\StubSettingsReader.cs" />
     <Compile Include="Core\UserStateManager.cs" />
     <Compile Include="Database\IDataBaseProvider.cs" />
+    <Compile Include="Database\InsertDbDataException.cs" />
     <Compile Include="Database\MsSQL\Access_Function.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
@@ -174,6 +175,7 @@
     <Compile Include="Database\MsSQL\User.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ValidationError.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

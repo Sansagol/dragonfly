@@ -8,6 +8,8 @@ using System.Data.Entity.Core.EntityClient;
 using System.Configuration;
 using System.Data.SqlClient;
 using Dragonfly.Core.Settings;
+using System.Security.Cryptography;
+using System.Data.Entity.Validation;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -16,9 +18,60 @@ namespace Dragonfly.Database.MsSQL
         DragonflyEntities _Context = null;
         public DbContext Context { get { return _Context; } }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        /// <exception cref="InsertDbDataException">Error on user adding.</exception> 
         public bool AddUser(string login, string password)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(login) ||
+                 string.IsNullOrWhiteSpace(password))
+                return false;
+            string hashedPassword = EncryptAsRfc2898(password);
+            User usr = new User()
+            {
+                Name = login,
+                Password = hashedPassword,
+                Date_Creation = DateTime.Now,
+                //TODO Create other parameters
+            };
+            _Context.User.Add(usr);
+            try
+            {
+                _Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.User.Remove(usr);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                throw new InsertDbDataException(validationErrors);
+            }
+
+            return true;
+        }
+
+        private string EncryptAsRfc2898(string password)
+        {
+            int iterationsCount = 5000;
+            byte[] salt = null;
+            new RNGCryptoServiceProvider().GetBytes(salt = new byte[20]);
+
+            var passwordFunc = new Rfc2898DeriveBytes(password, salt, iterationsCount);
+            byte[] passwordHash = passwordFunc.GetBytes(20);
+
+            //Salt + hash (20+20).
+            byte[] hashBytes = new byte[20 + 20];
+            Array.Copy(salt, 0, hashBytes, 0, 20);
+            Array.Copy(passwordHash, 0, hashBytes, 20, 20);
+            return Convert.ToBase64String(hashBytes);
         }
 
         public bool CheckUserCredentials(string login, string password)
@@ -28,10 +81,12 @@ namespace Dragonfly.Database.MsSQL
             User usr = (from user in _Context.User
                         where user.Name.Equals(login)
                         select user).FirstOrDefault();
-            if (usr != null
-                && !usr.Is_Ldap_User
-                && usr.Password.CompareTo(password) == 0)
-                return true;
+            if (usr != null)
+            {
+                if (!usr.Is_Ldap_User
+                   && usr.Password.CompareTo(password) == 0)
+                    return true;
+            }
             return false;
         }
 
