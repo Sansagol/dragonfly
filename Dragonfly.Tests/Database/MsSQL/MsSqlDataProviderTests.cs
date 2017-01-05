@@ -96,10 +96,10 @@ namespace Dragonfly.Tests.Database.MsSQL
             DragonflyEntities ents = context as DragonflyEntities;
             if (ents != null)
             {
-                User foundUser = (from u in ents.User
+                var foundUsers = (from u in ents.User
                                   where u.Name.Equals(login)
-                                  select u).FirstOrDefault();
-                if (foundUser != null)
+                                  select u);
+                foreach (var foundUser in foundUsers)
                 {
                     ents.User.Remove(foundUser);
                 }
@@ -120,13 +120,36 @@ namespace Dragonfly.Tests.Database.MsSQL
             };
             try
             {
-                provider.AddUser(model);
+                Assert.IsFalse(provider.AddUser(model), "Inserted without e-mail");
+            }
+            finally
+            {
+                DeleteUserFromDB(context, model.Login);
+                //TODO delete test user
+            }
+        }
+
+        [TestMethod]
+        public void AdduserWithDoubleEmailTest()
+        {
+            MsSqlDataProvider provider = new MsSqlDataProvider();
+            DbContext context = provider.Initizlize(_Connectionconfig);
+
+            LogUpModel model = new LogUpModel()
+            {
+                Login = "TestDbUser",
+                Password = "testDbPassword",
+                EMail = "some@mail.rrr"
+            };
+            try
+            {
+                Assert.IsTrue(provider.AddUser(model), "Insert failed");
+                Assert.IsFalse(provider.AddUser(model), "Double insert equals user");
             }
             catch (InsertDbDataException ex)
             {
                 Assert.IsTrue(ex.FieldNames.Count() > 0,
                     $"Exception thrown, but without error fields: {ex.Message}");
-
             }
             finally
             {
