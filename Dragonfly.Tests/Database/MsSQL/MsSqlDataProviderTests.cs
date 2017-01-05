@@ -6,6 +6,7 @@ using Dragonfly.Database.MsSQL;
 using System.Data.Entity;
 using Dragonfly.Core.Settings;
 using Dragonfly.Database;
+using Dragonfly.Models;
 
 namespace Dragonfly.Tests.Database.MsSQL
 {
@@ -58,32 +59,68 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
             DbContext context = provider.Initizlize(_Connectionconfig);
-
-            string login = "TestDbUser";
-            string password = "testDbPassword";
+            LogUpModel model = new LogUpModel()
+            {
+                Login = "TestDbUser",
+                Password = "testDbPassword",
+                EMail = "some@mail.rrr"
+            };
             try
             {
-                Assert.IsTrue(provider.AddUser(login, password), "User not saved without error.");
+                Assert.IsTrue(provider.AddUser(model), "User not saved without error.");
 
-                Assert.IsTrue(provider.CheckUserCredentials(login, password), "Wrong user saved");
+                Assert.IsTrue(provider.CheckUserCredentials(model.Login, model.Password), "Wrong user saved");
+
+                DragonflyEntities ents = context as DragonflyEntities;
+                if (ents != null)
+                {
+                    User foundUser = (from u in ents.User
+                                      where u.Name.Equals(model.Login)
+                                      select u).FirstOrDefault();
+                    if (foundUser != null)
+                    {
+                        Assert.AreEqual(model.EMail, foundUser.E_mail, "Wrong e-mail saved.");
+                        //TODO check stored password
+                    }
+                }
             }
             finally
             {
+                DeleteUserFromDB(context, model.Login);
                 //TODO delete test user
             }
         }
 
+        private void DeleteUserFromDB(DbContext context, string login)
+        {
+            DragonflyEntities ents = context as DragonflyEntities;
+            if (ents != null)
+            {
+                User foundUser = (from u in ents.User
+                                  where u.Name.Equals(login)
+                                  select u).FirstOrDefault();
+                if (foundUser != null)
+                {
+                    ents.User.Remove(foundUser);
+                }
+                ents.SaveChanges();
+            }
+        }
+
         [TestMethod]
-        public void AdduserWithExceptionTest()
+        public void AdduserWithoutEmailTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
             DbContext context = provider.Initizlize(_Connectionconfig);
 
-            string login = "TestDbUser";
-            string password = "testDbPassword";
+            LogUpModel model = new LogUpModel()
+            {
+                Login = "TestDbUser",
+                Password = "testDbPassword"
+            };
             try
             {
-                Assert.IsTrue(provider.AddUser(login, password), "User not saved without error.");
+                provider.AddUser(model);
             }
             catch (InsertDbDataException ex)
             {
@@ -93,6 +130,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
+                DeleteUserFromDB(context, model.Login);
                 //TODO delete test user
             }
         }

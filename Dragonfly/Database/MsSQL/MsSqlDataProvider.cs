@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using Dragonfly.Core.Settings;
 using System.Security.Cryptography;
 using System.Data.Entity.Validation;
+using Dragonfly.Models;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -25,18 +26,19 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="password"></param>
         /// <returns></returns>
         /// <exception cref="InsertDbDataException">Error on user adding.</exception> 
-        public bool AddUser(string login, string password)
+        public bool AddUser(LogUpModel userRegisterData)
         {
-            if (string.IsNullOrWhiteSpace(login) ||
-                 string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(userRegisterData.Login) ||
+                 string.IsNullOrWhiteSpace(userRegisterData.Password) ||
+                 string.IsNullOrWhiteSpace(userRegisterData.EMail))
                 return false;
-            string hashedPassword = EncryptAsRfc2898(password);
+            string hashedPassword = EncryptAsRfc2898(userRegisterData.Password);
             User usr = new User()
             {
-                Name = login,
+                Name = userRegisterData.Login,
                 Password = hashedPassword,
                 Date_Creation = DateTime.Now,
-                //TODO Create other parameters
+                E_mail = userRegisterData.EMail
             };
             _Context.User.Add(usr);
             try
@@ -54,7 +56,6 @@ namespace Dragonfly.Database.MsSQL
                 }
                 throw new InsertDbDataException(validationErrors);
             }
-
             return true;
         }
 
@@ -107,7 +108,7 @@ namespace Dragonfly.Database.MsSQL
                 if (_Context != null)
                     _Context.Dispose();
                 return null;
-            }
+            }   
             return _Context;
         }
 

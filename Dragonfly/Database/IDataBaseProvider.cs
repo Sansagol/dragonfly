@@ -1,5 +1,6 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Core.Settings;
+using Dragonfly.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -24,6 +25,6 @@ namespace Dragonfly.Database
 
         bool CheckUserCredentials(string login, string password);
 
-        bool AddUser(string login, string password);
+        bool AddUser(LogUpModel userRegisterData);
     }
 }
