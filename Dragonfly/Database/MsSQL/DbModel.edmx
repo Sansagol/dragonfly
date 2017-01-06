@@ -12,6 +12,74 @@
           <Property Name="ID_Access_Function" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Function_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="ID_Address" />
+          </Key>
+          <Property Name="ID_Address" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Address_Row" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="ID_Client" />
+          </Key>
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="450" Nullable="false" />
+          <Property Name="INN" Type="nvarchar" MaxLength="50" />
+          <Property Name="OGRN" Type="nvarchar" MaxLength="50" />
+          <Property Name="KPP" Type="nvarchar" MaxLength="50" />
+          <Property Name="ID_Client_Type" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Inner_Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="ID_Address" Type="numeric" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Client_Address">
+          <Key>
+            <PropertyRef Name="ID_Client" />
+            <PropertyRef Name="ID_Address" />
+          </Key>
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Address" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Client_Email">
+          <Key>
+            <PropertyRef Name="ID_Client" />
+            <PropertyRef Name="ID_E-mail" />
+          </Key>
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_E-mail" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Client_Phone">
+          <Key>
+            <PropertyRef Name="ID_Client" />
+            <PropertyRef Name="ID_Phone" />
+          </Key>
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Phone" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Client_Type">
+          <Key>
+            <PropertyRef Name="ID_Client_Type" />
+          </Key>
+          <Property Name="ID_Client_Type" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Type_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="E-mail">
+          <Key>
+            <PropertyRef Name="ID_E-mail" />
+          </Key>
+          <Property Name="ID_E-mail" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="E-mail_Notification">
+          <Key>
+            <PropertyRef Name="ID_E-mail_Notification" />
+          </Key>
+          <Property Name="ID_E-mail_Notification" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_User_To_Notificate" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Project" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Notificztion_Task" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
         <EntityType Name="Global_User_Role">
           <Key>
             <PropertyRef Name="ID_User_Role" />
@@ -19,17 +87,132 @@
           <Property Name="ID_User_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
+        <EntityType Name="Invitation_User_Settings">
+          <Key>
+            <PropertyRef Name="ID_Invitation_User_Settings" />
+          </Key>
+          <Property Name="ID_Invitation_User_Settings" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Count_Invitations_Per_Day" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Invitation_E-mail" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LDAP_Settings">
+          <Key>
+            <PropertyRef Name="ID_LDAP_Settings" />
+          </Key>
+          <Property Name="ID_LDAP_Settings" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Domain_Components" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Organizational_Unit" Type="varbinary" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="License_Type">
+          <Key>
+            <PropertyRef Name="ID_License_Type" />
+          </Key>
+          <Property Name="ID_License_Type" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Notification_Event">
+          <Key>
+            <PropertyRef Name="ID_Notification_Event" />
+          </Key>
+          <Property Name="ID_Notification_Event" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Event_Type" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Notification_Morpheme">
+          <Key>
+            <PropertyRef Name="ID_Notification_Morpheme" />
+          </Key>
+          <Property Name="ID_Notification_Morpheme" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Template" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="Notificztion_Task">
+          <Key>
+            <PropertyRef Name="ID_Notificztion_Task" />
+          </Key>
+          <Property Name="ID_Notificztion_Task" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Notification_Before_Month" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Week" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Day" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Hour" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="Notification_Text" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ID_Notification_Event" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Phone">
+          <Key>
+            <PropertyRef Name="ID_Phone" />
+          </Key>
+          <Property Name="ID_Phone" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Phone_Row" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Product_License">
+          <Key>
+            <PropertyRef Name="ID_Product_License" />
+          </Key>
+          <Property Name="ID_Product_License" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_Project" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Date_Begin" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Date_End" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ID_License_Type" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="License_Count" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Details" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID_Project" />
+          </Key>
+          <Property Name="ID_Project" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Date_Create" Type="datetime2" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Project_Access_Function">
+          <Key>
+            <PropertyRef Name="ID_Role_Access_Function" />
+          </Key>
+          <Property Name="ID_Role_Access_Function" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="Project_Role">
+          <Key>
+            <PropertyRef Name="ID_Project_Role" />
+          </Key>
+          <Property Name="ID_Project_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Role_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Is_Admin" Type="bit" Nullable="false" />
+          <Property Name="ID_User_Owner" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Project_Role_Access_Function">
+          <Key>
+            <PropertyRef Name="ID_Project_Role" />
+            <PropertyRef Name="ID_Role_Access_Function" />
+          </Key>
+          <Property Name="ID_Project_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Role_Access_Function" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Support_Entitlement">
+          <Key>
+            <PropertyRef Name="ID_Support_Entitlement" />
+          </Key>
+          <Property Name="ID_Support_Entitlement" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_Project" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Client" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Date_Begin" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Date_End" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Note" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID_User" />
           </Key>
           <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
           <Property Name="Surname" Type="nvarchar" MaxLength="255" />
           <Property Name="Password" Type="nvarchar" MaxLength="255" />
           <Property Name="Is_Ldap_User" Type="bit" Nullable="false" />
           <Property Name="E-mail" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Date_Creation" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Login" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
         <EntityType Name="User_And_His_Role">
           <Key>
@@ -38,6 +221,26 @@
           </Key>
           <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="ID_User_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User_Invitation">
+          <Key>
+            <PropertyRef Name="ID_User_Invitation" />
+          </Key>
+          <Property Name="ID_User_Invitation" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="E-mail" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Date_Of_Invitation" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ID_User_Referrer" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="IsAccepted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User_Project">
+          <Key>
+            <PropertyRef Name="ID_User" />
+            <PropertyRef Name="ID_Project" />
+            <PropertyRef Name="ID_Project_Role" />
+          </Key>
+          <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Project" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ID_Project_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -49,6 +252,222 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="ID_User_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="ID_Access_Function" Type="numeric" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Client_Address_Address">
+          <End Role="Address" Type="Self.Address" Multiplicity="1" />
+          <End Role="Client_Address" Type="Self.Client_Address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="ID_Address" />
+            </Principal>
+            <Dependent Role="Client_Address">
+              <PropertyRef Name="ID_Address" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Client_Address_Client">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Client_Address" Type="Self.Client_Address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Client_Address">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Client_Client_Type">
+          <End Role="Client_Type" Type="Self.Client_Type" Multiplicity="1" />
+          <End Role="Client" Type="Self.Client" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client_Type">
+              <PropertyRef Name="ID_Client_Type" />
+            </Principal>
+            <Dependent Role="Client">
+              <PropertyRef Name="ID_Client_Type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Client_Email_Client">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Client_Email" Type="Self.Client_Email" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Client_Email">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Client_Email_E-mail">
+          <End Role="E-mail" Type="Self.E-mail" Multiplicity="1" />
+          <End Role="Client_Email" Type="Self.Client_Email" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="E-mail">
+              <PropertyRef Name="ID_E-mail" />
+            </Principal>
+            <Dependent Role="Client_Email">
+              <PropertyRef Name="ID_E-mail" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Client_Phone_Client">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Client_Phone" Type="Self.Client_Phone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Client_Phone">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Client_Phone_Phone">
+          <End Role="Phone" Type="Self.Phone" Multiplicity="1" />
+          <End Role="Client_Phone" Type="Self.Client_Phone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Phone">
+              <PropertyRef Name="ID_Phone" />
+            </Principal>
+            <Dependent Role="Client_Phone">
+              <PropertyRef Name="ID_Phone" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_E-mail_Notification_Notificztion_Task">
+          <End Role="Notificztion_Task" Type="Self.Notificztion_Task" Multiplicity="1" />
+          <End Role="E-mail_Notification" Type="Self.E-mail_Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Notificztion_Task">
+              <PropertyRef Name="ID_Notificztion_Task" />
+            </Principal>
+            <Dependent Role="E-mail_Notification">
+              <PropertyRef Name="ID_Notificztion_Task" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_E-mail_Notification_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="E-mail_Notification" Type="Self.E-mail_Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="E-mail_Notification">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notificztion_Task_Notification_Event">
+          <End Role="Notification_Event" Type="Self.Notification_Event" Multiplicity="1" />
+          <End Role="Notificztion_Task" Type="Self.Notificztion_Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Notification_Event">
+              <PropertyRef Name="ID_Notification_Event" />
+            </Principal>
+            <Dependent Role="Notificztion_Task">
+              <PropertyRef Name="ID_Notification_Event" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_Client">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Product_License" Type="Self.Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_License_Type">
+          <End Role="License_Type" Type="Self.License_Type" Multiplicity="1" />
+          <End Role="Product_License" Type="Self.Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="License_Type">
+              <PropertyRef Name="ID_License_Type" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_License_Type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="Product_License" Type="Self.Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Role_Access_Function_Project_Access_Function">
+          <End Role="Project_Access_Function" Type="Self.Project_Access_Function" Multiplicity="1" />
+          <End Role="Project_Role_Access_Function" Type="Self.Project_Role_Access_Function" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Access_Function">
+              <PropertyRef Name="ID_Role_Access_Function" />
+            </Principal>
+            <Dependent Role="Project_Role_Access_Function">
+              <PropertyRef Name="ID_Role_Access_Function" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Role_Access_Function_Project_Role">
+          <End Role="Project_Role" Type="Self.Project_Role" Multiplicity="1" />
+          <End Role="Project_Role_Access_Function" Type="Self.Project_Role_Access_Function" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Role">
+              <PropertyRef Name="ID_Project_Role" />
+            </Principal>
+            <Dependent Role="Project_Role_Access_Function">
+              <PropertyRef Name="ID_Project_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Role_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Project_Role" Type="Self.Project_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="Project_Role">
+              <PropertyRef Name="ID_User_Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Support_Entitlement_Client">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Support_Entitlement" Type="Self.Support_Entitlement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Support_Entitlement">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Support_Entitlement_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="Support_Entitlement" Type="Self.Support_Entitlement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="Support_Entitlement">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_User_And_His_Role_Global_User_Role">
           <End Role="Global_User_Role" Type="Self.Global_User_Role" Multiplicity="1" />
           <End Role="User_And_His_Role" Type="Self.User_And_His_Role" Multiplicity="*" />
@@ -69,6 +488,54 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <PropertyRef Name="ID_User" />
             </Principal>
             <Dependent Role="User_And_His_Role">
+              <PropertyRef Name="ID_User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Invitation_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="User_Invitation" Type="Self.User_Invitation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Invitation">
+              <PropertyRef Name="ID_User_Referrer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_Project">
+          <End Role="Project" Type="Self.Project" Multiplicity="1" />
+          <End Role="User_Project" Type="Self.User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_Project_Role">
+          <End Role="Project_Role" Type="Self.Project_Role" Multiplicity="1" />
+          <End Role="User_Project" Type="Self.User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Role">
+              <PropertyRef Name="ID_Project_Role" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_Project_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="User_Project" Type="Self.User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Project">
               <PropertyRef Name="ID_User" />
             </Dependent>
           </ReferentialConstraint>
@@ -99,15 +566,110 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
         </Association>
         <EntityContainer Name="DragonflyModelStoreContainer">
           <EntitySet Name="Access_Function" EntityType="Self.Access_Function" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Client" EntityType="Self.Client" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Client_Address" EntityType="Self.Client_Address" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Client_Email" EntityType="Self.Client_Email" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Client_Phone" EntityType="Self.Client_Phone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Client_Type" EntityType="Self.Client_Type" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="E-mail" EntityType="Self.E-mail" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="E-mail_Notification" EntityType="Self.E-mail_Notification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Global_User_Role" EntityType="Self.Global_User_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invitation_User_Settings" EntityType="Self.Invitation_User_Settings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LDAP_Settings" EntityType="Self.LDAP_Settings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="License_Type" EntityType="Self.License_Type" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notification_Event" EntityType="Self.Notification_Event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notification_Morpheme" EntityType="Self.Notification_Morpheme" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notificztion_Task" EntityType="Self.Notificztion_Task" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Phone" EntityType="Self.Phone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Product_License" EntityType="Self.Product_License" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project_Access_Function" EntityType="Self.Project_Access_Function" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project_Role" EntityType="Self.Project_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project_Role_Access_Function" EntityType="Self.Project_Role_Access_Function" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Support_Entitlement" EntityType="Self.Support_Entitlement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_And_His_Role" EntityType="Self.User_And_His_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Invitation" EntityType="Self.User_Invitation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Project" EntityType="Self.User_Project" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Role_Access_Function" EntityType="Self.User_Role_Access_Function" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [User_Role_Access_Function].[ID_User_Role] AS [ID_User_Role], 
     [User_Role_Access_Function].[ID_Access_Function] AS [ID_Access_Function]
     FROM [dbo].[User_Role_Access_Function] AS [User_Role_Access_Function]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_Client_Address_Address" Association="Self.FK_Client_Address_Address">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Client_Address" EntitySet="Client_Address" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Client_Address_Client" Association="Self.FK_Client_Address_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Client_Address" EntitySet="Client_Address" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Client_Client_Type" Association="Self.FK_Client_Client_Type">
+            <End Role="Client_Type" EntitySet="Client_Type" />
+            <End Role="Client" EntitySet="Client" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Client_Email_Client" Association="Self.FK_Client_Email_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Client_Email" EntitySet="Client_Email" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Client_Email_E-mail" Association="Self.FK_Client_Email_E-mail">
+            <End Role="E-mail" EntitySet="E-mail" />
+            <End Role="Client_Email" EntitySet="Client_Email" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Client_Phone_Client" Association="Self.FK_Client_Phone_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Client_Phone" EntitySet="Client_Phone" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Client_Phone_Phone" Association="Self.FK_Client_Phone_Phone">
+            <End Role="Phone" EntitySet="Phone" />
+            <End Role="Client_Phone" EntitySet="Client_Phone" />
+          </AssociationSet>
+          <AssociationSet Name="FK_E-mail_Notification_Notificztion_Task" Association="Self.FK_E-mail_Notification_Notificztion_Task">
+            <End Role="Notificztion_Task" EntitySet="Notificztion_Task" />
+            <End Role="E-mail_Notification" EntitySet="E-mail_Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_E-mail_Notification_Project" Association="Self.FK_E-mail_Notification_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="E-mail_Notification" EntitySet="E-mail_Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notificztion_Task_Notification_Event" Association="Self.FK_Notificztion_Task_Notification_Event">
+            <End Role="Notification_Event" EntitySet="Notification_Event" />
+            <End Role="Notificztion_Task" EntitySet="Notificztion_Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_Client" Association="Self.FK_Product_License_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_License_Type" Association="Self.FK_Product_License_License_Type">
+            <End Role="License_Type" EntitySet="License_Type" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_Project" Association="Self.FK_Product_License_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Role_Access_Function_Project_Access_Function" Association="Self.FK_Project_Role_Access_Function_Project_Access_Function">
+            <End Role="Project_Access_Function" EntitySet="Project_Access_Function" />
+            <End Role="Project_Role_Access_Function" EntitySet="Project_Role_Access_Function" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Role_Access_Function_Project_Role" Association="Self.FK_Project_Role_Access_Function_Project_Role">
+            <End Role="Project_Role" EntitySet="Project_Role" />
+            <End Role="Project_Role_Access_Function" EntitySet="Project_Role_Access_Function" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Role_User" Association="Self.FK_Project_Role_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Project_Role" EntitySet="Project_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Support_Entitlement_Client" Association="Self.FK_Support_Entitlement_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Support_Entitlement_Project" Association="Self.FK_Support_Entitlement_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
+          </AssociationSet>
           <AssociationSet Name="FK_User_And_His_Role_Global_User_Role" Association="Self.FK_User_And_His_Role_Global_User_Role">
             <End Role="Global_User_Role" EntitySet="Global_User_Role" />
             <End Role="User_And_His_Role" EntitySet="User_And_His_Role" />
@@ -115,6 +677,22 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <AssociationSet Name="FK_User_And_His_Role_User" Association="Self.FK_User_And_His_Role_User">
             <End Role="User" EntitySet="User" />
             <End Role="User_And_His_Role" EntitySet="User_And_His_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Invitation_User" Association="Self.FK_User_Invitation_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Invitation" EntitySet="User_Invitation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Project_Project" Association="Self.FK_User_Project_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Project_Project_Role" Association="Self.FK_User_Project_Project_Role">
+            <End Role="Project_Role" EntitySet="Project_Role" />
+            <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Project_User" Association="Self.FK_User_Project_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Project" EntitySet="User_Project" />
           </AssociationSet>
           <AssociationSet Name="FK_User_Role_Access_Function_Access_Function" Association="Self.FK_User_Role_Access_Function_Access_Function">
             <End Role="Access_Function" EntitySet="Access_Function" />
@@ -131,8 +709,99 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
       <Schema Namespace="DragonflyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="DragonflyEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Access_Function" EntityType="DragonflyModel.Access_Function" />
+          <EntitySet Name="Address" EntityType="DragonflyModel.Address" />
+          <EntitySet Name="Client" EntityType="DragonflyModel.Client" />
+          <EntitySet Name="Client_Type" EntityType="DragonflyModel.Client_Type" />
+          <EntitySet Name="E_mail" EntityType="DragonflyModel.E_mail" />
+          <EntitySet Name="E_mail_Notification" EntityType="DragonflyModel.E_mail_Notification" />
           <EntitySet Name="Global_User_Role" EntityType="DragonflyModel.Global_User_Role" />
+          <EntitySet Name="Invitation_User_Settings" EntityType="DragonflyModel.Invitation_User_Settings" />
+          <EntitySet Name="LDAP_Settings" EntityType="DragonflyModel.LDAP_Settings" />
+          <EntitySet Name="License_Type" EntityType="DragonflyModel.License_Type" />
+          <EntitySet Name="Notification_Event" EntityType="DragonflyModel.Notification_Event" />
+          <EntitySet Name="Notification_Morpheme" EntityType="DragonflyModel.Notification_Morpheme" />
+          <EntitySet Name="Notificztion_Task" EntityType="DragonflyModel.Notificztion_Task" />
+          <EntitySet Name="Phone" EntityType="DragonflyModel.Phone" />
+          <EntitySet Name="Product_License" EntityType="DragonflyModel.Product_License" />
+          <EntitySet Name="Project" EntityType="DragonflyModel.Project" />
+          <EntitySet Name="Project_Access_Function" EntityType="DragonflyModel.Project_Access_Function" />
+          <EntitySet Name="Project_Role" EntityType="DragonflyModel.Project_Role" />
+          <EntitySet Name="Support_Entitlement" EntityType="DragonflyModel.Support_Entitlement" />
           <EntitySet Name="User" EntityType="DragonflyModel.User" />
+          <EntitySet Name="User_Invitation" EntityType="DragonflyModel.User_Invitation" />
+          <EntitySet Name="User_Project" EntityType="DragonflyModel.User_Project" />
+          <AssociationSet Name="FK_Client_Client_Type" Association="DragonflyModel.FK_Client_Client_Type">
+            <End Role="Client_Type" EntitySet="Client_Type" />
+            <End Role="Client" EntitySet="Client" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_Client" Association="DragonflyModel.FK_Product_License_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Support_Entitlement_Client" Association="DragonflyModel.FK_Support_Entitlement_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
+          </AssociationSet>
+          <AssociationSet Name="FK_E_mail_Notification_Notificztion_Task" Association="DragonflyModel.FK_E_mail_Notification_Notificztion_Task">
+            <End Role="Notificztion_Task" EntitySet="Notificztion_Task" />
+            <End Role="E_mail_Notification" EntitySet="E_mail_Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_E_mail_Notification_Project" Association="DragonflyModel.FK_E_mail_Notification_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="E_mail_Notification" EntitySet="E_mail_Notification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_License_Type" Association="DragonflyModel.FK_Product_License_License_Type">
+            <End Role="License_Type" EntitySet="License_Type" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notificztion_Task_Notification_Event" Association="DragonflyModel.FK_Notificztion_Task_Notification_Event">
+            <End Role="Notification_Event" EntitySet="Notification_Event" />
+            <End Role="Notificztion_Task" EntitySet="Notificztion_Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_Project" Association="DragonflyModel.FK_Product_License_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Support_Entitlement_Project" Association="DragonflyModel.FK_Support_Entitlement_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Project_Project" Association="DragonflyModel.FK_User_Project_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Role_User" Association="DragonflyModel.FK_Project_Role_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Project_Role" EntitySet="Project_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Project_Project_Role" Association="DragonflyModel.FK_User_Project_Project_Role">
+            <End Role="Project_Role" EntitySet="Project_Role" />
+            <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Invitation_User" Association="DragonflyModel.FK_User_Invitation_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Invitation" EntitySet="User_Invitation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Project_User" Association="DragonflyModel.FK_User_Project_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <AssociationSet Name="Client_Address" Association="DragonflyModel.Client_Address">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="Client" EntitySet="Client" />
+          </AssociationSet>
+          <AssociationSet Name="Client_Email" Association="DragonflyModel.Client_Email">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="E_mail" EntitySet="E_mail" />
+          </AssociationSet>
+          <AssociationSet Name="Client_Phone" Association="DragonflyModel.Client_Phone">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Phone" EntitySet="Phone" />
+          </AssociationSet>
+          <AssociationSet Name="Project_Role_Access_Function" Association="DragonflyModel.Project_Role_Access_Function">
+            <End Role="Project_Access_Function" EntitySet="Project_Access_Function" />
+            <End Role="Project_Role" EntitySet="Project_Role" />
+          </AssociationSet>
           <AssociationSet Name="User_And_His_Role" Association="DragonflyModel.User_And_His_Role">
             <End Role="Global_User_Role" EntitySet="Global_User_Role" />
             <End Role="User" EntitySet="User" />
@@ -150,6 +819,61 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="Function_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Global_User_Role" Relationship="DragonflyModel.User_Role_Access_Function" FromRole="Access_Function" ToRole="Global_User_Role" />
         </EntityType>
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="ID_Address" />
+          </Key>
+          <Property Name="ID_Address" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Address_Row" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ID_Client" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.Client_Address" FromRole="Address" ToRole="Client" />
+        </EntityType>
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="ID_Client" />
+          </Key>
+          <Property Name="ID_Client" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="450" FixedLength="false" Unicode="true" />
+          <Property Name="INN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OGRN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="KPP" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ID_Client_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Inner_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ID_Address" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="Client_Type" Relationship="DragonflyModel.FK_Client_Client_Type" FromRole="Client" ToRole="Client_Type" />
+          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Client" FromRole="Client" ToRole="Product_License" />
+          <NavigationProperty Name="Support_Entitlement" Relationship="DragonflyModel.FK_Support_Entitlement_Client" FromRole="Client" ToRole="Support_Entitlement" />
+          <NavigationProperty Name="Address" Relationship="DragonflyModel.Client_Address" FromRole="Client" ToRole="Address" />
+          <NavigationProperty Name="E_mail" Relationship="DragonflyModel.Client_Email" FromRole="Client" ToRole="E_mail" />
+          <NavigationProperty Name="Phone" Relationship="DragonflyModel.Client_Phone" FromRole="Client" ToRole="Phone" />
+        </EntityType>
+        <EntityType Name="Client_Type">
+          <Key>
+            <PropertyRef Name="ID_Client_Type" />
+          </Key>
+          <Property Name="ID_Client_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Type_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.FK_Client_Client_Type" FromRole="Client_Type" ToRole="Client" />
+        </EntityType>
+        <EntityType Name="E_mail">
+          <Key>
+            <PropertyRef Name="ID_E_mail" />
+          </Key>
+          <Property Name="ID_E_mail" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.Client_Email" FromRole="E_mail" ToRole="Client" />
+        </EntityType>
+        <EntityType Name="E_mail_Notification">
+          <Key>
+            <PropertyRef Name="ID_E_mail_Notification" />
+          </Key>
+          <Property Name="ID_E_mail_Notification" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_User_To_Notificate" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Notificztion_Task" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="Notificztion_Task" Relationship="DragonflyModel.FK_E_mail_Notification_Notificztion_Task" FromRole="E_mail_Notification" ToRole="Notificztion_Task" />
+          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_E_mail_Notification_Project" FromRole="E_mail_Notification" ToRole="Project" />
+        </EntityType>
         <EntityType Name="Global_User_Role">
           <Key>
             <PropertyRef Name="ID_User_Role" />
@@ -159,19 +883,355 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <NavigationProperty Name="User" Relationship="DragonflyModel.User_And_His_Role" FromRole="Global_User_Role" ToRole="User" />
           <NavigationProperty Name="Access_Function" Relationship="DragonflyModel.User_Role_Access_Function" FromRole="Global_User_Role" ToRole="Access_Function" />
         </EntityType>
+        <EntityType Name="Invitation_User_Settings">
+          <Key>
+            <PropertyRef Name="ID_Invitation_User_Settings" />
+          </Key>
+          <Property Name="ID_Invitation_User_Settings" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Count_Invitations_Per_Day" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Invitation_E_mail" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="LDAP_Settings">
+          <Key>
+            <PropertyRef Name="ID_LDAP_Settings" />
+          </Key>
+          <Property Name="ID_LDAP_Settings" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Domain_Components" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Organizational_Unit" Type="Binary" Nullable="false" MaxLength="255" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="License_Type">
+          <Key>
+            <PropertyRef Name="ID_License_Type" />
+          </Key>
+          <Property Name="ID_License_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="License_Type" ToRole="Product_License" />
+        </EntityType>
+        <EntityType Name="Notification_Event">
+          <Key>
+            <PropertyRef Name="ID_Notification_Event" />
+          </Key>
+          <Property Name="ID_Notification_Event" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Event_Type" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Notificztion_Task" Relationship="DragonflyModel.FK_Notificztion_Task_Notification_Event" FromRole="Notification_Event" ToRole="Notificztion_Task" />
+        </EntityType>
+        <EntityType Name="Notification_Morpheme">
+          <Key>
+            <PropertyRef Name="ID_Notification_Morpheme" />
+          </Key>
+          <Property Name="ID_Notification_Morpheme" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Template" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Notificztion_Task">
+          <Key>
+            <PropertyRef Name="ID_Notificztion_Task" />
+          </Key>
+          <Property Name="ID_Notificztion_Task" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Month" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Week" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Day" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Notification_Before_Hour" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Notification_Text" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ID_Notification_Event" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="E_mail_Notification" Relationship="DragonflyModel.FK_E_mail_Notification_Notificztion_Task" FromRole="Notificztion_Task" ToRole="E_mail_Notification" />
+          <NavigationProperty Name="Notification_Event" Relationship="DragonflyModel.FK_Notificztion_Task_Notification_Event" FromRole="Notificztion_Task" ToRole="Notification_Event" />
+        </EntityType>
+        <EntityType Name="Phone">
+          <Key>
+            <PropertyRef Name="ID_Phone" />
+          </Key>
+          <Property Name="ID_Phone" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Phone_Row" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.Client_Phone" FromRole="Phone" ToRole="Client" />
+        </EntityType>
+        <EntityType Name="Product_License">
+          <Key>
+            <PropertyRef Name="ID_Product_License" />
+          </Key>
+          <Property Name="ID_Product_License" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Client" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Date_Begin" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Date_End" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ID_License_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="License_Count" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Details" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.FK_Product_License_Client" FromRole="Product_License" ToRole="Client" />
+          <NavigationProperty Name="License_Type" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="Product_License" ToRole="License_Type" />
+          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Product_License" ToRole="Project" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ID_Project" />
+          </Key>
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Create" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="E_mail_Notification" Relationship="DragonflyModel.FK_E_mail_Notification_Project" FromRole="Project" ToRole="E_mail_Notification" />
+          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Project" ToRole="Product_License" />
+          <NavigationProperty Name="Support_Entitlement" Relationship="DragonflyModel.FK_Support_Entitlement_Project" FromRole="Project" ToRole="Support_Entitlement" />
+          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_Project" FromRole="Project" ToRole="User_Project" />
+        </EntityType>
+        <EntityType Name="Project_Access_Function">
+          <Key>
+            <PropertyRef Name="ID_Role_Access_Function" />
+          </Key>
+          <Property Name="ID_Role_Access_Function" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.Project_Role_Access_Function" FromRole="Project_Access_Function" ToRole="Project_Role" />
+        </EntityType>
+        <EntityType Name="Project_Role">
+          <Key>
+            <PropertyRef Name="ID_Project_Role" />
+          </Key>
+          <Property Name="ID_Project_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Role_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Admin" Type="Boolean" Nullable="false" />
+          <Property Name="ID_User_Owner" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="User" Relationship="DragonflyModel.FK_Project_Role_User" FromRole="Project_Role" ToRole="User" />
+          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_Project_Role" FromRole="Project_Role" ToRole="User_Project" />
+          <NavigationProperty Name="Project_Access_Function" Relationship="DragonflyModel.Project_Role_Access_Function" FromRole="Project_Role" ToRole="Project_Access_Function" />
+        </EntityType>
+        <EntityType Name="Support_Entitlement">
+          <Key>
+            <PropertyRef Name="ID_Support_Entitlement" />
+          </Key>
+          <Property Name="ID_Support_Entitlement" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Client" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Date_Begin" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Date_End" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.FK_Support_Entitlement_Client" FromRole="Support_Entitlement" ToRole="Client" />
+          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_Support_Entitlement_Project" FromRole="Support_Entitlement" ToRole="Project" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID_User" />
           </Key>
           <Property Name="ID_User" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Surname" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Is_Ldap_User" Type="Boolean" Nullable="false" />
           <Property Name="E_mail" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Date_Creation" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Login" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.FK_Project_Role_User" FromRole="User" ToRole="Project_Role" />
+          <NavigationProperty Name="User_Invitation" Relationship="DragonflyModel.FK_User_Invitation_User" FromRole="User" ToRole="User_Invitation" />
+          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User" ToRole="User_Project" />
           <NavigationProperty Name="Global_User_Role" Relationship="DragonflyModel.User_And_His_Role" FromRole="User" ToRole="Global_User_Role" />
         </EntityType>
+        <EntityType Name="User_Invitation">
+          <Key>
+            <PropertyRef Name="ID_User_Invitation" />
+          </Key>
+          <Property Name="ID_User_Invitation" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="E_mail" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Of_Invitation" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ID_User_Referrer" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="IsAccepted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="DragonflyModel.FK_User_Invitation_User" FromRole="User_Invitation" ToRole="User" />
+        </EntityType>
+        <EntityType Name="User_Project">
+          <Key>
+            <PropertyRef Name="ID_User" />
+            <PropertyRef Name="ID_Project" />
+            <PropertyRef Name="ID_Project_Role" />
+          </Key>
+          <Property Name="ID_User" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Project_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_User_Project_Project" FromRole="User_Project" ToRole="Project" />
+          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.FK_User_Project_Project_Role" FromRole="User_Project" ToRole="Project_Role" />
+          <NavigationProperty Name="User" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User_Project" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Client_Client_Type">
+          <End Type="DragonflyModel.Client_Type" Role="Client_Type" Multiplicity="1" />
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client_Type">
+              <PropertyRef Name="ID_Client_Type" />
+            </Principal>
+            <Dependent Role="Client">
+              <PropertyRef Name="ID_Client_Type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_Client">
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="1" />
+          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Support_Entitlement_Client">
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="1" />
+          <End Type="DragonflyModel.Support_Entitlement" Role="Support_Entitlement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Support_Entitlement">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_E_mail_Notification_Notificztion_Task">
+          <End Type="DragonflyModel.Notificztion_Task" Role="Notificztion_Task" Multiplicity="1" />
+          <End Type="DragonflyModel.E_mail_Notification" Role="E_mail_Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Notificztion_Task">
+              <PropertyRef Name="ID_Notificztion_Task" />
+            </Principal>
+            <Dependent Role="E_mail_Notification">
+              <PropertyRef Name="ID_Notificztion_Task" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_E_mail_Notification_Project">
+          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="DragonflyModel.E_mail_Notification" Role="E_mail_Notification" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="E_mail_Notification">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_License_Type">
+          <End Type="DragonflyModel.License_Type" Role="License_Type" Multiplicity="1" />
+          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="License_Type">
+              <PropertyRef Name="ID_License_Type" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_License_Type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notificztion_Task_Notification_Event">
+          <End Type="DragonflyModel.Notification_Event" Role="Notification_Event" Multiplicity="1" />
+          <End Type="DragonflyModel.Notificztion_Task" Role="Notificztion_Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Notification_Event">
+              <PropertyRef Name="ID_Notification_Event" />
+            </Principal>
+            <Dependent Role="Notificztion_Task">
+              <PropertyRef Name="ID_Notification_Event" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_Project">
+          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Support_Entitlement_Project">
+          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="DragonflyModel.Support_Entitlement" Role="Support_Entitlement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="Support_Entitlement">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_Project">
+          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Role_User">
+          <End Type="DragonflyModel.User" Role="User" Multiplicity="1" />
+          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="Project_Role">
+              <PropertyRef Name="ID_User_Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_Project_Role">
+          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="1" />
+          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Role">
+              <PropertyRef Name="ID_Project_Role" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_Project_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Invitation_User">
+          <End Type="DragonflyModel.User" Role="User" Multiplicity="1" />
+          <End Type="DragonflyModel.User_Invitation" Role="User_Invitation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Invitation">
+              <PropertyRef Name="ID_User_Referrer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_User">
+          <End Type="DragonflyModel.User" Role="User" Multiplicity="1" />
+          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Client_Address">
+          <End Type="DragonflyModel.Address" Role="Address" Multiplicity="*" />
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="*" />
+        </Association>
+        <Association Name="Client_Email">
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="*" />
+          <End Type="DragonflyModel.E_mail" Role="E_mail" Multiplicity="*" />
+        </Association>
+        <Association Name="Client_Phone">
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="*" />
+          <End Type="DragonflyModel.Phone" Role="Phone" Multiplicity="*" />
+        </Association>
+        <Association Name="Project_Role_Access_Function">
+          <End Type="DragonflyModel.Project_Access_Function" Role="Project_Access_Function" Multiplicity="*" />
+          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="*" />
+        </Association>
         <Association Name="User_And_His_Role">
           <End Type="DragonflyModel.Global_User_Role" Role="Global_User_Role" Multiplicity="*" />
           <End Type="DragonflyModel.User" Role="User" Multiplicity="*" />
@@ -194,6 +1254,55 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Address">
+            <EntityTypeMapping TypeName="DragonflyModel.Address">
+              <MappingFragment StoreEntitySet="Address">
+                <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+                <ScalarProperty Name="Address_Row" ColumnName="Address_Row" />
+                <ScalarProperty Name="ID_Address" ColumnName="ID_Address" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Client">
+            <EntityTypeMapping TypeName="DragonflyModel.Client">
+              <MappingFragment StoreEntitySet="Client">
+                <ScalarProperty Name="ID_Address" ColumnName="ID_Address" />
+                <ScalarProperty Name="Inner_Name" ColumnName="Inner_Name" />
+                <ScalarProperty Name="ID_Client_Type" ColumnName="ID_Client_Type" />
+                <ScalarProperty Name="KPP" ColumnName="KPP" />
+                <ScalarProperty Name="OGRN" ColumnName="OGRN" />
+                <ScalarProperty Name="INN" ColumnName="INN" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Client_Type">
+            <EntityTypeMapping TypeName="DragonflyModel.Client_Type">
+              <MappingFragment StoreEntitySet="Client_Type">
+                <ScalarProperty Name="Type_Name" ColumnName="Type_Name" />
+                <ScalarProperty Name="ID_Client_Type" ColumnName="ID_Client_Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="E_mail">
+            <EntityTypeMapping TypeName="DragonflyModel.E_mail">
+              <MappingFragment StoreEntitySet="E-mail">
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="ID_E_mail" ColumnName="ID_E-mail" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="E_mail_Notification">
+            <EntityTypeMapping TypeName="DragonflyModel.E_mail_Notification">
+              <MappingFragment StoreEntitySet="E-mail_Notification">
+                <ScalarProperty Name="ID_Notificztion_Task" ColumnName="ID_Notificztion_Task" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+                <ScalarProperty Name="ID_User_To_Notificate" ColumnName="ID_User_To_Notificate" />
+                <ScalarProperty Name="ID_E_mail_Notification" ColumnName="ID_E-mail_Notification" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Global_User_Role">
             <EntityTypeMapping TypeName="DragonflyModel.Global_User_Role">
               <MappingFragment StoreEntitySet="Global_User_Role">
@@ -202,9 +1311,128 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Invitation_User_Settings">
+            <EntityTypeMapping TypeName="DragonflyModel.Invitation_User_Settings">
+              <MappingFragment StoreEntitySet="Invitation_User_Settings">
+                <ScalarProperty Name="Invitation_E_mail" ColumnName="Invitation_E-mail" />
+                <ScalarProperty Name="Count_Invitations_Per_Day" ColumnName="Count_Invitations_Per_Day" />
+                <ScalarProperty Name="ID_Invitation_User_Settings" ColumnName="ID_Invitation_User_Settings" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LDAP_Settings">
+            <EntityTypeMapping TypeName="DragonflyModel.LDAP_Settings">
+              <MappingFragment StoreEntitySet="LDAP_Settings">
+                <ScalarProperty Name="Organizational_Unit" ColumnName="Organizational_Unit" />
+                <ScalarProperty Name="Domain_Components" ColumnName="Domain_Components" />
+                <ScalarProperty Name="ID_LDAP_Settings" ColumnName="ID_LDAP_Settings" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="License_Type">
+            <EntityTypeMapping TypeName="DragonflyModel.License_Type">
+              <MappingFragment StoreEntitySet="License_Type">
+                <ScalarProperty Name="Type_Name" ColumnName="Type_Name" />
+                <ScalarProperty Name="ID_License_Type" ColumnName="ID_License_Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notification_Event">
+            <EntityTypeMapping TypeName="DragonflyModel.Notification_Event">
+              <MappingFragment StoreEntitySet="Notification_Event">
+                <ScalarProperty Name="Event_Type" ColumnName="Event_Type" />
+                <ScalarProperty Name="ID_Notification_Event" ColumnName="ID_Notification_Event" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notification_Morpheme">
+            <EntityTypeMapping TypeName="DragonflyModel.Notification_Morpheme">
+              <MappingFragment StoreEntitySet="Notification_Morpheme">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Template" ColumnName="Template" />
+                <ScalarProperty Name="ID_Notification_Morpheme" ColumnName="ID_Notification_Morpheme" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notificztion_Task">
+            <EntityTypeMapping TypeName="DragonflyModel.Notificztion_Task">
+              <MappingFragment StoreEntitySet="Notificztion_Task">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_Notification_Event" ColumnName="ID_Notification_Event" />
+                <ScalarProperty Name="Notification_Text" ColumnName="Notification_Text" />
+                <ScalarProperty Name="Notification_Before_Hour" ColumnName="Notification_Before_Hour" />
+                <ScalarProperty Name="Notification_Before_Day" ColumnName="Notification_Before_Day" />
+                <ScalarProperty Name="Notification_Before_Week" ColumnName="Notification_Before_Week" />
+                <ScalarProperty Name="Notification_Before_Month" ColumnName="Notification_Before_Month" />
+                <ScalarProperty Name="ID_Notificztion_Task" ColumnName="ID_Notificztion_Task" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Phone">
+            <EntityTypeMapping TypeName="DragonflyModel.Phone">
+              <MappingFragment StoreEntitySet="Phone">
+                <ScalarProperty Name="Phone_Row" ColumnName="Phone_Row" />
+                <ScalarProperty Name="ID_Phone" ColumnName="ID_Phone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Product_License">
+            <EntityTypeMapping TypeName="DragonflyModel.Product_License">
+              <MappingFragment StoreEntitySet="Product_License">
+                <ScalarProperty Name="Details" ColumnName="Details" />
+                <ScalarProperty Name="License_Count" ColumnName="License_Count" />
+                <ScalarProperty Name="ID_License_Type" ColumnName="ID_License_Type" />
+                <ScalarProperty Name="Date_End" ColumnName="Date_End" />
+                <ScalarProperty Name="Date_Begin" ColumnName="Date_Begin" />
+                <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+                <ScalarProperty Name="ID_Product_License" ColumnName="ID_Product_License" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project">
+            <EntityTypeMapping TypeName="DragonflyModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="Date_Create" ColumnName="Date_Create" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project_Access_Function">
+            <EntityTypeMapping TypeName="DragonflyModel.Project_Access_Function">
+              <MappingFragment StoreEntitySet="Project_Access_Function">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project_Role">
+            <EntityTypeMapping TypeName="DragonflyModel.Project_Role">
+              <MappingFragment StoreEntitySet="Project_Role">
+                <ScalarProperty Name="ID_User_Owner" ColumnName="ID_User_Owner" />
+                <ScalarProperty Name="Is_Admin" ColumnName="Is_Admin" />
+                <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
+                <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Support_Entitlement">
+            <EntityTypeMapping TypeName="DragonflyModel.Support_Entitlement">
+              <MappingFragment StoreEntitySet="Support_Entitlement">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Date_End" ColumnName="Date_End" />
+                <ScalarProperty Name="Date_Begin" ColumnName="Date_Begin" />
+                <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+                <ScalarProperty Name="ID_Support_Entitlement" ColumnName="ID_Support_Entitlement" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="User">
             <EntityTypeMapping TypeName="DragonflyModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Login" ColumnName="Login" />
                 <ScalarProperty Name="Date_Creation" ColumnName="Date_Creation" />
                 <ScalarProperty Name="E_mail" ColumnName="E-mail" />
                 <ScalarProperty Name="Is_Ldap_User" ColumnName="Is_Ldap_User" />
@@ -215,6 +1443,58 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="User_Invitation">
+            <EntityTypeMapping TypeName="DragonflyModel.User_Invitation">
+              <MappingFragment StoreEntitySet="User_Invitation">
+                <ScalarProperty Name="IsAccepted" ColumnName="IsAccepted" />
+                <ScalarProperty Name="ID_User_Referrer" ColumnName="ID_User_Referrer" />
+                <ScalarProperty Name="Date_Of_Invitation" ColumnName="Date_Of_Invitation" />
+                <ScalarProperty Name="E_mail" ColumnName="E-mail" />
+                <ScalarProperty Name="ID_User_Invitation" ColumnName="ID_User_Invitation" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User_Project">
+            <EntityTypeMapping TypeName="DragonflyModel.User_Project">
+              <MappingFragment StoreEntitySet="User_Project">
+                <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+                <ScalarProperty Name="ID_User" ColumnName="ID_User" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Client_Address" TypeName="DragonflyModel.Client_Address" StoreEntitySet="Client_Address">
+            <EndProperty Name="Client">
+              <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+            </EndProperty>
+            <EndProperty Name="Address">
+              <ScalarProperty Name="ID_Address" ColumnName="ID_Address" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Client_Email" TypeName="DragonflyModel.Client_Email" StoreEntitySet="Client_Email">
+            <EndProperty Name="E_mail">
+              <ScalarProperty Name="ID_E_mail" ColumnName="ID_E-mail" />
+            </EndProperty>
+            <EndProperty Name="Client">
+              <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Client_Phone" TypeName="DragonflyModel.Client_Phone" StoreEntitySet="Client_Phone">
+            <EndProperty Name="Phone">
+              <ScalarProperty Name="ID_Phone" ColumnName="ID_Phone" />
+            </EndProperty>
+            <EndProperty Name="Client">
+              <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Project_Role_Access_Function" TypeName="DragonflyModel.Project_Role_Access_Function" StoreEntitySet="Project_Role_Access_Function">
+            <EndProperty Name="Project_Role">
+              <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
+            </EndProperty>
+            <EndProperty Name="Project_Access_Function">
+              <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
+            </EndProperty>
+          </AssociationSetMapping>
           <AssociationSetMapping Name="User_And_His_Role" TypeName="DragonflyModel.User_And_His_Role" StoreEntitySet="User_And_His_Role">
             <EndProperty Name="User">
               <ScalarProperty Name="ID_User" ColumnName="ID_User" />

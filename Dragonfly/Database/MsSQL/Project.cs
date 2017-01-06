@@ -12,33 +12,28 @@ namespace Dragonfly.Database.MsSQL
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class Project
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public User()
+        public Project()
         {
-            this.Project_Role = new HashSet<Project_Role>();
-            this.User_Invitation = new HashSet<User_Invitation>();
+            this.E_mail_Notification = new HashSet<E_mail_Notification>();
+            this.Product_License = new HashSet<Product_License>();
+            this.Support_Entitlement = new HashSet<Support_Entitlement>();
             this.User_Project = new HashSet<User_Project>();
-            this.Global_User_Role = new HashSet<Global_User_Role>();
         }
     
-        public decimal ID_User { get; set; }
+        public decimal ID_Project { get; set; }
         public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Password { get; set; }
-        public bool Is_Ldap_User { get; set; }
-        public string E_mail { get; set; }
-        public System.DateTime Date_Creation { get; set; }
-        public string Login { get; set; }
+        public System.DateTime Date_Create { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Project_Role> Project_Role { get; set; }
+        public virtual ICollection<E_mail_Notification> E_mail_Notification { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User_Invitation> User_Invitation { get; set; }
+        public virtual ICollection<Product_License> Product_License { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Support_Entitlement> Support_Entitlement { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User_Project> User_Project { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Global_User_Role> Global_User_Role { get; set; }
     }
 }

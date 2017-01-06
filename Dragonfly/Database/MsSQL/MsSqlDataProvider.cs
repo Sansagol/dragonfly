@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 using System.Data.Entity.Validation;
 using Dragonfly.Models;
 using System.Threading;
+using System.Data.Entity.Infrastructure;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -33,10 +34,12 @@ namespace Dragonfly.Database.MsSQL
                  string.IsNullOrWhiteSpace(userRegisterData.Password) ||
                  string.IsNullOrWhiteSpace(userRegisterData.EMail))
                 return false;
+            CheckExistingUsers(userRegisterData);
+
             string hashedPassword = EncryptAsRfc2898(userRegisterData.Password);
             User usr = new User()
             {
-                Name = userRegisterData.Login,
+                Login = userRegisterData.Login,
                 Password = hashedPassword,
                 Date_Creation = DateTime.Now,
                 E_mail = userRegisterData.EMail
@@ -57,7 +60,34 @@ namespace Dragonfly.Database.MsSQL
                 }
                 throw new InsertDbDataException(validationErrors);
             }
+            catch (DbUpdateException ex)
+            {
+                _Context.User.Remove(usr);
+            }
             return true;
+        }
+
+        /// <exception cref="InsertDbDataException">User exists.</exception> 
+        private void CheckExistingUsers(LogUpModel userRegisterData)
+        {
+            List<ValidationError> validationErrors = new List<ValidationError>();
+            int existsUsersCount = (from u in _Context.User
+                                    where u.Login.Equals(userRegisterData.Login)
+                                    select u).Count();
+            if (existsUsersCount > 0)
+            {
+                validationErrors.Add(new ValidationError("Login", "The user with  the specified login exists."));
+            }
+            else
+            {
+                existsUsersCount = (from u in _Context.User
+                                    where u.E_mail.Equals(userRegisterData.EMail)
+                                    select u).Count();
+                if (existsUsersCount > 0)
+                    validationErrors.Add(new ValidationError("Email", "The user with  the specified Email exists."));
+            }
+            if (validationErrors.Count > 0)
+                throw new InsertDbDataException(validationErrors);
         }
 
         private string EncryptAsRfc2898(string password)
@@ -86,12 +116,17 @@ namespace Dragonfly.Database.MsSQL
             return passwordHash;
         }
 
+        /// <summary>Method check user credentials.</summary>
+        /// <param name="login">User login or e-mail address</param>
+        /// <param name="password">User password</param>
+        /// <returns>Is user exists in the system.</returns>
         public bool CheckUserCredentials(string login, string password)
         {
             if (_Context == null)
                 return false;
             User usr = (from user in _Context.User
-                        where user.Name.Equals(login)
+                        where user.Login.Equals(login) ||
+                              user.E_mail.Equals(login)
                         select user).FirstOrDefault();
             if (usr != null)
             {

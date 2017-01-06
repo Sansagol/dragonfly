@@ -4,10 +4,47 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="1e8b8db621104850bfaced018bf87610" Name="Diagram1" ZoomLevel="87">
-        <EntityTypeShape EntityType="DragonflyModel.Access_Function" Width="1.5" PointX="1.125" PointY="2" />
-        <EntityTypeShape EntityType="DragonflyModel.Global_User_Role" Width="2" PointX="4.625" PointY="2.25" />
-        <EntityTypeShape EntityType="DragonflyModel.User" Width="1.5" PointX="8.625" PointY="1.75" />
+      <Diagram DiagramId="1e8b8db621104850bfaced018bf87610" Name="Diagram1" ZoomLevel="72">
+        <EntityTypeShape EntityType="DragonflyModel.Access_Function" Width="2.125" PointX="7.75" PointY="13.75" />
+        <EntityTypeShape EntityType="DragonflyModel.Address" Width="2.125" PointX="0.75" PointY="7.875" />
+        <EntityTypeShape EntityType="DragonflyModel.Client" Width="2.125" PointX="3" PointY="6.875" />
+        <EntityTypeShape EntityType="DragonflyModel.Client_Type" Width="2.125" PointX="0.75" PointY="5" />
+        <EntityTypeShape EntityType="DragonflyModel.E_mail" Width="2.125" PointX="5.25" PointY="14" />
+        <EntityTypeShape EntityType="DragonflyModel.E_mail_Notification" Width="2.125" PointX="13.25" PointY="2.125" />
+        <EntityTypeShape EntityType="DragonflyModel.Global_User_Role" Width="2.125" PointX="10" PointY="13.625" />
+        <EntityTypeShape EntityType="DragonflyModel.Invitation_User_Settings" Width="2.125" PointX="0.75" PointY="2.5" />
+        <EntityTypeShape EntityType="DragonflyModel.LDAP_Settings" Width="2.125" PointX="2.75" PointY="2.5" />
+        <EntityTypeShape EntityType="DragonflyModel.License_Type" Width="2.125" PointX="6" PointY="4.375" />
+        <EntityTypeShape EntityType="DragonflyModel.Notification_Event" Width="2.125" PointX="8.75" PointY="3.5" />
+        <EntityTypeShape EntityType="DragonflyModel.Notification_Morpheme" Width="2.125" PointX="0.75" PointY="11.5" />
+        <EntityTypeShape EntityType="DragonflyModel.Notificztion_Task" Width="2.125" PointX="11" PointY="2.75" />
+        <EntityTypeShape EntityType="DragonflyModel.Phone" Width="2.125" PointX="5.25" PointY="16.375" />
+        <EntityTypeShape EntityType="DragonflyModel.Product_License" Width="2.125" PointX="8.25" PointY="7.25" />
+        <EntityTypeShape EntityType="DragonflyModel.Project" Width="2.125" PointX="6" PointY="0.75" />
+        <EntityTypeShape EntityType="DragonflyModel.Project_Access_Function" Width="2.125" PointX="12.25" PointY="9.75" />
+        <EntityTypeShape EntityType="DragonflyModel.Project_Role" Width="2.125" PointX="14.5" PointY="13.375" />
+        <EntityTypeShape EntityType="DragonflyModel.Support_Entitlement" Width="2.125" PointX="5.25" PointY="7.5" />
+        <EntityTypeShape EntityType="DragonflyModel.User" Width="2.125" PointX="12.25" PointY="12.875" />
+        <EntityTypeShape EntityType="DragonflyModel.User_Invitation" Width="2.125" PointX="14.5" PointY="16.625" />
+        <EntityTypeShape EntityType="DragonflyModel.User_Project" Width="2.125" PointX="16.75" PointY="7.375" />
+        <AssociationConnector Association="DragonflyModel.FK_Client_Client_Type" />
+        <AssociationConnector Association="DragonflyModel.FK_Product_License_Client" />
+        <AssociationConnector Association="DragonflyModel.FK_Support_Entitlement_Client" />
+        <AssociationConnector Association="DragonflyModel.FK_E_mail_Notification_Notificztion_Task" />
+        <AssociationConnector Association="DragonflyModel.FK_E_mail_Notification_Project" />
+        <AssociationConnector Association="DragonflyModel.FK_Product_License_License_Type" />
+        <AssociationConnector Association="DragonflyModel.FK_Notificztion_Task_Notification_Event" />
+        <AssociationConnector Association="DragonflyModel.FK_Product_License_Project" />
+        <AssociationConnector Association="DragonflyModel.FK_Support_Entitlement_Project" />
+        <AssociationConnector Association="DragonflyModel.FK_User_Project_Project" />
+        <AssociationConnector Association="DragonflyModel.FK_Project_Role_User" />
+        <AssociationConnector Association="DragonflyModel.FK_User_Project_Project_Role" />
+        <AssociationConnector Association="DragonflyModel.FK_User_Invitation_User" />
+        <AssociationConnector Association="DragonflyModel.FK_User_Project_User" />
+        <AssociationConnector Association="DragonflyModel.Client_Address" />
+        <AssociationConnector Association="DragonflyModel.Client_Email" />
+        <AssociationConnector Association="DragonflyModel.Client_Phone" />
+        <AssociationConnector Association="DragonflyModel.Project_Role_Access_Function" />
         <AssociationConnector Association="DragonflyModel.User_And_His_Role" />
         <AssociationConnector Association="DragonflyModel.User_Role_Access_Function" />
       </Diagram>

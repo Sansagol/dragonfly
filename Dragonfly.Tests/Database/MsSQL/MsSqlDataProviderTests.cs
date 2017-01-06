@@ -55,7 +55,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         }
 
         [TestMethod]
-        public void AdduserTest()
+        public void AddUserTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
             DbContext context = provider.Initizlize(_Connectionconfig);
@@ -69,13 +69,15 @@ namespace Dragonfly.Tests.Database.MsSQL
             {
                 Assert.IsTrue(provider.AddUser(model), "User not saved without error.");
 
-                Assert.IsTrue(provider.CheckUserCredentials(model.Login, model.Password), "Wrong user saved");
+                Assert.IsTrue(provider.CheckUserCredentials(model.Login, model.Password), "Wrong user saved (login)");
+                Assert.IsTrue(provider.CheckUserCredentials(model.EMail, model.Password), "Wrong user saved (email)");
+
 
                 DragonflyEntities ents = context as DragonflyEntities;
                 if (ents != null)
                 {
                     User foundUser = (from u in ents.User
-                                      where u.Name.Equals(model.Login)
+                                      where u.Login.Equals(model.Login)
                                       select u).FirstOrDefault();
                     if (foundUser != null)
                     {
@@ -86,18 +88,18 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                DeleteUserFromDB(context, model.Login);
+                DeleteUserFromDB(context, model.Login, model.EMail);
                 //TODO delete test user
             }
         }
 
-        private void DeleteUserFromDB(DbContext context, string login)
+        private void DeleteUserFromDB(DbContext context, string login, string eMail)
         {
             DragonflyEntities ents = context as DragonflyEntities;
             if (ents != null)
             {
                 var foundUsers = (from u in ents.User
-                                  where u.Name.Equals(login)
+                                  where u.Login.Equals(login) || u.E_mail.Equals(eMail)
                                   select u);
                 foreach (var foundUser in foundUsers)
                 {
@@ -124,7 +126,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                DeleteUserFromDB(context, model.Login);
+                DeleteUserFromDB(context, model.Login, model.EMail);
                 //TODO delete test user
             }
         }
@@ -153,7 +155,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                DeleteUserFromDB(context, model.Login);
+                DeleteUserFromDB(context, model.Login, model.EMail);
                 //TODO delete test user
             }
         }
