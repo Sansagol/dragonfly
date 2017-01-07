@@ -11,6 +11,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -19,10 +20,15 @@
         </Grid.ColumnDefinitions>
 
         <ToolBar Grid.Row="0" Grid.ColumnSpan="2">
-            <Button Content="Add"/>
+            <Button Content="Get"
+                    Name="btnGetUsers"
+                    Click="btnGetUsers_Click"/>
+            <Button Content="Add"
+                    Name="btnAddUser"
+                    Click="btnAddUser_Click"/>
             <Button Content="Del"/>
         </ToolBar>
-        
+
         <TextBlock Grid.Row="1" Grid.Column="0"
                    Text="User name"/>
         <TextBox Grid.Row="1" Grid.Column="1"
@@ -33,12 +39,24 @@
         <TextBox Grid.Row="2" Grid.Column="1"
                  Text="{Binding UserPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <DataGrid Grid.Row="3" Grid.ColumnSpan="2"
+        <TextBlock Grid.Row="3" Grid.Column="0"
+                   Text="e-mail"/>
+        <TextBox Grid.Row="3" Grid.Column="1"
+                 Text="{Binding UserEMail, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
+        <DataGrid Grid.Row="4" Grid.ColumnSpan="2"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
-                  IsReadOnly="True">
-            
+                  IsReadOnly="True"
+                  ItemsSource="{Binding Users}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Login"
+                                    Binding="{Binding Login}"/>
+                <DataGridTextColumn Header="E_mail"
+                                    Binding="{Binding E_mail}"/>
+            </DataGrid.Columns>
+
         </DataGrid>
-        
+
     </Grid>
 </UserControl>

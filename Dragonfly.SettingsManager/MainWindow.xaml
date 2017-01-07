@@ -19,10 +19,14 @@
                     CommonConfig="{Binding DbConfiguration, 
                                            UpdateSourceTrigger=PropertyChanged, 
                                            Mode=TwoWay,
-                    RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"/>
+                                           RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"/>
             </TabItem>
             <TabItem Header="Users">
-                <controls:UsersControl/>
+                <controls:UsersControl
+                    DbConfig="{Binding DbConfiguration, 
+                                       UpdateSourceTrigger=PropertyChanged, 
+                                       Mode=TwoWay,
+                                       RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"/>
             </TabItem>
         </TabControl>
         <Button Grid.Row="1" Margin="3"
