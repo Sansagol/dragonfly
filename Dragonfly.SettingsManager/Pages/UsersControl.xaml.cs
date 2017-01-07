@@ -48,7 +48,7 @@ namespace Dragonfly.SettingsManager.Pages
         }
         public static readonly DependencyProperty UserNameProperty =
             DependencyProperty.Register("UserName", typeof(string), typeof(UsersControl), new PropertyMetadata(string.Empty));
-        
+
         public string UserPassword
         {
             get { return (string)GetValue(UserPasswordProperty); }
@@ -65,6 +65,15 @@ namespace Dragonfly.SettingsManager.Pages
         public static readonly DependencyProperty UserEMailProperty =
             DependencyProperty.Register("UserEMail", typeof(string), typeof(UsersControl), new PropertyMetadata(string.Empty));
 
+        /// <summary>Selected in table user.</summary>
+        public User SelectedUser
+        {
+            get { return (User)GetValue(SelectedUserProperty); }
+            set { SetValue(SelectedUserProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedUserProperty =
+            DependencyProperty.Register("SelectedUser", typeof(User), typeof(UsersControl), new PropertyMetadata(null));
+
 
         #endregion
 
@@ -76,12 +85,19 @@ namespace Dragonfly.SettingsManager.Pages
 
         private void btnGetUsers_Click(object sender, RoutedEventArgs e)
         {
-            if(DbConfig!=null &&
+            if (IsTrueDbConfig())
+                LoadUsersRunner(DbConfig);
+        }
+
+        private bool IsTrueDbConfig()
+        {
+            if (DbConfig != null &&
                 !string.IsNullOrWhiteSpace(DbConfig.DbAddress) &&
                 !string.IsNullOrWhiteSpace(DbConfig.DbName) &&
                 !string.IsNullOrWhiteSpace(DbConfig.DefaultUserName) &&
-                !string.IsNullOrWhiteSpace(DbConfig.DefaultUserPassword) )
-            LoadUsersRunner(DbConfig);
+                !string.IsNullOrWhiteSpace(DbConfig.DefaultUserPassword))
+                return true;
+            return false;
         }
 
         /// <summary>Methor run a loading all users from database.</summary>
@@ -106,6 +122,11 @@ namespace Dragonfly.SettingsManager.Pages
 
         private void btnAddUser_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsTrueDbConfig())
+            {
+                MessageBox.Show("Need right db configuration on the first tab.");
+                return;
+            }
             if (string.IsNullOrWhiteSpace(UserName))
             {
                 MessageBox.Show("User name is empty");
@@ -123,7 +144,7 @@ namespace Dragonfly.SettingsManager.Pages
             }
             User user = new User()
             {
-                E_mail= UserEMail,
+                E_mail = UserEMail,
                 Login = UserName,
                 Password = UserPassword
             };
@@ -134,13 +155,48 @@ namespace Dragonfly.SettingsManager.Pages
                 DragonflyEntities context = provider.Initizlize(config) as DragonflyEntities;
                 try
                 {
-                    context.User.Add(user);
-                    context.SaveChanges();
+                    provider.AddUser(user.Login, user.Password, user.E_mail);                   
                     Dispatcher.Invoke((Action)(() =>
                     {
                         UserEMail = string.Empty;
                         UserName = string.Empty;
                         UserPassword = string.Empty;
+                        LoadUsersRunner(config);
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            })).Start();
+        }
+
+        private void btnDeleteUser_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsTrueDbConfig())
+            {
+                MessageBox.Show("Need right db configuration on the first tab.");
+                return;
+            }
+
+            if (SelectedUser == null)
+            {
+                MessageBox.Show("Please select the user to delete.");
+                return;
+            }
+
+            User userToDelete = SelectedUser;
+            DatabaseConfig config = DbConfig;
+
+            new Task((Action)(() =>
+            {
+                MsSqlDataProvider provider = new MsSqlDataProvider();
+                DragonflyEntities context = provider.Initizlize(config) as DragonflyEntities;
+                try
+                {
+                    provider.DeleteUser(userToDelete.Login);
+                    Dispatcher.Invoke((Action)(() =>
+                    {
                         LoadUsersRunner(config);
                     }));
                 }

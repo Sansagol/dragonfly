@@ -26,7 +26,9 @@
             <Button Content="Add"
                     Name="btnAddUser"
                     Click="btnAddUser_Click"/>
-            <Button Content="Del"/>
+            <Button Content="Del"
+                    Name="btnDeleteUser"
+                    Click="btnDeleteUser_Click"/>
         </ToolBar>
 
         <TextBlock Grid.Row="1" Grid.Column="0"
@@ -48,7 +50,9 @@
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   IsReadOnly="True"
-                  ItemsSource="{Binding Users}">
+                  SelectionMode="Single"
+                  ItemsSource="{Binding Users}"
+                  SelectedItem="{Binding SelectedUser, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Login"
                                     Binding="{Binding Login}"/>

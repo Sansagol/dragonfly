@@ -188,5 +188,30 @@ namespace Dragonfly.SettingsManager
             connection.ProviderConnectionString = builder.ToString();
             return connection;
         }
+
+        public void DeleteUser(string login = "",
+            string eMail = "",
+            int userId = 0)
+        {
+            var query = _Context.User.Select(u => u);
+            if (!string.IsNullOrWhiteSpace(login))
+                query = query.Where(u => u.Login.Equals(login));
+            if (!string.IsNullOrWhiteSpace(eMail))
+                query = query.Where(u => u.E_mail.Equals(eMail));
+            if (userId > 0)
+                query = query.Where(u => u.ID_User == userId);
+
+            User foundUser = query.FirstOrDefault();
+            if (foundUser != null)
+                try
+                {
+                    _Context.User.Remove(foundUser);
+                    _Context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Error on user deleting", ex);
+                }
+        }
     }
 }
