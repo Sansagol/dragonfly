@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dragonfly.Tests", "Dragonfl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dragonfly.SettingsManager", "Dragonfly.SettingsManager\Dragonfly.SettingsManager.csproj", "{0C88A4CA-CBDE-4E34-8550-8EAD8EAE0FA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dragonfly.SettingsLib", "Dragonfly.SettingsLib\Dragonfly.SettingsLib.csproj", "{7229CB14-63AA-4784-91EA-0CB92491E8C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0C88A4CA-CBDE-4E34-8550-8EAD8EAE0FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C88A4CA-CBDE-4E34-8550-8EAD8EAE0FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C88A4CA-CBDE-4E34-8550-8EAD8EAE0FA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7229CB14-63AA-4784-91EA-0CB92491E8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7229CB14-63AA-4784-91EA-0CB92491E8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7229CB14-63AA-4784-91EA-0CB92491E8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7229CB14-63AA-4784-91EA-0CB92491E8C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

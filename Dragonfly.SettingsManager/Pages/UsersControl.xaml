@@ -1,14 +1,13 @@
-﻿<UserControl x:Class="Dragonfly.SettingsManager.Controls.DbSettingsControl"
+﻿<UserControl x:Class="Dragonfly.SettingsManager.Pages.UsersControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Dragonfly.SettingsManager.Controls"
+             xmlns:local="clr-namespace:Dragonfly.SettingsManager.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -19,24 +18,27 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0"
-                   Text="Address"/>
-        <TextBox Grid.Row="0" Grid.Column="1"
-                 Text="{Binding DbAddress, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+        <ToolBar Grid.Row="0" Grid.ColumnSpan="2">
+            <Button Content="Add"/>
+            <Button Content="Del"/>
+        </ToolBar>
         
         <TextBlock Grid.Row="1" Grid.Column="0"
-                   Text="DB name"/>
+                   Text="User name"/>
         <TextBox Grid.Row="1" Grid.Column="1"
-                 Text="{Binding DbNane, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-        
-        <TextBlock Grid.Row="2" Grid.Column="0"
-                   Text="Login"/>
-        <TextBox Grid.Row="2" Grid.Column="1"
-                 Text="{Binding Login, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                 Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="3" Grid.Column="0"
+        <TextBlock Grid.Row="2" Grid.Column="0"
                    Text="Password"/>
-        <TextBox Grid.Row="3" Grid.Column="1"
-                 Text="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+        <TextBox Grid.Row="2" Grid.Column="1"
+                 Text="{Binding UserPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
+        <DataGrid Grid.Row="3" Grid.ColumnSpan="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True">
+            
+        </DataGrid>
+        
     </Grid>
 </UserControl>

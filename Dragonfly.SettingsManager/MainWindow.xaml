@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dragonfly.SettingsManager"
-        xmlns:controls="clr-namespace:Dragonfly.SettingsManager.Controls"
+        xmlns:controls="clr-namespace:Dragonfly.SettingsManager.Pages"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
+        Title="Dragonfly settings manager" Height="350" Width="525">
+    <Grid DataContext="{RelativeSource AncestorType=Window, Mode=FindAncestor}">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -15,12 +15,20 @@
 
         <TabControl Grid.Row="0">
             <TabItem Header="Database">
-                <controls:DbSettingsControl/>
+                <controls:DbSettingsControl
+                    CommonConfig="{Binding DbConfiguration, 
+                                           UpdateSourceTrigger=PropertyChanged, 
+                                           Mode=TwoWay,
+                    RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"/>
             </TabItem>
             <TabItem Header="Users">
                 <controls:UsersControl/>
             </TabItem>
         </TabControl>
-
+        <Button Grid.Row="1" Margin="3"
+                HorizontalAlignment="Right"
+                Content="Save"
+                Name="btnSaveConfig"
+                Click="btnSaveConfig_Click"/>
     </Grid>
 </Window>

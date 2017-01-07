@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Dragonfly.SettingsManager.Controls
+namespace Dragonfly.SettingsManager.Pages
 {
     /// <summary>
     /// Interaction logic for UsersControl.xaml

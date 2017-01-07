@@ -53,11 +53,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\DbSettingsControl.xaml">
+    <Page Include="Pages\DbSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\UsersControl.xaml">
+    <Page Include="Pages\UsersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -69,10 +69,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\DbSettingsControl.xaml.cs">
+    <Compile Include="Pages\DbSettingsControl.xaml.cs">
       <DependentUpon>DbSettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UsersControl.xaml.cs">
+    <Compile Include="Pages\UsersControl.xaml.cs">
       <DependentUpon>UsersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
@@ -103,6 +103,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dragonfly.SettingsLib\Dragonfly.SettingsLib.csproj">
+      <Project>{7229cb14-63aa-4784-91ea-0cb92491e8c7}</Project>
+      <Name>Dragonfly.SettingsLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

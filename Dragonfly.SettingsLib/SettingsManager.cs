@@ -59,6 +59,7 @@ namespace Dragonfly.SettingsLib
             if (config == null)
                 throw new ArgumentNullException(nameof(config));
 
+            PrepareConfigDirectory();
             try
             {
                 using (StreamWriter writer = new StreamWriter(
@@ -74,6 +75,21 @@ namespace Dragonfly.SettingsLib
             {
                 throw new InvalidOperationException("Unable to save config.", ex);
             }
+        }
+
+        /// <exception cref="InvalidOperationException"/>
+        private void PrepareConfigDirectory()
+        {
+            string directoryName = Path.GetDirectoryName(_DefaultPath);
+            if (!Directory.Exists(directoryName))
+                try
+                {
+                    Directory.CreateDirectory(directoryName);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException("Unable to create config directory.", ex);
+                }
         }
     }
 }

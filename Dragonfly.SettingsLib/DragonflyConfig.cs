@@ -10,5 +10,11 @@ namespace Dragonfly.SettingsLib
     {
         /// <summary>Configuration of database access.</summary>
         public DatabaseConfig DbConfiguration { get; set; }
+
+        /// <summary>Initialize all properties.</summary>
+        public DragonflyConfig()
+        {
+            DbConfiguration = new DatabaseConfig();
+        }
     }
 }
