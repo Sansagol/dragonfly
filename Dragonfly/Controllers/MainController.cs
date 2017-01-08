@@ -19,7 +19,7 @@ namespace Dragonfly.Controllers
             {
                 ViewBag.Greeting = "Please log in";
                 ViewBag.Logged = false;
-                return RedirectToAction(nameof(Authorization));
+                return RedirectToAction(nameof(Authorization), new AuthenticateModel());
             }
             else
             {
@@ -32,7 +32,7 @@ namespace Dragonfly.Controllers
         [HttpGet]
         public ViewResult Authorization()
         {
-            return View();
+            return View(new AuthenticateModel());
         }
 
         /// <summary>Method try to authorize user in the system.</summary>
@@ -52,7 +52,7 @@ namespace Dragonfly.Controllers
             }
             else
                 UserStateManager.IsUserLogged = false;
-            return View();
+            return View(authParameters);
         }
     }
 }

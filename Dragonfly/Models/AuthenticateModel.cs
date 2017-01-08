@@ -22,19 +22,26 @@ namespace Dragonfly.Models
         /// <summary>Is need to keep login for next authenticate.</summary>
         public bool KeepLogin { get; set; }
 
+        /// <summary>Flag shows is user checking was correct.</summary>
+        public bool IsTrueUser { get; set; }
+
+        public AuthenticateModel()
+        {
+            IsTrueUser = true;
+        }
+
         /// <summary>Method check user credentials.</summary>
         /// <returns>True - if is right user. False - in another case.</returns>
         public bool CheckUser()
         {
-            bool isTrueUser = false;
 
             if (!string.IsNullOrWhiteSpace(Login) &&
                 !string.IsNullOrWhiteSpace(Password))
             {
                 IDataBaseProvider context = BaseBindings.GetNewDbProvider();
-                isTrueUser = context.CheckUserCredentials(Login, Password);
+                IsTrueUser = context.CheckUserCredentials(Login, Password);
             }
-            return isTrueUser;
+            return IsTrueUser;
         }
     }
 }
