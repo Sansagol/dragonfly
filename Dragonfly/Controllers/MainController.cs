@@ -35,18 +35,20 @@ namespace Dragonfly.Controllers
             return View();
         }
 
+        /// <summary>Method try to authorize user in the system.</summary>
+        /// <param name="authParameters">Auth parameters.</param>
+        /// <returns>Reload page (if error), or return to main.</returns>
         [HttpPost]
         public ActionResult Authorization(AuthenticateModel authParameters)
         {
-            UserModel user = null;
             if (ModelState.IsValid)
             {
-
-
-                UserStateManager.IsUserLogged = true;
-                UserStateManager.UserName = authParameters.Login;
-                user = new UserModel() { Login = authParameters.Login };
-                return RedirectToAction("Index");
+                UserStateManager.IsUserLogged = authParameters.CheckUser();
+                if (UserStateManager.IsUserLogged)
+                {
+                    UserStateManager.UserName = authParameters.Login;
+                    return RedirectToAction("Index");
+                }
             }
             else
                 UserStateManager.IsUserLogged = false;
