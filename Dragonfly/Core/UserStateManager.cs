@@ -32,8 +32,7 @@ namespace Dragonfly.Core
             if (string.IsNullOrWhiteSpace(password))
                 return false;
 
-            using (DbContext context = _DbProvider.Initizlize(
-                BaseBindings.Settingsreader.GetDbAccessSettings()))
+            IDataBaseProvider context = BaseBindings.GetNewDbProvider();
             {
 
             }

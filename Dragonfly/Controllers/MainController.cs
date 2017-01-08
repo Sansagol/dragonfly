@@ -12,6 +12,7 @@ namespace Dragonfly.Controllers
     {
 
         // GET: Main
+        [HttpGet]
         public ActionResult Index()
         {
             if (!UserStateManager.IsUserLogged)

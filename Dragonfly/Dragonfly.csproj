@@ -145,6 +145,7 @@
     <Compile Include="Core\BaseBindings.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />
+    <Compile Include="Core\Settings\SettingsLibReader.cs" />
     <Compile Include="Core\Settings\StubSettingsReader.cs" />
     <Compile Include="Core\UserStateManager.cs" />
     <Compile Include="Database\IDataBaseProvider.cs" />
@@ -259,6 +260,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dragonfly.SettingsLib\Dragonfly.SettingsLib.csproj">
+      <Project>{7229cb14-63aa-4784-91ea-0cb92491e8c7}</Project>
+      <Name>Dragonfly.SettingsLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

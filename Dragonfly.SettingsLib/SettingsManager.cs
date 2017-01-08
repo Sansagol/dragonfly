@@ -18,7 +18,8 @@ namespace Dragonfly.SettingsLib
 
         /// <summary>Method load a dragonfly configuration from the default config file.</summary>
         /// <returns>Loaded configuration.</returns>
-        /// <exception cref="InvalidOperationException">Something wrong</exception>
+        /// <exception cref="InvalidOperationException">Something wrong.</exception>
+        /// <exception cref="FileNotFoundException">Configuration file not found.</exception> 
         public DragonflyConfig LoadConfiguration()
         {
             DragonflyConfig config = null;
@@ -33,10 +34,11 @@ namespace Dragonfly.SettingsLib
             }
             catch (FileNotFoundException ex)
             {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "Config file \'{0}\' doesn't found.",
-                        ex.FileName));
+                throw ex;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                throw new FileNotFoundException("Configuration not found", _DefaultPath);
             }
             catch (Exception ex)
             {
