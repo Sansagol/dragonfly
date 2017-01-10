@@ -19,12 +19,13 @@ namespace Dragonfly.Controllers
             {
                 ViewBag.Greeting = "Please log in";
                 ViewBag.Logged = false;
-                return RedirectToAction(nameof(Authorization), new AuthenticateModel());
+                //return RedirectToAction(nameof(Authorization), new AuthenticateModel());
             }
             else
             {
                 ViewBag.Greeting = $"Hello, {UserStateManager.UserName}";
                 ViewBag.Logged = true;
+                ViewBag.UserName = UserStateManager.UserName;
             }
             return View();
         }
