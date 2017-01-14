@@ -10,5 +10,7 @@ namespace Dragonfly.Models
     {
         public string Login{get;set;}
         public string Name { get; set; }
+
+        public decimal Id { get; set; }
     }
 }

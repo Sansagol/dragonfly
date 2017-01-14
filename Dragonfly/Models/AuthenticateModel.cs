@@ -20,7 +20,7 @@ namespace Dragonfly.Models
         public string Password { get; set; }
 
         /// <summary>Is need to keep login for next authenticate.</summary>
-        public bool KeepLogin { get; set; }
+        public bool IsKeepLogin { get; set; }
 
         /// <summary>Flag shows is user checking was correct.</summary>
         public bool IsTrueUser { get; set; }

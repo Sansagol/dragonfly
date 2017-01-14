@@ -15,17 +15,23 @@ namespace Dragonfly.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            if (!UserStateManager.IsUserLogged)
+            if (Session["UserId"] == null)
             {
-                ViewBag.Greeting = "Please log in";
                 ViewBag.Logged = false;
                 //return RedirectToAction(nameof(Authorization), new AuthenticateModel());
             }
             else
             {
-                ViewBag.Greeting = $"Hello, {UserStateManager.UserName}";
-                ViewBag.Logged = true;
-                ViewBag.UserName = UserStateManager.UserName;
+                int userId = -1;
+                if (int.TryParse(Session["UserId"].ToString(), out userId))
+                {
+                    UserModel user = BaseBindings.GetNewDbProvider().GetUserById(userId);
+                    if (user != null)
+                    {
+                        ViewBag.Logged = true;
+                        ViewBag.UserName = user.Login;
+                    }
+                }
             }
             return View();
         }
@@ -44,15 +50,26 @@ namespace Dragonfly.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserStateManager.IsUserLogged = authParameters.CheckUser();
-                if (UserStateManager.IsUserLogged)
+                bool isTrueUser = authParameters.CheckUser();
+                if (isTrueUser)
                 {
-                    UserStateManager.UserName = authParameters.Login;
-                    return RedirectToAction("Index");
+                    UserModel user =
+                        BaseBindings.GetNewDbProvider().GetUserByLoginMail(authParameters.Login);
+                    if (user != null)
+                    {
+                        Session["UserName"] = user.Login;
+                        Session["UserId"] = user.Id;
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    authParameters.IsTrueUser = false;
+                    authParameters.ErrorOnUserChecking = "User not found";
                 }
             }
             else
-                UserStateManager.IsUserLogged = false;
+                Session["UserId"] = null;
             return View(authParameters);
         }
 
@@ -61,8 +78,7 @@ namespace Dragonfly.Controllers
         [HttpGet]
         public ActionResult Logout()
         {
-            UserStateManager.IsUserLogged = false;
-            UserStateManager.UserName = string.Empty;
+            Session["UserId"] = null;
             return RedirectToAction("Index");
         }
     }

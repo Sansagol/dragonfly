@@ -133,8 +133,9 @@ namespace Dragonfly.Database.MsSQL
                              user.E_mail.Equals(login)
                        select user).FirstOrDefault();
             }
-            catch (Exception ex) {
-                throw new InvalidOperationException("Database is down.",ex);
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Database is down.", ex);
             }
             if (usr != null)
             {
@@ -196,6 +197,59 @@ namespace Dragonfly.Database.MsSQL
 
             connection.ProviderConnectionString = builder.ToString();
             return connection;
+        }
+
+        public UserModel GetUserById(int userId)
+        {
+            UserModel model = null;
+            User usr = null;
+            try
+            {
+                usr = (from user in _Context.User
+                       where user.ID_User == userId
+                       select user).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Database is down.", ex);
+            }
+            if (usr != null)
+            {
+                model = new UserModel()
+                {
+                    Id = usr.ID_User,
+                    Login = usr.Login,
+                    Name = usr.Name
+                };
+            }
+            return model;
+        }
+
+        public UserModel GetUserByLoginMail(string userLogin)
+        {
+            UserModel model = null;
+            User usr = null;
+            try
+            {
+                usr = (from user in _Context.User
+                       where user.Login.Equals(userLogin) ||
+                             user.E_mail.Equals(userLogin)
+                       select user).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Database is down.", ex);
+            }
+            if (usr != null)
+            {
+                model = new UserModel()
+                {
+                    Id = usr.ID_User,
+                    Login = usr.Login,
+                    Name = usr.Name
+                };
+            }
+            return model;
         }
     }
 }
