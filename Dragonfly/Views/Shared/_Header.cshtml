@@ -10,7 +10,11 @@
 
         <div id="user-identity">
             Hello, <a>@PageData["UserName"]</a>
-            <input value="LogOut"/>
+            <a value="LogOut"
+               id="user-logout"
+               href="@Url.Action("Logout", "Main")">
+                <Span>Log out</Span>
+            </a>
         </div>
     }
     <div>Dragonfly, project system</div>

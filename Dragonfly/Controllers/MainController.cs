@@ -55,5 +55,15 @@ namespace Dragonfly.Controllers
                 UserStateManager.IsUserLogged = false;
             return View(authParameters);
         }
+
+        /// <summary>Method log out current user.</summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            UserStateManager.IsUserLogged = false;
+            UserStateManager.UserName = string.Empty;
+            return RedirectToAction("Index");
+        }
     }
 }
