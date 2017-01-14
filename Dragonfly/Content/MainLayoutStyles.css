@@ -1,0 +1,25 @@
+﻿#page-content{
+    width:1000px;
+    margin: auto;
+}
+#header {
+    width:750px;
+    height:50px;
+    border: 3px solid green;
+}
+#body{
+    background:yellow;
+    width:750px;
+}
+#side-bar{    
+    background:grey;
+    width:250px;
+    height:500px;
+    float:right;
+}
+
+/*Header details*/
+#user-identity {
+    float:right;
+    margin-right: 3px;
+}

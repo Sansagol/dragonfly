@@ -25,6 +25,9 @@ namespace Dragonfly.Models
         /// <summary>Flag shows is user checking was correct.</summary>
         public bool IsTrueUser { get; set; }
 
+        /// <summary>Content message, which show why is authentication failed.</summary>
+        public string ErrorOnUserChecking { get; set; }
+
         public AuthenticateModel()
         {
             IsTrueUser = true;
@@ -34,12 +37,23 @@ namespace Dragonfly.Models
         /// <returns>True - if is right user. False - in another case.</returns>
         public bool CheckUser()
         {
+            ErrorOnUserChecking = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(Login) &&
                 !string.IsNullOrWhiteSpace(Password))
             {
-                IDataBaseProvider context = BaseBindings.GetNewDbProvider();
-                IsTrueUser = context.CheckUserCredentials(Login, Password);
+                try
+                {
+                    IDataBaseProvider context = BaseBindings.GetNewDbProvider();
+                    IsTrueUser = context.CheckUserCredentials(Login, Password);
+                    if (!IsTrueUser)
+                        ErrorOnUserChecking = "Incorrect login or password";
+                }
+                catch (InvalidOperationException ex)
+                {
+                    IsTrueUser = false;
+                    ErrorOnUserChecking = ex.Message;
+                }
             }
             return IsTrueUser;
         }

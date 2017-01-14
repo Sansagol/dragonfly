@@ -120,14 +120,22 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="login">User login or e-mail address</param>
         /// <param name="password">User password</param>
         /// <returns>Is user exists in the system.</returns>
+        /// <exception cref="InvalidOperationException"/>
         public bool CheckUserCredentials(string login, string password)
         {
             if (_Context == null)
                 return false;
-            User usr = (from user in _Context.User
-                        where user.Login.Equals(login) ||
-                              user.E_mail.Equals(login)
-                        select user).FirstOrDefault();
+            User usr = null;
+            try
+            {
+                usr = (from user in _Context.User
+                       where user.Login.Equals(login) ||
+                             user.E_mail.Equals(login)
+                       select user).FirstOrDefault();
+            }
+            catch (Exception ex) {
+                throw new InvalidOperationException("Database is down.",ex);
+            }
             if (usr != null)
             {
                 if (!usr.Is_Ldap_User)

@@ -1,13 +1,17 @@
 ﻿<div class="text-center">
-    Dragonfly, project system<br />
     @if (PageData["Logged"] == false)
     {
-        <p>
+        <div id="user-identity">
             Please @Html.ActionLink("log in", "Authorization", "Main")
-        </p>
+        </div>
     }
     else
     {
-        <p>Hello, <a>@PageData["UserName"]</a></p>
+
+        <div id="user-identity">
+            Hello, <a>@PageData["UserName"]</a>
+            <input value="LogOut"/>
+        </div>
     }
+    <div>Dragonfly, project system</div>
 </div>
