@@ -1,0 +1,24 @@
+﻿<div class="text-center">
+    <div>
+        @if (ViewBag.Logged)
+        {
+            <a href="@Url.Action("AddProject", "SideBar")"
+               value="Projects"
+               class="sidebar-button">
+                <span>Add Project +</span>
+            </a>
+
+            <a href="@Url.Action("ShowHideProjects", "SideBar")"
+               value="Projects"
+               class="sidebar-button">
+                <span>Projects</span>
+            </a>
+
+            <a href="@Url.Action("ShowHideClients", "SideBar")"
+               value="Projects"
+               class="sidebar-button">
+                <span>Clients</span>
+            </a>
+        }
+    </div>
+</div>

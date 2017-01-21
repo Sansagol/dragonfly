@@ -11,7 +11,7 @@
 <body>
     <div id="page-content">
         <div id="side-bar">
-            Side bar
+            @RenderPage("~/Views/Shared/_SideBar.cshtml", ViewBag.Logged)
         </div>
         <div id="header">
             @RenderPage("~/Views/Shared/_Header.cshtml")
