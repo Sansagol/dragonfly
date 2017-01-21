@@ -5,8 +5,8 @@ using System.Web;
 
 namespace Dragonfly.Models.Projects
 {
-    /// <summary>The class describe a single project.</summary>
-    public class Project
+    /// <summary>The model-class describe a single project.</summary>
+    public class ProjectModel
     {
         /// <summary>Id of the project.</summary>
         public int Projectid { get; set; }
@@ -16,5 +16,8 @@ namespace Dragonfly.Models.Projects
 
         /// <summary>Name of the project.</summary>
         public string ProjectName { get; set; }
+
+        /// <summary>Project description.</summary>
+        public string Description { get; set; }
     }
 }

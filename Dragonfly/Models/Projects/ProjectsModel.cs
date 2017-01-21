@@ -12,6 +12,6 @@ namespace Dragonfly.Models.Projects
         public int UserId { get; set; }
 
         /// <summary>All Available projects for a user.</summary>
-        public List<Project> AvailableProjects { get; set; }
+        public List<ProjectModel> AvailableProjects { get; set; }
     }
 }

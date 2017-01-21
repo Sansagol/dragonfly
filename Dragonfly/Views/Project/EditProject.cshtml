@@ -1,0 +1,35 @@
+﻿@model Dragonfly.Models.Projects.ProjectModel
+
+@{
+    ViewBag.Title = "AddProject";
+    PageData["Logged"] = ViewBag.Logged;
+}
+
+<h3>New project</h3>
+@if (ViewBag.Logged == true && Model != null)
+{
+    using (Html.BeginForm(
+        "UpdateProject",
+        "EditProject",
+        FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <td>
+                    <label class="edit-row-label">Name</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(x => x.ProjectName, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="edit-row-label">Description</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+        </table>
+    }
+}

@@ -33,17 +33,31 @@
     border: 1px solid grey;
 }
 
-a:hover {    
+a:hover {
     color: white;
 }
 
 .sidebar-button {
     float: left;
     clear: right;
-    width:150px;
+    width: 150px;
     margin-left: 15px;
     margin-top: 30px;
     border: 1px solid white;
     color: white;
-    text-decoration:none;
+    text-decoration: none;
+}
+
+.edit-row {
+    width: 730px;
+    margin: auto;
+}
+
+.edit-row-label {
+    margin: 5px;
+}
+
+.edit-row-text {
+    margin: 5px;
+    width: 400px;
 }

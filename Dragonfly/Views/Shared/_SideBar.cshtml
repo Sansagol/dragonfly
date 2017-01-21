@@ -2,14 +2,13 @@
     <div>
         @if (PageData["Logged"] == true)
         {
-            <a href="@Url.Action("AddProject", "Projects")
-               value="Projects"
+            <a href="@Url.Action("AddProject", "Project")"
                class="sidebar-button">
                 <span>Add Project +</span>
             </a>
 
             <a href="@Url.Action("Index", "Projects")"
-        value="Projects"
+               value="Projects"
                class="sidebar-button">
                 <span>Projects</span>
             </a>
