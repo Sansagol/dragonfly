@@ -143,6 +143,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Core\BaseBindings.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />
@@ -240,6 +241,8 @@
     </Compile>
     <Compile Include="Models\AuthenticateModel.cs" />
     <Compile Include="Models\LogUpModel.cs" />
+    <Compile Include="Models\Projects\Project.cs" />
+    <Compile Include="Models\Projects\ProjectsModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -253,6 +256,7 @@
     <Content Include="Views\Shared\_Header.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_SideBar.cshtml" />
+    <Content Include="Views\Projects\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

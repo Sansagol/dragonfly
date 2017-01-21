@@ -1,0 +1,21 @@
+﻿@model Dragonfly.Models.Projects.ProjectsModel
+
+@{
+    ViewBag.Title = "Projects";
+    PageData["Logged"] = ViewBag.Logged;
+}
+
+<h2>Available projects</h2>
+@if (ViewBag.Logged == false)
+{
+    <div>
+        <span>No projects available. Need to login.</span>
+    </div>
+}
+else
+{
+    <div>
+        <span>Projects will soon.</span>
+    </div>
+}
+
