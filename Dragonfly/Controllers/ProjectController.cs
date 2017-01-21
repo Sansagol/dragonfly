@@ -9,7 +9,7 @@ namespace Dragonfly.Controllers
 {
     public class ProjectController : Controller
     {
-        /// <summary>Methot to add a new project.</summary>
+        /// <summary>Method add a new project.</summary>
         /// <returns></returns>
         [HttpGet]
         public ActionResult AddProject()
@@ -24,7 +24,16 @@ namespace Dragonfly.Controllers
                     return View("EditProject", project);
                 }
             }
-            return View("EditProject");
+            return View("CreateProject");
+        }
+
+        [HttpPost]
+        public ActionResult CreateProject(ProjectModel project)
+        {
+            if (project.SaveProject())
+                return RedirectToAction("Index", "Projects");
+            else
+                return View("CreateProject");
         }
     }
 }

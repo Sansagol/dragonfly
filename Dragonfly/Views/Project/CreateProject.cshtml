@@ -9,8 +9,8 @@
 @if (ViewBag.Logged == true && Model != null)
 {
     using (Html.BeginForm(
-        "UpdateProject",
-        "EditProject",
+        "CreateProject",
+        "Project",
         FormMethod.Post))
     {
         <table>
@@ -31,5 +31,15 @@
                 </td>
             </tr>
         </table>
+        <div class="text-left bd-content">
+            <input class="btn btn-success"
+                   type="submit" value="Login" />
+        </div>
+        @*<a class="body-button"
+               href="@Url.Action("CreateTask", "Project")">
+                <span>
+                    Create
+                </span>
+            </a>*@
     }
 }

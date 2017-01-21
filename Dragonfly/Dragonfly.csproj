@@ -258,7 +258,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_SideBar.cshtml" />
     <Content Include="Views\Projects\Index.cshtml" />
-    <Content Include="Views\Project\EditProject.cshtml" />
+    <Content Include="Views\Project\CreateProject.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

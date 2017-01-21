@@ -52,12 +52,14 @@ a:hover {
     width: 730px;
     margin: auto;
 }
-
 .edit-row-label {
     margin: 5px;
 }
-
 .edit-row-text {
     margin: 5px;
     width: 400px;
+}
+/*All body content*/
+.bd-content{
+    margin-left:5px;
 }

@@ -13,6 +13,7 @@ using System.Data.Entity.Validation;
 using Dragonfly.Models;
 using System.Threading;
 using System.Data.Entity.Infrastructure;
+using Dragonfly.Models.Projects;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -203,16 +204,7 @@ namespace Dragonfly.Database.MsSQL
         {
             UserModel model = null;
             User usr = null;
-            try
-            {
-                usr = (from user in _Context.User
-                       where user.ID_User == userId
-                       select user).FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Database is down.", ex);
-            }
+            usr = SelectUser(userId);
             if (usr != null)
             {
                 model = new UserModel()
@@ -223,6 +215,23 @@ namespace Dragonfly.Database.MsSQL
                 };
             }
             return model;
+        }
+
+        private User SelectUser(int userId)
+        {
+            User usr;
+            try
+            {
+                usr = (from user in _Context.User
+                       where user.ID_User == userId
+                       select user).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Database is down.", ex);
+            }
+
+            return usr;
         }
 
         public UserModel GetUserByLoginMail(string userLogin)
@@ -250,6 +259,101 @@ namespace Dragonfly.Database.MsSQL
                 };
             }
             return model;
+        }
+
+        public void CreateProject(ProjectModel newProject)
+        {
+            CheckProjectModelArgs(newProject);
+
+            User user = SelectUser(newProject.UserOwnerId);
+            if (user == null)
+                throw new InvalidOperationException(
+                    $"User with id: \'{newProject.UserOwnerId}\' not found.");
+
+            Project proj = new Project()
+            {
+                Name = newProject.ProjectName,
+                Date_Create = DateTime.Now
+            };
+            SaveNewProjectInDB(proj);
+
+            Project_Role prRole = (from pr in _Context.Project_Role
+                                   where pr.Is_Admin
+                                   select pr).FirstOrDefault();
+
+            User_Project usProj = new User_Project()
+            {
+                ID_Project = proj.ID_Project,
+                ID_User = user.ID_User,
+                ID_Project_Role = prRole.ID_Project_Role
+            };
+
+            try
+            {
+                _Context.User_Project.Add(usProj);
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                DeleteProject(proj.ID_Project);
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                DeleteProject(proj.ID_Project);
+                throw new InvalidOperationException("Unable to save user-project relation", ex);
+            }
+        }
+
+        /// <summary>Method save a new project in the database.</summary>
+        /// <param name="project">Project to save</param>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="InsertDbDataException"/>
+        private void SaveNewProjectInDB(Project project)
+        {
+            try
+            {
+                _Context.Project.Add(project);
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.Project.Remove(project);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.Project.Remove(project);
+                throw new InvalidOperationException("Unable to save project", ex);
+            }
+        }
+
+        private void CheckProjectModelArgs(ProjectModel newProject)
+        {
+            if (newProject == null)
+                throw new ArgumentNullException(nameof(newProject));
+            if (string.IsNullOrWhiteSpace(newProject.ProjectName))
+                throw new ArgumentException("Empty project name", nameof(newProject));
+            if (newProject.UserOwnerId < 1)
+                throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
+        }
+
+        /// <summary>Method delete a project from a db.</summary>
+        /// <param name="projectId">Id of project.</param>
+        public void DeleteProject(decimal projectId)
+        {
         }
     }
 }
