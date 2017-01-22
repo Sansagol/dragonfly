@@ -24,9 +24,7 @@ namespace Dragonfly.Database.MsSQL
         public decimal ID_Project_Role { get; set; }
         public string Role_Name { get; set; }
         public bool Is_Admin { get; set; }
-        public decimal ID_User_Owner { get; set; }
     
-        public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User_Project> User_Project { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
