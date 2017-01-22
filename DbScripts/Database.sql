@@ -379,7 +379,7 @@ GO
 
 CREATE TABLE [Project]
 (
-	[ID_Project] numeric(18) NOT NULL,
+	[ID_Project] numeric(18) NOT NULL IDENTITY(1,1),
 	[Name] nvarchar(255) NOT NULL,    -- Название проекта (по этому полю идёт полнотекстовый поиск).
 	[Date_Create] datetime2(7) NOT NULL,    -- Дата создания проекта.
 	[Description] nvarchar(512) NULL -- Описание проекта.
@@ -852,15 +852,15 @@ ALTER TABLE [User_Invitation] ADD CONSTRAINT [FK_User_Invitation_User]
 GO
 
 ALTER TABLE [User_Project] ADD CONSTRAINT [FK_User_Project_Project]
-	FOREIGN KEY ([ID_Project]) REFERENCES [Project] ([ID_Project]) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY ([ID_Project]) REFERENCES [Project] ([ID_Project]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
 ALTER TABLE [User_Project] ADD CONSTRAINT [FK_User_Project_Project_Role]
-	FOREIGN KEY ([ID_Project_Role]) REFERENCES [Project_Role] ([ID_Project_Role]) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY ([ID_Project_Role]) REFERENCES [Project_Role] ([ID_Project_Role]) ON DELETE Cascade ON UPDATE Cascade
 GO
 
 ALTER TABLE [User_Project] ADD CONSTRAINT [FK_User_Project_User]
-	FOREIGN KEY ([ID_User]) REFERENCES [User] ([ID_User]) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY ([ID_User]) REFERENCES [User] ([ID_User]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
 ALTER TABLE [User_Role_Access_Function] ADD CONSTRAINT [FK_User_Role_Access_Function_Access_Function]

@@ -7,6 +7,7 @@ using System.Data.Entity;
 using Dragonfly.Core.Settings;
 using Dragonfly.Database;
 using Dragonfly.Models;
+using Dragonfly.Models.Projects;
 
 namespace Dragonfly.Tests.Database.MsSQL
 {
@@ -132,7 +133,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         }
 
         [TestMethod]
-        public void AdduserWithDoubleEmailTest()
+        public void AddUserWithDoubleEmailTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
             DbContext context = provider.Initizlize(_Connectionconfig);
@@ -157,6 +158,59 @@ namespace Dragonfly.Tests.Database.MsSQL
             {
                 DeleteUserFromDB(context, model.Login, model.EMail);
                 //TODO delete test user
+            }
+        }
+
+        /// <summary>Checking simple project creating.</summary>
+        [TestMethod]
+        public void CreateProjectTest()
+        {
+            MsSqlDataProvider provider = new MsSqlDataProvider();
+            DbContext context = provider.Initizlize(_Connectionconfig);
+            LogUpModel userData = new LogUpModel()
+            {
+                Login = "Test_user",
+                EMail = "test@mail.mail",
+                Password = "Test user password"
+            };
+            provider.AddUser(userData);
+            UserModel userModel = provider.GetUserByLoginMail("test@mail.mail");
+
+            ProjectModel model = new ProjectModel()
+            {
+                Description = "Project description",
+                ProjectName = "Test project name",
+                Users = new System.Collections.Generic.List<decimal>()
+                {
+                    userModel.Id
+                }
+            };
+
+            try
+            {
+                provider.CreateProject(model);
+                Assert.IsTrue(model.ProjectId > 0, "Project id less than 1.");
+
+                ProjectModel selectedProjectModel = provider.GetProjectById(model.ProjectId);
+                Assert.IsNotNull(
+                    selectedProjectModel,
+                    $"Unable to retrieve project with id \'{model.ProjectId}\'");
+                Assert.AreEqual(model.ProjectName, selectedProjectModel.ProjectName);
+                Assert.AreEqual(model.Description, selectedProjectModel.Description);
+
+                //Check users
+                DragonflyEntities ents = context as DragonflyEntities;
+                var projectUsers = (from usr in ents.User_Project
+                                    where usr.ID_Project == selectedProjectModel.ProjectId
+                                    select usr).ToList();
+                Assert.IsTrue(projectUsers.All(pu => model.Users.Contains(pu.ID_User)),
+                    "Not all users added to project management.");
+            }
+            finally
+            {
+                if (model != null && model.ProjectId > 0)
+                    provider.DeleteProject(model.ProjectId);
+                DeleteUserFromDB(context, userData.Login, userData.EMail);
             }
         }
     }

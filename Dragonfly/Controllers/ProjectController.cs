@@ -20,7 +20,10 @@ namespace Dragonfly.Controllers
                 int userId = -1;
                 if (int.TryParse(Session["UserId"].ToString(), out userId))
                 {
-                    ProjectModel project = new ProjectModel() { UserOwnerId = userId };
+                    ProjectModel project = new ProjectModel()
+                    {
+                        Users = new List<decimal>() { userId }
+                    };
                     return View("EditProject", project);
                 }
             }

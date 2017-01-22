@@ -217,7 +217,7 @@ namespace Dragonfly.Database.MsSQL
             return model;
         }
 
-        private User SelectUser(int userId)
+        private User SelectUser(decimal userId)
         {
             User usr;
             try
@@ -261,14 +261,25 @@ namespace Dragonfly.Database.MsSQL
             return model;
         }
 
+        /// <summary>Method create new project.</summary>
+        /// <param name="newProject">Model of project to save.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="InsertDbDataException"/>
         public void CreateProject(ProjectModel newProject)
         {
             CheckProjectModelArgs(newProject);
 
-            User user = SelectUser(newProject.UserOwnerId);
-            if (user == null)
-                throw new InvalidOperationException(
-                    $"User with id: \'{newProject.UserOwnerId}\' not found.");
+            List<User> users = new List<User>();
+            foreach (var userId in newProject.Users)
+            {
+                User usr = SelectUser(userId);
+                if (usr != null)
+                    users.Add(usr);
+            }
+            if (users.Count < 1)
+                throw new InvalidOperationException("Users for project not found.");
 
             Project proj = new Project()
             {
@@ -276,40 +287,53 @@ namespace Dragonfly.Database.MsSQL
                 Date_Create = DateTime.Now
             };
             SaveNewProjectInDB(proj);
+            newProject.ProjectId = proj.ID_Project;
 
             Project_Role prRole = (from pr in _Context.Project_Role
                                    where pr.Is_Admin
                                    select pr).FirstOrDefault();
-
-            User_Project usProj = new User_Project()
+            foreach (User user in users)
             {
-                ID_Project = proj.ID_Project,
-                ID_User = user.ID_User,
-                ID_Project_Role = prRole.ID_Project_Role
-            };
-
-            try
-            {
-                _Context.User_Project.Add(usProj);
-            }
-            catch (DbEntityValidationException ex)
-            {
-                _Context.User_Project.Remove(usProj);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
+                User_Project usProj = new User_Project()
                 {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    ID_Project = proj.ID_Project,
+                    ID_User = user.ID_User,
+                    ID_Project_Role = prRole.ID_Project_Role
+                };
+
+                try
+                {
+                    _Context.User_Project.Add(usProj);
                 }
-                DeleteProject(proj.ID_Project);
-                throw new InsertDbDataException(validationErrors);
+                catch (DbEntityValidationException ex)
+                {
+                    _Context.User_Project.Remove(usProj);
+                    List<ValidationError> validationErrors = new List<ValidationError>();
+                    foreach (var validResult in ex.EntityValidationErrors)
+                    {
+                        validationErrors.AddRange(validResult.ValidationErrors.Select(
+                            v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    }
+                    DeleteProject(proj.ID_Project);
+                    throw new InsertDbDataException(validationErrors);
+                }
+                catch (DbUpdateException ex)
+                {
+                    _Context.User_Project.Remove(usProj);
+                    DeleteProject(proj.ID_Project);
+                    throw new InvalidOperationException("Unable to save user-project relation", ex);
+                }
             }
-            catch (DbUpdateException ex)
-            {
-                _Context.User_Project.Remove(usProj);
-                DeleteProject(proj.ID_Project);
-                throw new InvalidOperationException("Unable to save user-project relation", ex);
-            }
+        }
+
+        private void CheckProjectModelArgs(ProjectModel newProject)
+        {
+            if (newProject == null)
+                throw new ArgumentNullException(nameof(newProject));
+            if (string.IsNullOrWhiteSpace(newProject.ProjectName))
+                throw new ArgumentException("Empty project name", nameof(newProject));
+            if (newProject.Users.Count < 1)
+                throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
         }
 
         /// <summary>Method save a new project in the database.</summary>
@@ -321,6 +345,7 @@ namespace Dragonfly.Database.MsSQL
             try
             {
                 _Context.Project.Add(project);
+                _Context.SaveChanges();
             }
             catch (DbEntityValidationException ex)
             {
@@ -340,20 +365,52 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
-        private void CheckProjectModelArgs(ProjectModel newProject)
-        {
-            if (newProject == null)
-                throw new ArgumentNullException(nameof(newProject));
-            if (string.IsNullOrWhiteSpace(newProject.ProjectName))
-                throw new ArgumentException("Empty project name", nameof(newProject));
-            if (newProject.UserOwnerId < 1)
-                throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
-        }
-
         /// <summary>Method delete a project from a db.</summary>
         /// <param name="projectId">Id of project.</param>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="InvalidOperationException"/>
         public void DeleteProject(decimal projectId)
         {
+            if (projectId < 1)
+                throw new ArgumentException("Project id can't be less than 1", nameof(projectId));
+
+            try
+            {
+                Project proj = (from p in _Context.Project
+                                where p.ID_Project == projectId
+                                select p).FirstOrDefault();
+                if (proj != null)
+                    _Context.Project.Remove(proj);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unable to delete project.", ex);
+            }
+        }
+
+        public ProjectModel GetProjectById(decimal projectId)
+        {
+            if (projectId < 1)
+                throw new ArgumentException("Project id can't be less than 1", nameof(projectId));
+            ProjectModel model = null;
+            try
+            {
+                Project proj = (from p in _Context.Project
+                                where p.ID_Project == projectId
+                                select p).FirstOrDefault();
+                if (proj != null)
+                    model = new ProjectModel()
+                    {
+                        Description = proj.Description,
+                        ProjectName = proj.Name,
+                        Users = proj.User_Project.Select(u => u.ID_User).ToList()
+                    };
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unable to retrieve a project.", ex);
+            }
+            return model;
         }
     }
 }

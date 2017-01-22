@@ -11,10 +11,10 @@ namespace Dragonfly.Models.Projects
     public class ProjectModel
     {
         /// <summary>Id of the project.</summary>
-        public int Projectid { get; set; }
+        public decimal ProjectId { get; set; }
 
-        /// <summary>Id of user-owner of the project.</summary>
-        public int UserOwnerId { get; set; }
+        /// <summary>Ids of users which can something do with the project.</summary>
+        public List<decimal> Users { get; set; }
 
         /// <summary>Name of the project.</summary>
         public string ProjectName { get; set; }
@@ -29,7 +29,7 @@ namespace Dragonfly.Models.Projects
         {
             bool saveResult = false;
             IDataBaseProvider context = BaseBindings.GetNewDbProvider();
-            if (Projectid == 0)
+            if (ProjectId == 0)
             {
                 try
                 {

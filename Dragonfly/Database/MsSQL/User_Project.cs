@@ -18,8 +18,8 @@ namespace Dragonfly.Database.MsSQL
         public decimal ID_Project { get; set; }
         public decimal ID_Project_Role { get; set; }
     
+        public virtual Project Project { get; set; }
         public virtual Project_Role Project_Role { get; set; }
         public virtual User User { get; set; }
-        public virtual Project Project { get; set; }
     }
 }
