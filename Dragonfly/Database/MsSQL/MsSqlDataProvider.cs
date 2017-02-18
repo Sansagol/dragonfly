@@ -271,20 +271,13 @@ namespace Dragonfly.Database.MsSQL
         {
             CheckProjectModelArgs(newProject);
 
-            List<User> users = new List<User>();
-            foreach (var userId in newProject.Users)
-            {
-                User usr = SelectUser(userId);
-                if (usr != null)
-                    users.Add(usr);
-            }
-            if (users.Count < 1)
-                throw new InvalidOperationException("Users for project not found.");
+            IEnumerable<User> users = GetUsersByIds(newProject.UserIds);
 
             Project proj = new Project()
             {
                 Name = newProject.ProjectName,
-                Date_Create = DateTime.Now
+                Date_Create = DateTime.Now,
+                Description = newProject.Description
             };
             SaveNewProjectInDB(proj);
             newProject.ProjectId = proj.ID_Project;
@@ -292,6 +285,9 @@ namespace Dragonfly.Database.MsSQL
             Project_Role prRole = (from pr in _Context.Project_Role
                                    where pr.Is_Admin
                                    select pr).FirstOrDefault();
+            if (prRole == null)
+                throw new InvalidOperationException("An admin role for project not found.");
+
             foreach (User user in users)
             {
                 User_Project usProj = new User_Project()
@@ -300,41 +296,70 @@ namespace Dragonfly.Database.MsSQL
                     ID_User = user.ID_User,
                     ID_Project_Role = prRole.ID_Project_Role
                 };
-
-                try
-                {
-                    _Context.User_Project.Add(usProj);
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    _Context.User_Project.Remove(usProj);
-                    List<ValidationError> validationErrors = new List<ValidationError>();
-                    foreach (var validResult in ex.EntityValidationErrors)
-                    {
-                        validationErrors.AddRange(validResult.ValidationErrors.Select(
-                            v => new ValidationError(v.PropertyName, v.ErrorMessage)));
-                    }
-                    DeleteProject(proj.ID_Project);
-                    throw new InsertDbDataException(validationErrors);
-                }
-                catch (DbUpdateException ex)
-                {
-                    _Context.User_Project.Remove(usProj);
-                    DeleteProject(proj.ID_Project);
-                    throw new InvalidOperationException("Unable to save user-project relation", ex);
-                }
+                KeepUserProject(proj.ID_Project, usProj);
             }
         }
 
+        /// <summary>
+        /// Method check a projectmodel the args for correctness.
+        /// If error args will found then will thrown an exception.
+        /// </summary>
+        /// <param name="newProject">Args to check.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
         private void CheckProjectModelArgs(ProjectModel newProject)
         {
             if (newProject == null)
                 throw new ArgumentNullException(nameof(newProject));
             if (string.IsNullOrWhiteSpace(newProject.ProjectName))
                 throw new ArgumentException("Empty project name", nameof(newProject));
-            if (newProject.Users.Count < 1)
+            if (newProject.UserIds.Count < 1)
                 throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
         }
+
+        /// <summary>Method retrieve a users from th DB by it ids.</summary>
+        /// <param name="userIds">Ids of users to retrieve.</param>
+        /// <returns>List with retrieving results.</returns>
+        /// <exception cref="InvalidOperationException">No users found.</exception>
+        private IEnumerable<User> GetUsersByIds(IEnumerable<decimal> userIds)
+        {
+            List<User> users = new List<User>();
+            foreach (var userId in userIds)
+            {
+                User usr = SelectUser(userId);
+                if (usr != null)
+                    users.Add(usr);
+            }
+            if (users.Count < 1)
+                throw new InvalidOperationException("Users for project not found.");
+            return users;
+        }
+
+        private void KeepUserProject(decimal projectId, User_Project usProj)
+        {
+            try
+            {
+                _Context.User_Project.Add(usProj);
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                DeleteProject(projectId);
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                DeleteProject(projectId);
+                throw new InvalidOperationException("Unable to save user-project relation", ex);
+            }
+        }       
 
         /// <summary>Method save a new project in the database.</summary>
         /// <param name="project">Project to save</param>
@@ -403,7 +428,7 @@ namespace Dragonfly.Database.MsSQL
                     {
                         Description = proj.Description,
                         ProjectName = proj.Name,
-                        Users = proj.User_Project.Select(u => u.ID_User).ToList()
+                        UserIds = proj.User_Project.Select(u => u.ID_User).ToList()
                     };
             }
             catch (Exception ex)

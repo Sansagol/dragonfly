@@ -22,9 +22,9 @@ namespace Dragonfly.Controllers
                 {
                     ProjectModel project = new ProjectModel()
                     {
-                        Users = new List<decimal>() { userId }
+                        UserIds = new List<decimal>() { userId }
                     };
-                    return View("EditProject", project);
+                    return View("CreateProject", project);
                 }
             }
             return View("CreateProject");

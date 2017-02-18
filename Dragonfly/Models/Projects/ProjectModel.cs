@@ -14,7 +14,7 @@ namespace Dragonfly.Models.Projects
         public decimal ProjectId { get; set; }
 
         /// <summary>Ids of users which can something do with the project.</summary>
-        public List<decimal> Users { get; set; }
+        public List<decimal> UserIds { get; set; }
 
         /// <summary>Name of the project.</summary>
         public string ProjectName { get; set; }
@@ -40,9 +40,13 @@ namespace Dragonfly.Models.Projects
                 {
                     ProjectError = ex.Message;
                 }
+                catch (Exception ex)
+                {
+                    ProjectError = ex.Message;
+                }
             }
             else
-            {//Update existing project
+            {//TODO Update existing project
             }
             return saveResult;
         }

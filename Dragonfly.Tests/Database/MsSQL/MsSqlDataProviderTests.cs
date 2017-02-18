@@ -41,7 +41,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         [TestMethod]
         public void WrongDbNameConnectionTest()
         {
-            _Connectionconfig.DbName = "Dragonfly";
+            _Connectionconfig.DbName = "Dragonfly.Test";
             MsSqlDataProvider provider = new MsSqlDataProvider();
             DbContext context = provider.Initizlize(_Connectionconfig);
             try
@@ -180,7 +180,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             {
                 Description = "Project description",
                 ProjectName = "Test project name",
-                Users = new System.Collections.Generic.List<decimal>()
+                UserIds = new System.Collections.Generic.List<decimal>()
                 {
                     userModel.Id
                 }
@@ -203,7 +203,7 @@ namespace Dragonfly.Tests.Database.MsSQL
                 var projectUsers = (from usr in ents.User_Project
                                     where usr.ID_Project == selectedProjectModel.ProjectId
                                     select usr).ToList();
-                Assert.IsTrue(projectUsers.All(pu => model.Users.Contains(pu.ID_User)),
+                Assert.IsTrue(projectUsers.All(pu => model.UserIds.Contains(pu.ID_User)),
                     "Not all users added to project management.");
             }
             finally
