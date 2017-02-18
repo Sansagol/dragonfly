@@ -7,25 +7,18 @@ using System.Data.Entity;
 using Dragonfly.Core.Settings;
 using Dragonfly.Database;
 using Dragonfly.Models;
+using Dragonfly.Models.Projects;
 
 namespace Dragonfly.Tests.Database.MsSQL
 {
     [TestClass]
     public class MsSqlDataProviderTests
     {
-        DatabaseAccessConfiguration _Connectionconfig = new DatabaseAccessConfiguration()
-        {
-            DbName = "Dragonfly.Test",
-            ServerName = "10.10.0.117",
-            UserName = "Unit_Tester",
-            Password = "SelectAllPasswords"
-        };
-
         [TestMethod]
         public void InitializeConnection()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
             try
             {
                 Assert.IsNotNull(context, "Context not created.");
@@ -37,18 +30,24 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
         }
 
+        /// <summary>
+        /// Check if context with wrong credentials will not create.
+        /// </summary>
         [TestMethod]
+        [ExpectedException(typeof(DbInitializationException))]
         public void WrongDbNameConnectionTest()
         {
-            _Connectionconfig.DbName = "Dragonfly";
+            Common.Connectionconfig.DbName = "Dragonfly";
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = null;
             try
             {
+                context = provider.Initizlize(Common.Connectionconfig);
                 Assert.IsNull(context, "Context created - is wrong.");
             }
             finally
             {
+                Common.Connectionconfig.DbName = "Dragonfly.Test";
                 if (context != null)
                     context.Dispose();
             }
@@ -58,7 +57,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AddUserTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
             LogUpModel model = new LogUpModel()
             {
                 Login = "TestDbUser",
@@ -113,7 +112,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AdduserWithoutEmailTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
 
             LogUpModel model = new LogUpModel()
             {
@@ -132,10 +131,10 @@ namespace Dragonfly.Tests.Database.MsSQL
         }
 
         [TestMethod]
-        public void AdduserWithDoubleEmailTest()
+        public void AddUserWithDoubleEmailTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
 
             LogUpModel model = new LogUpModel()
             {
@@ -157,6 +156,59 @@ namespace Dragonfly.Tests.Database.MsSQL
             {
                 DeleteUserFromDB(context, model.Login, model.EMail);
                 //TODO delete test user
+            }
+        }
+
+        /// <summary>Checking simple project creating.</summary>
+        [TestMethod]
+        public void CreateProjectTest()
+        {
+            MsSqlDataProvider provider = new MsSqlDataProvider();
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
+            LogUpModel userData = new LogUpModel()
+            {
+                Login = "Test_user",
+                EMail = "test@mail.mail",
+                Password = "Test user password"
+            };
+            provider.AddUser(userData);
+            UserModel userModel = provider.GetUserByLoginMail("test@mail.mail");
+
+            ProjectModel model = new ProjectModel(provider)
+            {
+                Description = "Project description",
+                ProjectName = "Test project name",
+                UserIds = new System.Collections.Generic.List<decimal>()
+                {
+                    userModel.Id
+                }
+            };
+
+            try
+            {
+                provider.CreateProject(model);
+                Assert.IsTrue(model.ProjectId > 0, "Project id less than 1.");
+
+                ProjectModel selectedProjectModel = provider.GetProjectById(model.ProjectId);
+                Assert.IsNotNull(
+                    selectedProjectModel,
+                    $"Unable to retrieve project with id \'{model.ProjectId}\'");
+                Assert.AreEqual(model.ProjectName, selectedProjectModel.ProjectName);
+                Assert.AreEqual(model.Description, selectedProjectModel.Description);
+
+                //Check users
+                DragonflyEntities ents = context as DragonflyEntities;
+                var projectUsers = (from usr in ents.User_Project
+                                    where usr.ID_Project == selectedProjectModel.ProjectId
+                                    select usr).ToList();
+                Assert.IsTrue(projectUsers.All(pu => model.UserIds.Contains(pu.ID_User)),
+                    "Not all users added to project management.");
+            }
+            finally
+            {
+                if (model != null && model.ProjectId > 0)
+                    provider.DeleteProject(model.ProjectId);
+                DeleteUserFromDB(context, userData.Login, userData.EMail);
             }
         }
     }

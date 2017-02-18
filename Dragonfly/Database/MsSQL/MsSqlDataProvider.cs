@@ -13,6 +13,7 @@ using System.Data.Entity.Validation;
 using Dragonfly.Models;
 using System.Threading;
 using System.Data.Entity.Infrastructure;
+using Dragonfly.Models.Projects;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -160,6 +161,7 @@ namespace Dragonfly.Database.MsSQL
         /// <summary>Method create and open context for database.</summary>
         /// <param name="accessConfigurations">Parameters to database connect.</param>
         /// <returns>Created context. null if fail.</returns>
+        /// <exception cref="DbInitializationException">Error on database initialization.</exception>
         public DbContext Initizlize(DatabaseAccessConfiguration accessConfigurations)
         {
             EntityConnectionStringBuilder connection = UpdateConnectionParameters(accessConfigurations);
@@ -173,7 +175,7 @@ namespace Dragonfly.Database.MsSQL
             {
                 if (_Context != null)
                     _Context.Dispose();
-                return null;
+                throw new DbInitializationException(ex.Message);
             }
             return _Context;
         }
@@ -203,6 +205,28 @@ namespace Dragonfly.Database.MsSQL
         {
             UserModel model = null;
             User usr = null;
+            usr = SelectUser(userId);
+            if (usr != null)
+            {
+                model = CreateAUserModel(usr);
+            }
+            return model;
+        }
+
+        private static UserModel CreateAUserModel(User usr)
+        {
+            return new UserModel()
+            {
+                Id = usr.ID_User,
+                Login = usr.Login,
+                Name = usr.Name,
+                EMail = usr.E_mail
+            };
+        }
+
+        private User SelectUser(decimal userId)
+        {
+            User usr;
             try
             {
                 usr = (from user in _Context.User
@@ -213,16 +237,8 @@ namespace Dragonfly.Database.MsSQL
             {
                 throw new InvalidOperationException("Database is down.", ex);
             }
-            if (usr != null)
-            {
-                model = new UserModel()
-                {
-                    Id = usr.ID_User,
-                    Login = usr.Login,
-                    Name = usr.Name
-                };
-            }
-            return model;
+
+            return usr;
         }
 
         public UserModel GetUserByLoginMail(string userLogin)
@@ -242,12 +258,185 @@ namespace Dragonfly.Database.MsSQL
             }
             if (usr != null)
             {
-                model = new UserModel()
+                model = CreateAUserModel(usr);
+            }
+            return model;
+        }
+
+        /// <summary>Method create new project.</summary>
+        /// <param name="newProject">Model of project to save.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="InsertDbDataException"/>
+        public void CreateProject(ProjectModel newProject)
+        {
+            CheckProjectModelArgs(newProject);
+
+            IEnumerable<User> users = GetUsersByIds(newProject.UserIds);
+
+            Project proj = new Project()
+            {
+                Name = newProject.ProjectName,
+                Date_Create = DateTime.Now,
+                Description = newProject.Description
+            };
+            SaveNewProjectInDB(proj);
+            newProject.ProjectId = proj.ID_Project;
+
+            Project_Role prRole = (from pr in _Context.Project_Role
+                                   where pr.Is_Admin
+                                   select pr).FirstOrDefault();
+            if (prRole == null)
+                throw new InvalidOperationException("An admin role for project not found.");
+
+            foreach (User user in users)
+            {
+                User_Project usProj = new User_Project()
                 {
-                    Id = usr.ID_User,
-                    Login = usr.Login,
-                    Name = usr.Name
+                    ID_Project = proj.ID_Project,
+                    ID_User = user.ID_User,
+                    ID_Project_Role = prRole.ID_Project_Role
                 };
+                KeepUserProject(proj.ID_Project, usProj);
+            }
+        }
+
+        /// <summary>
+        /// Method check a projectmodel the args for correctness.
+        /// If error args will found then will thrown an exception.
+        /// </summary>
+        /// <param name="newProject">Args to check.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        private void CheckProjectModelArgs(ProjectModel newProject)
+        {
+            if (newProject == null)
+                throw new ArgumentNullException(nameof(newProject));
+            if (string.IsNullOrWhiteSpace(newProject.ProjectName))
+                throw new ArgumentException("Empty project name", nameof(newProject));
+            if (newProject.UserIds.Count < 1)
+                throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
+        }
+
+        /// <summary>Method retrieve a users from th DB by it ids.</summary>
+        /// <param name="userIds">Ids of users to retrieve.</param>
+        /// <returns>List with retrieving results.</returns>
+        /// <exception cref="InvalidOperationException">No users found.</exception>
+        private IEnumerable<User> GetUsersByIds(IEnumerable<decimal> userIds)
+        {
+            List<User> users = new List<User>();
+            foreach (var userId in userIds)
+            {
+                User usr = SelectUser(userId);
+                if (usr != null)
+                    users.Add(usr);
+            }
+            if (users.Count < 1)
+                throw new InvalidOperationException("Users for project not found.");
+            return users;
+        }    
+
+        /// <summary>Method save a new project in the database.</summary>
+        /// <param name="project">Project to save</param>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="InsertDbDataException"/>
+        private void SaveNewProjectInDB(Project project)
+        {
+            try
+            {
+                _Context.Project.Add(project);
+                _Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.Project.Remove(project);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.Project.Remove(project);
+                throw new InvalidOperationException("Unable to save project", ex);
+            }
+        }
+
+        private void KeepUserProject(decimal projectId, User_Project usProj)
+        {
+            try
+            {
+                _Context.User_Project.Add(usProj);
+                _Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                DeleteProject(projectId);
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                DeleteProject(projectId);
+                throw new InvalidOperationException("Unable to save user-project relation", ex);
+            }
+        }
+
+        /// <summary>Method delete a project from a db.</summary>
+        /// <param name="projectId">Id of project.</param>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="InvalidOperationException"/>
+        public void DeleteProject(decimal projectId)
+        {
+            if (projectId < 1)
+                throw new ArgumentException("Project id can't be less than 1", nameof(projectId));
+
+            try
+            {
+                Project proj = (from p in _Context.Project
+                                where p.ID_Project == projectId
+                                select p).FirstOrDefault();
+                if (proj != null)
+                    _Context.Project.Remove(proj);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unable to delete project.", ex);
+            }
+        }
+
+        public ProjectModel GetProjectById(decimal projectId)
+        {
+            if (projectId < 1)
+                throw new ArgumentException("Project id can't be less than 1", nameof(projectId));
+            ProjectModel model = null;
+            try
+            {
+                Project proj = (from p in _Context.Project
+                                where p.ID_Project == projectId
+                                select p).FirstOrDefault();
+                if (proj != null)
+                    model = new ProjectModel(this)
+                    {
+                        Description = proj.Description,
+                        ProjectName = proj.Name,
+                        UserIds = proj.User_Project.Select(u => u.ID_User).ToList()
+                    };
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unable to retrieve a project.", ex);
             }
             return model;
         }

@@ -1,6 +1,7 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Core.Settings;
 using Dragonfly.Models;
+using Dragonfly.Models.Projects;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,7 +15,7 @@ namespace Dragonfly.Database
     /// Interface implements providers, which will be
     /// provide access to databases.
     /// </summary>
-    interface IDataBaseProvider
+    public interface IDataBaseProvider
     {
         DbContext Context { get; }
 
@@ -30,5 +31,7 @@ namespace Dragonfly.Database
         UserModel GetUserById(int userId);
 
         UserModel GetUserByLoginMail(string userLogin);
+
+        void CreateProject(ProjectModel newProject);
     }
 }

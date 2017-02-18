@@ -17,10 +17,9 @@ namespace Dragonfly.Database.MsSQL
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public User()
         {
-            this.Project_Role = new HashSet<Project_Role>();
             this.User_Invitation = new HashSet<User_Invitation>();
-            this.User_Project = new HashSet<User_Project>();
             this.Global_User_Role = new HashSet<Global_User_Role>();
+            this.User_Project = new HashSet<User_Project>();
         }
     
         public decimal ID_User { get; set; }
@@ -33,12 +32,10 @@ namespace Dragonfly.Database.MsSQL
         public string Login { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Project_Role> Project_Role { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User_Invitation> User_Invitation { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User_Project> User_Project { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Global_User_Role> Global_User_Role { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<User_Project> User_Project { get; set; }
     }
 }

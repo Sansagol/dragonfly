@@ -379,9 +379,10 @@ GO
 
 CREATE TABLE [Project]
 (
-	[ID_Project] numeric(18) NOT NULL,
+	[ID_Project] numeric(18) NOT NULL IDENTITY(1,1),
 	[Name] nvarchar(255) NOT NULL,    -- Название проекта (по этому полю идёт полнотекстовый поиск).
-	[Date_Create] datetime2(7) NOT NULL    -- Дата создания проекта
+	[Date_Create] datetime2(7) NOT NULL,    -- Дата создания проекта.
+	[Description] nvarchar(512) NULL -- Описание проекта.
 )
 GO
 
@@ -397,7 +398,6 @@ CREATE TABLE [Project_Role]
 	[ID_Project_Role] numeric(18) NOT NULL,
 	[Role_Name] nvarchar(255) NOT NULL,
 	[Is_Admin] bit NOT NULL DEFAULT 0,    -- Флаг показывает является ли данная роль администратором. Эта роль создаётся автоматически и не может быть удалена.
-	[ID_User_Owner] numeric(18) NOT NULL    -- Идентификатор пользователя, который создал эту роль. За каждым пользователем системы автоматически закрепляется одна запись в таблице - роль Администратор
 )
 GO
 
@@ -675,10 +675,6 @@ ALTER TABLE [Project_Role]
  ADD CONSTRAINT [UK_Project_Role_Name] UNIQUE NONCLUSTERED ([Role_Name] ASC)
 GO
 
-CREATE NONCLUSTERED INDEX [IXFK_Project_Role_User] 
- ON [Project_Role] ([ID_User_Owner] ASC)
-GO
-
 ALTER TABLE [Project_Role_Access_Function] 
  ADD CONSTRAINT [PK_Project_Role_Access_Function]
 	PRIMARY KEY CLUSTERED ([ID_Role_Access_Function] ASC,[ID_Project_Role] ASC)
@@ -827,10 +823,6 @@ ALTER TABLE [Product_License] ADD CONSTRAINT [FK_Product_License_Project]
 	FOREIGN KEY ([ID_Project]) REFERENCES [Project] ([ID_Project]) ON DELETE No Action ON UPDATE No Action
 GO
 
-ALTER TABLE [Project_Role] ADD CONSTRAINT [FK_Project_Role_User]
-	FOREIGN KEY ([ID_User_Owner]) REFERENCES [User] ([ID_User]) ON DELETE No Action ON UPDATE No Action
-GO
-
 ALTER TABLE [Project_Role_Access_Function] ADD CONSTRAINT [FK_Project_Role_Access_Function_Project_Access_Function]
 	FOREIGN KEY ([ID_Role_Access_Function]) REFERENCES [Project_Access_Function] ([ID_Role_Access_Function]) ON DELETE No Action ON UPDATE No Action
 GO
@@ -860,15 +852,15 @@ ALTER TABLE [User_Invitation] ADD CONSTRAINT [FK_User_Invitation_User]
 GO
 
 ALTER TABLE [User_Project] ADD CONSTRAINT [FK_User_Project_Project]
-	FOREIGN KEY ([ID_Project]) REFERENCES [Project] ([ID_Project]) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY ([ID_Project]) REFERENCES [Project] ([ID_Project]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
 ALTER TABLE [User_Project] ADD CONSTRAINT [FK_User_Project_Project_Role]
-	FOREIGN KEY ([ID_Project_Role]) REFERENCES [Project_Role] ([ID_Project_Role]) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY ([ID_Project_Role]) REFERENCES [Project_Role] ([ID_Project_Role]) ON DELETE Cascade ON UPDATE Cascade
 GO
 
 ALTER TABLE [User_Project] ADD CONSTRAINT [FK_User_Project_User]
-	FOREIGN KEY ([ID_User]) REFERENCES [User] ([ID_User]) ON DELETE No Action ON UPDATE No Action
+	FOREIGN KEY ([ID_User]) REFERENCES [User] ([ID_User]) ON DELETE CASCADE ON UPDATE CASCADE
 GO
 
 ALTER TABLE [User_Role_Access_Function] ADD CONSTRAINT [FK_User_Role_Access_Function_Access_Function]
@@ -1145,9 +1137,6 @@ begin
 end
 
 EXEC sp_addextendedproperty 'MS_Description', 'Флаг показывает является ли данная роль администратором. Эта роль создаётся автоматически и не может быть удалена.', 'Schema', [dbo], 'table', [Project_Role], 'column', [Is_Admin]
-GO
-
-EXEC sp_addextendedproperty 'MS_Description', 'Идентификатор пользователя, который создал эту роль. За каждым пользователем системы автоматически закрепляется одна запись в таблице - роль Администратор', 'Schema', [dbo], 'table', [Project_Role], 'column', [ID_User_Owner]
 GO
 
 

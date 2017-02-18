@@ -58,8 +58,10 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="Core\Settings\SettingsLibReaderTests.cs" />
     <Compile Include="Database\MsSQL\MsSqlDataProviderTests.cs" />
+    <Compile Include="Models\Projects\ProjectModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
