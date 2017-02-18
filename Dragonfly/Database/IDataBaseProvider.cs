@@ -15,7 +15,7 @@ namespace Dragonfly.Database
     /// Interface implements providers, which will be
     /// provide access to databases.
     /// </summary>
-    interface IDataBaseProvider
+    public interface IDataBaseProvider
     {
         DbContext Context { get; }
 

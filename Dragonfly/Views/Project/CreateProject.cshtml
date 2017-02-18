@@ -43,3 +43,18 @@
             </a>*@
     }
 }
+else
+{
+    if (!string.IsNullOrEmpty(ViewBag.InitError))
+    {
+        <div>
+            @ViewBag.InitError;
+        </div>
+    }
+    else
+    {
+        <div>
+            @ViewBag.Error
+        </div>
+    }
+}

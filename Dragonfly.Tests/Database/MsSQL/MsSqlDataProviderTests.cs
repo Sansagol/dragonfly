@@ -14,19 +14,11 @@ namespace Dragonfly.Tests.Database.MsSQL
     [TestClass]
     public class MsSqlDataProviderTests
     {
-        DatabaseAccessConfiguration _Connectionconfig = new DatabaseAccessConfiguration()
-        {
-            DbName = "Dragonfly.Test",
-            ServerName = "10.10.0.117",
-            UserName = "Unit_Tester",
-            Password = "SelectAllPasswords"
-        };
-
         [TestMethod]
         public void InitializeConnection()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
             try
             {
                 Assert.IsNotNull(context, "Context not created.");
@@ -38,18 +30,24 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
         }
 
+        /// <summary>
+        /// Check if context with wrong credentials will not create.
+        /// </summary>
         [TestMethod]
+        [ExpectedException(typeof(DbInitializationException))]
         public void WrongDbNameConnectionTest()
         {
-            _Connectionconfig.DbName = "Dragonfly.Test";
+            Common.Connectionconfig.DbName = "Dragonfly";
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = null;
             try
             {
+                context = provider.Initizlize(Common.Connectionconfig);
                 Assert.IsNull(context, "Context created - is wrong.");
             }
             finally
             {
+                Common.Connectionconfig.DbName = "Dragonfly.Test";
                 if (context != null)
                     context.Dispose();
             }
@@ -59,7 +57,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AddUserTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
             LogUpModel model = new LogUpModel()
             {
                 Login = "TestDbUser",
@@ -114,7 +112,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AdduserWithoutEmailTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
 
             LogUpModel model = new LogUpModel()
             {
@@ -136,7 +134,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AddUserWithDoubleEmailTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
 
             LogUpModel model = new LogUpModel()
             {
@@ -166,7 +164,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CreateProjectTest()
         {
             MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(_Connectionconfig);
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
             LogUpModel userData = new LogUpModel()
             {
                 Login = "Test_user",
@@ -176,7 +174,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             provider.AddUser(userData);
             UserModel userModel = provider.GetUserByLoginMail("test@mail.mail");
 
-            ProjectModel model = new ProjectModel()
+            ProjectModel model = new ProjectModel(provider)
             {
                 Description = "Project description",
                 ProjectName = "Test project name",

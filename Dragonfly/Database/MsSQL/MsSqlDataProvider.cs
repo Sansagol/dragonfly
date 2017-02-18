@@ -161,6 +161,7 @@ namespace Dragonfly.Database.MsSQL
         /// <summary>Method create and open context for database.</summary>
         /// <param name="accessConfigurations">Parameters to database connect.</param>
         /// <returns>Created context. null if fail.</returns>
+        /// <exception cref="DbInitializationException">Error on database initialization.</exception>
         public DbContext Initizlize(DatabaseAccessConfiguration accessConfigurations)
         {
             EntityConnectionStringBuilder connection = UpdateConnectionParameters(accessConfigurations);
@@ -174,7 +175,7 @@ namespace Dragonfly.Database.MsSQL
             {
                 if (_Context != null)
                     _Context.Dispose();
-                return null;
+                throw new DbInitializationException(ex.Message);
             }
             return _Context;
         }
@@ -207,14 +208,20 @@ namespace Dragonfly.Database.MsSQL
             usr = SelectUser(userId);
             if (usr != null)
             {
-                model = new UserModel()
-                {
-                    Id = usr.ID_User,
-                    Login = usr.Login,
-                    Name = usr.Name
-                };
+                model = CreateAUserModel(usr);
             }
             return model;
+        }
+
+        private static UserModel CreateAUserModel(User usr)
+        {
+            return new UserModel()
+            {
+                Id = usr.ID_User,
+                Login = usr.Login,
+                Name = usr.Name,
+                EMail = usr.E_mail
+            };
         }
 
         private User SelectUser(decimal userId)
@@ -251,12 +258,7 @@ namespace Dragonfly.Database.MsSQL
             }
             if (usr != null)
             {
-                model = new UserModel()
-                {
-                    Id = usr.ID_User,
-                    Login = usr.Login,
-                    Name = usr.Name
-                };
+                model = CreateAUserModel(usr);
             }
             return model;
         }
@@ -333,33 +335,7 @@ namespace Dragonfly.Database.MsSQL
             if (users.Count < 1)
                 throw new InvalidOperationException("Users for project not found.");
             return users;
-        }
-
-        private void KeepUserProject(decimal projectId, User_Project usProj)
-        {
-            try
-            {
-                _Context.User_Project.Add(usProj);
-            }
-            catch (DbEntityValidationException ex)
-            {
-                _Context.User_Project.Remove(usProj);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
-                {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
-                }
-                DeleteProject(projectId);
-                throw new InsertDbDataException(validationErrors);
-            }
-            catch (DbUpdateException ex)
-            {
-                _Context.User_Project.Remove(usProj);
-                DeleteProject(projectId);
-                throw new InvalidOperationException("Unable to save user-project relation", ex);
-            }
-        }       
+        }    
 
         /// <summary>Method save a new project in the database.</summary>
         /// <param name="project">Project to save</param>
@@ -387,6 +363,33 @@ namespace Dragonfly.Database.MsSQL
             {
                 _Context.Project.Remove(project);
                 throw new InvalidOperationException("Unable to save project", ex);
+            }
+        }
+
+        private void KeepUserProject(decimal projectId, User_Project usProj)
+        {
+            try
+            {
+                _Context.User_Project.Add(usProj);
+                _Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                DeleteProject(projectId);
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.User_Project.Remove(usProj);
+                DeleteProject(projectId);
+                throw new InvalidOperationException("Unable to save user-project relation", ex);
             }
         }
 
@@ -424,7 +427,7 @@ namespace Dragonfly.Database.MsSQL
                                 where p.ID_Project == projectId
                                 select p).FirstOrDefault();
                 if (proj != null)
-                    model = new ProjectModel()
+                    model = new ProjectModel(this)
                     {
                         Description = proj.Description,
                         ProjectName = proj.Name,

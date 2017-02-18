@@ -25,15 +25,32 @@ namespace Dragonfly.Models.Projects
         /// <summary>Some errors on project.</summary>
         public string ProjectError { get; set; }
 
+        #region fields
+        IDataBaseProvider _DbProvider = null;
+        public IDataBaseProvider DbProvider
+        {
+            get { return _DbProvider; }
+            set { _DbProvider = value; }
+        }
+        #endregion
+
+        public ProjectModel()
+        {
+        }
+
+        public ProjectModel(IDataBaseProvider dbProvider)
+        {
+            _DbProvider = dbProvider;
+        }
+
         public bool SaveProject()
         {
             bool saveResult = false;
-            IDataBaseProvider context = BaseBindings.GetNewDbProvider();
             if (ProjectId == 0)
             {
                 try
                 {
-                    context.CreateProject(this);
+                    _DbProvider.CreateProject(this);
                     saveResult = true;
                 }
                 catch (InvalidOperationException ex)
