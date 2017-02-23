@@ -33,5 +33,13 @@ namespace Dragonfly.Database
         UserModel GetUserByLoginMail(string userLogin);
 
         void CreateProject(ProjectModel newProject);
+
+        /// <summary>
+        /// Method retrieves projects from database and returns it.
+        /// </summary>
+        /// <param name="offset">Offset from a first project.</param>
+        /// <param name="count">Count projects to return.</param>
+        /// <returns>Retrieved projects.</returns>
+        IEnumerable<ProjectModel> GetProjects(int offset, int count);
     }
 }

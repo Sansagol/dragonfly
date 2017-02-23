@@ -15,7 +15,23 @@
 else
 {
     <div>
-        <span>Projects will soon.</span>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date Create</th>
+                <th>Owner</th>
+            </tr>
+            @foreach (var proj in Model.AvailableProjects)
+            {
+                <tr>
+                    <td>proj.ProjectId</td>
+                    <td>proj.ProjectName</td>
+                    <td>proj.DateCreation</td>
+                    <td>proj.ProjectId</td>
+                </tr>
+            }
+        </table>
     </div>
 }
 

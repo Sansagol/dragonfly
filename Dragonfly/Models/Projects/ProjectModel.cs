@@ -25,6 +25,11 @@ namespace Dragonfly.Models.Projects
         /// <summary>Some errors on project.</summary>
         public string ProjectError { get; set; }
 
+        /// <summary>
+        /// Get or set a data, when prodect was creted.
+        /// </summary>
+        public DateTime DateCreation { get; set; }
+
         #region fields
         IDataBaseProvider _DbProvider = null;
         public IDataBaseProvider DbProvider
@@ -36,9 +41,11 @@ namespace Dragonfly.Models.Projects
 
         public ProjectModel()
         {
+            UserIds = new List<decimal>();
         }
 
-        public ProjectModel(IDataBaseProvider dbProvider)
+        public ProjectModel(IDataBaseProvider dbProvider):
+            this()
         {
             _DbProvider = dbProvider;
         }

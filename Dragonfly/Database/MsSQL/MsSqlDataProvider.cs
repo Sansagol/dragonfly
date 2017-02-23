@@ -335,7 +335,7 @@ namespace Dragonfly.Database.MsSQL
             if (users.Count < 1)
                 throw new InvalidOperationException("Users for project not found.");
             return users;
-        }    
+        }
 
         /// <summary>Method save a new project in the database.</summary>
         /// <param name="project">Project to save</param>
@@ -439,6 +439,27 @@ namespace Dragonfly.Database.MsSQL
                 throw new InvalidOperationException("Unable to retrieve a project.", ex);
             }
             return model;
+        }
+
+        public IEnumerable<ProjectModel> GetProjects(int offset, int count)
+        {
+            if (offset < 0) offset = 0;
+            if (count < 0) count = 1;
+
+            var projects = (from proj in _Context.Project
+                            select proj).Skip(offset).Take(count);
+            List<ProjectModel> projectModels = new List<ProjectModel>();
+            foreach (var project in projects)
+            {
+                try
+                {
+                    projectModels.Add(project.ToProjectModel(this));
+                }
+                catch (Exception ex)
+                {//TODO log exception
+                }
+            }
+            return projectModels;
         }
     }
 }

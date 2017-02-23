@@ -160,6 +160,7 @@
     <Compile Include="Database\MsSQL\Address.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\MsSQL\ClassConvertersExtensions.cs" />
     <Compile Include="Database\MsSQL\Client.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
