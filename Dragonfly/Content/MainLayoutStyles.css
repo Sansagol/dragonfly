@@ -52,14 +52,39 @@ a:hover {
     width: 730px;
     margin: auto;
 }
+
 .edit-row-label {
     margin: 5px;
 }
+
 .edit-row-text {
     margin: 5px;
     width: 400px;
 }
 /*All body content*/
-.bd-content{
-    margin-left:5px;
+.body-content {
+    margin-left: 5px;
+}
+
+.info_table {
+    border-collapse: collapse;
+    width: 95%;
+    table-layout: fixed;
+}
+
+.info_table_header {
+    border: 2px solid;
+}
+/*info table regular cell*/
+.i_t_cell {
+    border-bottom: 1px solid;
+    word-wrap: break-word;
+}
+/*First cell*/
+.f-cell {
+    border-left: 1px solid;
+}
+/*Last cell*/
+.l-cell {
+    border-right: 1px solid;
 }

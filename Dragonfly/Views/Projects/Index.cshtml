@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Projects";
     PageData["Logged"] = ViewBag.Logged;
+    PageData["UserName"] = ViewBag.UserName;
 }
 
 <h3>Available projects</h3>
@@ -15,20 +16,26 @@
 else
 {
     <div>
-        <table>
+        <table class="info_table">
+            <col width="10%"/>
+            <col width="50%" />
+            <col width="20%" />
+            <col width="20%" />
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Date Create</th>
-                <th>Owner</th>
+                <th class="info_table_header">ID</th>
+                <th class="info_table_header">Name</th>
+                <th class="info_table_header">Date Create</th>
+                <th class="info_table_header">Owner</th>
             </tr>
             @foreach (var proj in Model.AvailableProjects)
             {
                 <tr>
-                    <td>proj.ProjectId</td>
-                    <td>proj.ProjectName</td>
-                    <td>proj.DateCreation</td>
-                    <td>proj.ProjectId</td>
+                    <td class="f-cell i_t_cell">@proj.ProjectId</td>
+                    <td class="i_t_cell">@proj.ProjectName</td>
+                    <td class="i_t_cell">@proj.DateCreation.ToString("dd.MM.yyyy")</td>
+                    <td class="l-cell i_t_cell">
+                        @string.Join(", ", proj.Users.Select(u => u.Login))
+                    </td>
                 </tr>
             }
         </table>

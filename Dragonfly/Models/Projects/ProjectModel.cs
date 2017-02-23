@@ -16,6 +16,8 @@ namespace Dragonfly.Models.Projects
         /// <summary>Ids of users which can something do with the project.</summary>
         public List<decimal> UserIds { get; set; }
 
+        public List<UserModel> Users { get; set; }
+
         /// <summary>Name of the project.</summary>
         public string ProjectName { get; set; }
 
@@ -42,6 +44,7 @@ namespace Dragonfly.Models.Projects
         public ProjectModel()
         {
             UserIds = new List<decimal>();
+            Users = new List<UserModel>();
         }
 
         public ProjectModel(IDataBaseProvider dbProvider):

@@ -105,6 +105,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Data-styles.css" />
     <Content Include="Content\MainLayoutStyles.css" />
+    <Content Include="Content\ProjectsPageStyle.css" />
     <Content Include="Content\ValidationFormsStyles.css" />
     <Content Include="Database\MsSQL\DbModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

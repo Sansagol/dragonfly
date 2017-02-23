@@ -39,9 +39,11 @@ namespace Dragonfly.Controllers
             }
 
             ProjectsModel model = new ProjectsModel();
-            _DbProvider.GetProjects(0, 10);
+            var projects = _DbProvider.GetProjects(0, 10);
 
-            return View();
+            model.AvailableProjects = projects;
+
+            return View(model);
         }
     }
 }

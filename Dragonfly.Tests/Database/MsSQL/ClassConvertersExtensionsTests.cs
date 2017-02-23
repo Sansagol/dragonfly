@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Dragonfly.Models.Projects;
 using System.Data.Entity;
 using Dragonfly.Tests;
+using Dragonfly.Models;
 
 namespace Dragonfly.Database.MsSQL.Tests
 {
@@ -24,14 +25,20 @@ namespace Dragonfly.Database.MsSQL.Tests
             ProjectModel model = proj.ToProjectModel(provider);
 
             Assert.AreEqual(proj.ID_Project, model.ProjectId, "Bad project id");
-            Assert.AreEqual(proj.Name, model.ProjectName, "Bad Name ");
+            Assert.AreEqual(proj.Name, model.ProjectName, "Bad name");
             Assert.AreEqual(proj.Date_Create, model.DateCreation, "Bad date of creation");
-            Assert.AreEqual(proj.Description, model.Description, "Bad dexcription");
+            Assert.AreEqual(proj.Description, model.Description, "Bad description");
             CollectionAssert.AreEqual(
                 proj.User_Project.Select(u => u.ID_User).ToList(),
                 model.UserIds,
+                "Users ids are not equal");
+
+            CollectionAssert.AreEqual(
+                proj.User_Project.Select(u => u.User.ID_User).ToList(),
+                model.Users.Select(u => u.Id).ToList(),
                 "Users are not equal");
         }
+
         private static Project InitializeProject()
         {
             Project proj = new Project()
@@ -41,14 +48,28 @@ namespace Dragonfly.Database.MsSQL.Tests
                 ID_Project = 1,
                 Name = "Project name",
             };
+            User usr = InitUser();
             proj.User_Project = new List<User_Project>()
             {
                 new User_Project() {
-                    ID_User = 11,
+                    ID_User = usr.ID_User,
                     ID_Project = 1,
-                    ID_Project_Role =2 }
+                    ID_Project_Role =2,
+                    User = usr
+                }
             };
             return proj;
+        }
+
+        private static User InitUser()
+        {
+            return new User()
+            {
+                ID_User = 11,
+                E_mail = "User@mail.m",
+                Login = "User login",
+                Name = "Sample name"
+            };
         }
 
         [TestMethod()]
@@ -57,6 +78,21 @@ namespace Dragonfly.Database.MsSQL.Tests
         {
             Project proj = InitializeProject();
             ProjectModel model = proj.ToProjectModel(null);
+        }
+
+        [TestMethod()]
+        public void UserToUserModelTest()
+        {
+            MsSqlDataProvider provider = new MsSqlDataProvider();
+
+            User user = InitUser();
+
+            UserModel model = user.ToUserModel(provider);
+
+            Assert.AreEqual(user.ID_User, model.Id, "Bad user id");
+            Assert.AreEqual(user.Name, model.Name, "Bad name");
+            Assert.AreEqual(user.Login, model.Login, "Bad login");
+            Assert.AreEqual(user.E_mail, model.EMail, "Bad e-mail");
         }
     }
 }

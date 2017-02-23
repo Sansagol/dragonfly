@@ -1,4 +1,5 @@
-﻿using Dragonfly.Models.Projects;
+﻿using Dragonfly.Models;
+using Dragonfly.Models.Projects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,8 +28,27 @@ namespace Dragonfly.Database.MsSQL
                 Description = project.Description,
                 DateCreation = project.Date_Create,
             };
-            project.User_Project.ToList().ForEach(u => projMod.UserIds.Add(u.ID_User));
+            foreach (var up in project.User_Project)
+            {
+                projMod.UserIds.Add(up.ID_User);
+                projMod.Users.Add(up.User.ToUserModel(provider));
+            }
+
             return projMod;
+        }
+
+        public static UserModel ToUserModel(this User user, IDataBaseProvider provider)
+        {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            UserModel model = new UserModel()
+            {
+                Id = user.ID_User,
+                EMail = user.E_mail,
+                Login = user.Login,
+                Name = user.Name
+            };
+            return model;
         }
     }
 }

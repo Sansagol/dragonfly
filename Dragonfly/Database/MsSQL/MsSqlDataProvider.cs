@@ -447,7 +447,7 @@ namespace Dragonfly.Database.MsSQL
             if (count < 0) count = 1;
 
             var projects = (from proj in _Context.Project
-                            select proj).Skip(offset).Take(count);
+                            select proj).OrderBy(p => p.ID_Project).Skip(offset).Take(count);
             List<ProjectModel> projectModels = new List<ProjectModel>();
             foreach (var project in projects)
             {
