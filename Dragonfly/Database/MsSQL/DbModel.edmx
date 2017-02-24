@@ -214,6 +214,16 @@
           <Property Name="Date_Creation" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Login" Type="nvarchar" MaxLength="255" Nullable="false" />
         </EntityType>
+        <EntityType Name="User_Access">
+          <Key>
+            <PropertyRef Name="ID_User_Access" />
+          </Key>
+          <Property Name="ID_User_Access" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Access_Token" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Date_Creation" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Expiration_Date" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
         <EntityType Name="User_And_His_Role">
           <Key>
             <PropertyRef Name="ID_User" />
@@ -456,6 +466,20 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_User_Access_User">
+          <End Role="User" Type="Self.User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="User_Access" Type="Self.User_Access" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Access">
+              <PropertyRef Name="ID_User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_User_And_His_Role_Global_User_Role">
           <End Role="Global_User_Role" Type="Self.Global_User_Role" Multiplicity="1" />
           <End Role="User_And_His_Role" Type="Self.User_And_His_Role" Multiplicity="*" />
@@ -583,6 +607,7 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <EntitySet Name="Project_Role_Access_Function" EntityType="Self.Project_Role_Access_Function" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Support_Entitlement" EntityType="Self.Support_Entitlement" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Access" EntityType="Self.User_Access" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_And_His_Role" EntityType="Self.User_And_His_Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Invitation" EntityType="Self.User_Invitation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User_Project" EntityType="Self.User_Project" Schema="dbo" store:Type="Tables" />
@@ -659,6 +684,10 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <AssociationSet Name="FK_Support_Entitlement_Project" Association="Self.FK_Support_Entitlement_Project">
             <End Role="Project" EntitySet="Project" />
             <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Access_User" Association="Self.FK_User_Access_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Access" EntitySet="User_Access" />
           </AssociationSet>
           <AssociationSet Name="FK_User_And_His_Role_Global_User_Role" Association="Self.FK_User_And_His_Role_Global_User_Role">
             <End Role="Global_User_Role" EntitySet="Global_User_Role" />
@@ -795,6 +824,11 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <AssociationSet Name="FK_User_Project_User" Association="DragonflyModel.FK_User_Project_User">
             <End Role="User" EntitySet="User" />
             <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <EntitySet Name="User_Access" EntityType="DragonflyModel.User_Access" />
+          <AssociationSet Name="FK_User_Access_User" Association="DragonflyModel.FK_User_Access_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Access" EntitySet="User_Access" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Access_Function">
@@ -1093,6 +1127,7 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <NavigationProperty Name="User_Invitation" Relationship="DragonflyModel.FK_User_Invitation_User" FromRole="User" ToRole="User_Invitation" />
           <NavigationProperty Name="Global_User_Role" Relationship="DragonflyModel.User_And_His_Role" FromRole="User" ToRole="Global_User_Role" />
           <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User" ToRole="User_Project" />
+          <NavigationProperty Name="User_Access" Relationship="DragonflyModel.FK_User_Access_User" FromRole="User" ToRole="User_Access" />
         </EntityType>
         <Association Name="FK_User_Invitation_User">
           <End Type="DragonflyModel.User" Role="User" Multiplicity="1" />
@@ -1214,6 +1249,31 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <PropertyRef Name="ID_User" />
             </Principal>
             <Dependent Role="User_Project">
+              <PropertyRef Name="ID_User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="User_Access">
+          <Key>
+            <PropertyRef Name="ID_User_Access" />
+          </Key>
+          <Property Name="ID_User_Access" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Access_Token" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Creation" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Expiration_Date" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ID_User" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="User" Relationship="DragonflyModel.FK_User_Access_User" FromRole="User_Access" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_User_Access_User">
+          <End Type="DragonflyModel.User" Role="User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DragonflyModel.User_Access" Role="User_Access" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Access">
               <PropertyRef Name="ID_User" />
             </Dependent>
           </ReferentialConstraint>
@@ -1486,6 +1546,17 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
                 <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
                 <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
                 <ScalarProperty Name="ID_User" ColumnName="ID_User" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User_Access">
+            <EntityTypeMapping TypeName="DragonflyModel.User_Access">
+              <MappingFragment StoreEntitySet="User_Access">
+                <ScalarProperty Name="ID_User" ColumnName="ID_User" />
+                <ScalarProperty Name="Expiration_Date" ColumnName="Expiration_Date" />
+                <ScalarProperty Name="Date_Creation" ColumnName="Date_Creation" />
+                <ScalarProperty Name="Access_Token" ColumnName="Access_Token" />
+                <ScalarProperty Name="ID_User_Access" ColumnName="ID_User_Access" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

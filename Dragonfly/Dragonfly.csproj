@@ -233,6 +233,9 @@
     <Compile Include="Database\MsSQL\User.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\MsSQL\User_Access.cs">
+      <DependentUpon>DbModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\MsSQL\User_Invitation.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>

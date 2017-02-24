@@ -47,5 +47,6 @@ namespace Dragonfly.Database.MsSQL
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<User_Project> User_Project { get; set; }
+        public virtual DbSet<User_Access> User_Access { get; set; }
     }
 }

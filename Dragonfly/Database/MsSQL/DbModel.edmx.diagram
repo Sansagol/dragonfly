@@ -46,6 +46,8 @@
         <AssociationConnector Association="DragonflyModel.FK_User_Project_Project" />
         <AssociationConnector Association="DragonflyModel.FK_User_Project_Project_Role" />
         <AssociationConnector Association="DragonflyModel.FK_User_Project_User" />
+        <EntityTypeShape EntityType="DragonflyModel.User_Access" Width="1.5" PointX="9.5" PointY="26.625" />
+        <AssociationConnector Association="DragonflyModel.FK_User_Access_User" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
