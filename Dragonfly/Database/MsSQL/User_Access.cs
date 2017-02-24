@@ -17,7 +17,7 @@ namespace Dragonfly.Database.MsSQL
         public decimal ID_User_Access { get; set; }
         public string Access_Token { get; set; }
         public System.DateTime Date_Creation { get; set; }
-        public System.DateTime Expiration_Date { get; set; }
+        public System.DateTime Date_Expiration { get; set; }
         public decimal ID_User { get; set; }
     
         public virtual User User { get; set; }

@@ -23,7 +23,7 @@ CREATE TABLE [User_Access]
 	[ID_User_Access] numeric(18) NOT NULL IDENTITY (1, 1),
 	[Access_Token] nvarchar(128) NOT NULL,    -- Токен доступа пользователя к порталу
 	[Date_Creation] datetime2(7) NOT NULL,    -- Дата создания токена
-	[Expiration_Date] datetime2(7) NOT NULL,    -- Дата, до которой действует токен.
+	[Date_Expiration] datetime2(7) NOT NULL,    -- Дата, до которой действует токен.
 	[ID_User] numeric(18) NOT NULL    -- Пользователь, для которого сгенерирован токен.
 )
 GO
@@ -67,7 +67,7 @@ GO
 EXEC sp_addextendedproperty 'MS_Description', 'Дата создания токена', 'Schema', [dbo], 'table', [User_Access], 'column', [Date_Creation]
 GO
 
-EXEC sp_addextendedproperty 'MS_Description', 'Дата, до которой действует токен.', 'Schema', [dbo], 'table', [User_Access], 'column', [Expiration_Date]
+EXEC sp_addextendedproperty 'MS_Description', 'Дата, до которой действует токен.', 'Schema', [dbo], 'table', [User_Access], 'column', [Date_Expiration]
 GO
 
 EXEC sp_addextendedproperty 'MS_Description', 'Пользователь, для которого сгенерирован токен.', 'Schema', [dbo], 'table', [User_Access], 'column', [ID_User]

@@ -205,7 +205,7 @@ namespace Dragonfly.Database.MsSQL
         {
             UserModel model = null;
             User usr = null;
-            usr = SelectUser(userId);
+            usr = SelectUserById(userId);
             if (usr != null)
             {
                 model = CreateAUserModel(usr);
@@ -224,7 +224,7 @@ namespace Dragonfly.Database.MsSQL
             };
         }
 
-        private User SelectUser(decimal userId)
+        private User SelectUserById(decimal userId)
         {
             User usr;
             try
@@ -328,7 +328,7 @@ namespace Dragonfly.Database.MsSQL
             List<User> users = new List<User>();
             foreach (var userId in userIds)
             {
-                User usr = SelectUser(userId);
+                User usr = SelectUserById(userId);
                 if (usr != null)
                     users.Add(usr);
             }
@@ -351,12 +351,7 @@ namespace Dragonfly.Database.MsSQL
             catch (DbEntityValidationException ex)
             {
                 _Context.Project.Remove(project);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
-                {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
-                }
+                List<ValidationError> validationErrors = RetrieveValidationsErrors(ex);
                 throw new InsertDbDataException(validationErrors);
             }
             catch (DbUpdateException ex)
@@ -364,6 +359,18 @@ namespace Dragonfly.Database.MsSQL
                 _Context.Project.Remove(project);
                 throw new InvalidOperationException("Unable to save project", ex);
             }
+        }
+
+        private static List<ValidationError> RetrieveValidationsErrors(DbEntityValidationException ex)
+        {
+            List<ValidationError> validationErrors = new List<ValidationError>();
+            foreach (var validResult in ex.EntityValidationErrors)
+            {
+                validationErrors.AddRange(validResult.ValidationErrors.Select(
+                    v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+            }
+
+            return validationErrors;
         }
 
         private void KeepUserProject(decimal projectId, User_Project usProj)
@@ -376,12 +383,7 @@ namespace Dragonfly.Database.MsSQL
             catch (DbEntityValidationException ex)
             {
                 _Context.User_Project.Remove(usProj);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
-                {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
-                }
+                List<ValidationError> validationErrors = RetrieveValidationsErrors(ex);
                 DeleteProject(projectId);
                 throw new InsertDbDataException(validationErrors);
             }
@@ -460,6 +462,94 @@ namespace Dragonfly.Database.MsSQL
                 }
             }
             return projectModels;
+        }
+
+        /// <summary>
+        /// Method check an access token to correct and that is not expired.
+        /// </summary>
+        /// <param name="userId">Current logged user, which token are presented.</param>
+        /// <param name="token">Token to check.</param>
+        /// <returns>True - if token is correct. False - otherwise.</returns>
+        public bool CheckAccessToken(decimal userId, string token)
+        {
+            DateTime now = DateTime.UtcNow.Date;
+            DeleteOldUserAccessTokens(userId, now);
+            var userAccesses = (from userAccess in _Context.User_Access
+                                where userAccess.Date_Expiration.Date >= now &&
+                                      userAccess.Access_Token.Equals(token)
+                                select userAccess).OrderByDescending(u => u.Date_Expiration);
+            //Delete multiple equals access tokens
+            if (userAccesses.Count() > 1)
+            {//TODO: write this to log as error
+                _Context.User_Access.RemoveRange(userAccesses.Skip(1));
+            }
+            return userAccesses.Count() >= 1;
+        }
+
+        private void DeleteOldUserAccessTokens(decimal userId, DateTime now)
+        {
+            var userAccesses = (from userAccess in _Context.User_Access
+                                where userAccess.ID_User == userId &&
+                                    userAccess.Date_Expiration.Date < now.Date
+                                select userAccess);
+            if (userAccesses.Count() > 0)
+                _Context.User_Access.RemoveRange(userAccesses);
+            try
+            {
+                _Context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        /// <summary>Method create an access token for current user.</summary>
+        /// <param name="userId">Id of user to create token.</param>
+        /// <returns>Created access toker, or null if was error.</returns>
+        /// <exception cref="InsertDbDataException"/>
+        /// <exception cref="InvalidOperationException"/>
+        public string CreateAccessToken(decimal userId)
+        {
+            string token = string.Empty;
+            DateTime now = DateTime.UtcNow;
+
+            DeleteOldUserAccessTokens(userId, now);
+            User currentUser = SelectUserById(userId);
+            if (currentUser != null)
+            {
+                token = GenerateAccessToken(now);
+                User_Access access = new User_Access()
+                {
+                    Access_Token = token,
+                    Date_Creation = now,
+                    Date_Expiration = now.AddDays(1),
+                    ID_User = currentUser.ID_User
+                };
+                try
+                {
+                    _Context.User_Access.Add(access);
+                    _Context.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    _Context.User_Access.Remove(access);
+                    List<ValidationError> validationErrors = RetrieveValidationsErrors(ex);
+                    throw new InsertDbDataException(validationErrors);
+                }
+                catch (DbUpdateException ex)
+                {
+                    _Context.User_Access.Remove(access);
+                    throw new InvalidOperationException("Unable to save user-access", ex);
+                }
+            }
+            return token;
+        }
+
+        private string GenerateAccessToken(DateTime now)
+        {
+            byte[] time = BitConverter.GetBytes(now.ToBinary());
+            byte[] key = Guid.NewGuid().ToByteArray();
+            return Convert.ToBase64String(time.Concat(key).ToArray());
         }
     }
 }
