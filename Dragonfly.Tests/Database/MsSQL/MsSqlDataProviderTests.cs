@@ -320,5 +320,26 @@ namespace Dragonfly.Tests.Database.MsSQL
                 DeleteAccessTokenFromDB(context, createdAceessToken);
             }
         }
+
+        [TestMethod]
+        public void CheckAccessTokenTest()
+        {
+            MsSqlDataProvider provider = new MsSqlDataProvider();
+            DbContext context = provider.Initizlize(Common.Connectionconfig);
+            DragonflyEntities ents = context as DragonflyEntities;
+            decimal createdAceessToken = 0;
+
+            try
+            {
+                decimal userId = provider.AddUser(_UserSignUpData);
+                Assert.IsTrue(userId > 0, "Error occured on the user save.");
+                string token = provider.CreateAccessToken(userId);
+                Assert.IsTrue(provider.CheckAccessToken(userId, token));
+            }
+            finally
+            {
+                DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
+            }
+        }
     }
 }

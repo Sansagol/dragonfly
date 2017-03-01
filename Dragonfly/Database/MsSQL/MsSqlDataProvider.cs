@@ -477,7 +477,7 @@ namespace Dragonfly.Database.MsSQL
             DateTime now = DateTime.UtcNow.Date;
             DeleteOldUserAccessTokens(userId, now);
             var userAccesses = (from userAccess in _Context.User_Access
-                                where userAccess.Date_Expiration.Date >= now &&
+                                where DbFunctions.TruncateTime(userAccess.Date_Expiration) >= now &&
                                       userAccess.Access_Token.Equals(token)
                                 select userAccess).OrderByDescending(u => u.Date_Expiration);
             //Delete multiple equals access tokens
@@ -490,7 +490,7 @@ namespace Dragonfly.Database.MsSQL
 
         private void DeleteOldUserAccessTokens(decimal userId, DateTime now)
         {
-            var userAccesses = 
+            var userAccesses =
                 (from userAccess in _Context.User_Access
                  where userAccess.ID_User == userId &&
                        DbFunctions.TruncateTime(userAccess.Date_Expiration) < now.Date
