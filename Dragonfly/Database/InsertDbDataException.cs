@@ -10,6 +10,11 @@ namespace Dragonfly.Database
         IEnumerable<ValidationError> _FieldNames = null;
         public IEnumerable<ValidationError> FieldNames { get { return _FieldNames; } }
 
+        public InsertDbDataException(string message) :
+            this(message, null)
+        {
+        }
+
         public InsertDbDataException(IEnumerable<ValidationError> errorFildNames) :
             this(string.Empty, errorFildNames)
         {

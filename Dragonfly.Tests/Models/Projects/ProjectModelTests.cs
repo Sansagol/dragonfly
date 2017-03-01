@@ -19,7 +19,7 @@ namespace Dragonfly.Models.Projects.Tests
         /// <returns>Stored model of user.</returns>
         private static UserModel SaveANewUser(MsSqlDataProvider provider)
         {
-            LogUpModel userData = new LogUpModel()
+            SignUpModel userData = new SignUpModel()
             {
                 Login = "Test_user",
                 EMail = "test@mail.mail",

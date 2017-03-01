@@ -26,7 +26,7 @@ namespace Dragonfly.Database
 
         bool CheckUserCredentials(string login, string password);
 
-        bool AddUser(LogUpModel userRegisterData);
+        decimal AddUser(SignUpModel userRegisterData);
 
         UserModel GetUserById(int userId);
 

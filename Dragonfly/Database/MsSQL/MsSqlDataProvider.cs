@@ -14,6 +14,7 @@ using Dragonfly.Models;
 using System.Threading;
 using System.Data.Entity.Infrastructure;
 using Dragonfly.Models.Projects;
+using System.Data.Entity.Core.Objects;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -29,12 +30,12 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="password"></param>
         /// <returns></returns>
         /// <exception cref="InsertDbDataException">Error on user adding.</exception> 
-        public bool AddUser(LogUpModel userRegisterData)
+        public decimal AddUser(SignUpModel userRegisterData)
         {
             if (string.IsNullOrWhiteSpace(userRegisterData.Login) ||
                  string.IsNullOrWhiteSpace(userRegisterData.Password) ||
                  string.IsNullOrWhiteSpace(userRegisterData.EMail))
-                return false;
+                return 0;
             CheckExistingUsers(userRegisterData);
 
             string hashedPassword = EncryptAsRfc2898(userRegisterData.Password);
@@ -64,12 +65,13 @@ namespace Dragonfly.Database.MsSQL
             catch (DbUpdateException ex)
             {
                 _Context.User.Remove(usr);
+                throw new InsertDbDataException($"Update entity error: {ex.Message}");
             }
-            return true;
+            return usr.ID_User;
         }
 
         /// <exception cref="InsertDbDataException">User exists.</exception> 
-        private void CheckExistingUsers(LogUpModel userRegisterData)
+        private void CheckExistingUsers(SignUpModel userRegisterData)
         {
             List<ValidationError> validationErrors = new List<ValidationError>();
             int existsUsersCount = (from u in _Context.User
@@ -488,10 +490,11 @@ namespace Dragonfly.Database.MsSQL
 
         private void DeleteOldUserAccessTokens(decimal userId, DateTime now)
         {
-            var userAccesses = (from userAccess in _Context.User_Access
-                                where userAccess.ID_User == userId &&
-                                    userAccess.Date_Expiration.Date < now.Date
-                                select userAccess);
+            var userAccesses = 
+                (from userAccess in _Context.User_Access
+                 where userAccess.ID_User == userId &&
+                       DbFunctions.TruncateTime(userAccess.Date_Expiration) < now.Date
+                 select userAccess);
             if (userAccesses.Count() > 0)
                 _Context.User_Access.RemoveRange(userAccesses);
             try

@@ -7,7 +7,7 @@ using System.Web;
 namespace Dragonfly.Models
 {
     /// <summary>Class represent a model for user registration.</summary>
-    public class LogUpModel
+    public class SignUpModel
     {
         [Required(ErrorMessage = "Please enter login")]
         public string Login { get; set; }
