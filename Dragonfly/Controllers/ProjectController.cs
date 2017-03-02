@@ -11,20 +11,9 @@ namespace Dragonfly.Controllers
 {
     public class ProjectController : Controller
     {
-        private IDataBaseProvider _DbProvider = null;
         private string _InitializationError = null;
 
-        public ProjectController()
-        {
-            try
-            {
-                _DbProvider = BaseBindings.GetNewDbProvider();
-            }
-            catch (Exception ex)
-            {
-                _InitializationError = ex.ToString();
-            }
-        }
+        public ProjectController() { }
 
         /// <summary>Method run generatig page for add a new project.</summary>
         /// <returns></returns>
@@ -59,11 +48,14 @@ namespace Dragonfly.Controllers
         {
             if (Session["UserId"] != null)
             {
-                project.DbProvider = _DbProvider;
-                decimal userId = Convert.ToDecimal(Session["UserId"].ToString());
-                project.UserIds = new List<decimal>() { userId };
-                if (project.SaveProject())
-                    return RedirectToAction("Index", "Projects");
+                using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+                {
+                    project.DbProvider = provider;
+                    decimal userId = Convert.ToDecimal(Session["UserId"].ToString());
+                    project.UserIds = new List<decimal>() { userId };
+                    if (project.SaveProject())
+                        return RedirectToAction("Index", "Projects");
+                }
             }
             return View("CreateProject");
         }

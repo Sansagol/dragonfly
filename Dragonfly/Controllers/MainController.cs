@@ -1,4 +1,5 @@
 ﻿using Dragonfly.Core;
+using Dragonfly.Database;
 using Dragonfly.Models;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,14 @@ namespace Dragonfly.Controllers
                 int userId = -1;
                 if (int.TryParse(Session["UserId"].ToString(), out userId))
                 {
-                    UserModel user = BaseBindings.GetNewDbProvider().GetUserById(userId);
-                    if (user != null)
+                    using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
                     {
-                        ViewBag.Logged = true;
-                        ViewBag.UserName = user.Login;
+                        UserModel user = provider.GetUserById(userId);
+                        if (user != null)
+                        {
+                            ViewBag.Logged = true;
+                            ViewBag.UserName = user.Login;
+                        }
                     }
                 }
             }
@@ -53,13 +57,15 @@ namespace Dragonfly.Controllers
                 bool isTrueUser = authParameters.CheckUser();
                 if (isTrueUser)
                 {
-                    UserModel user =
-                        BaseBindings.GetNewDbProvider().GetUserByLoginMail(authParameters.Login);
-                    if (user != null)
+                    using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
                     {
-                        Session["UserName"] = user.Login;
-                        Session["UserId"] = user.Id;
-                        return RedirectToAction("Index");
+                        UserModel user = provider.GetUserByLoginMail(authParameters.Login);
+                        if (user != null)
+                        {
+                            Session["UserName"] = user.Login;
+                            Session["UserId"] = user.Id;
+                            return RedirectToAction("Index");
+                        }
                     }
                 }
                 else

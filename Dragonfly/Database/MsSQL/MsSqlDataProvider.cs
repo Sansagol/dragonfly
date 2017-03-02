@@ -14,7 +14,7 @@ using Dragonfly.Models;
 using System.Threading;
 using System.Data.Entity.Infrastructure;
 using Dragonfly.Models.Projects;
-using System.Data.Entity.Core.Objects;
+using Dragonfly.Database.MsSQL.LowLevel;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -22,6 +22,40 @@ namespace Dragonfly.Database.MsSQL
     {
         DragonflyEntities _Context = null;
         public DbContext Context { get { return _Context; } }
+
+        #region Low level interfaces
+        IDBContextGenerator _ContextGenerator = null;
+
+        IUserDBDataManager _UserManager = null;
+        #endregion
+
+        public MsSqlDataProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator)
+        {
+            if (userDbDataManage == null)
+                throw new ArgumentNullException(nameof(userDbDataManage));
+            if (contextgenerator == null)
+                throw new ArgumentNullException(nameof(contextgenerator));
+
+            _UserManager = userDbDataManage;
+            _ContextGenerator = contextgenerator;
+        }
+
+        /// <summary>Method create and open context for database.</summary>
+        /// <param name="accessConfigurations">Parameters to database connect.</param>
+        /// <returns>Created context. null if fail.</returns>
+        /// <exception cref="DbInitializationException">Error on database initialization.</exception>
+        public DbContext Initizlize(DatabaseAccessConfiguration accessConfigurations)
+        {
+            _Context = _ContextGenerator.GenerateContext(accessConfigurations);
+            _UserManager.Initialize(_Context);
+            return _Context;
+        }
+
+        public void Dispose()
+        {
+            _Context?.Dispose();
+            _Context = null;
+        }
 
         /// <summary>
         /// 
@@ -160,54 +194,11 @@ namespace Dragonfly.Database.MsSQL
             return false;
         }
 
-        /// <summary>Method create and open context for database.</summary>
-        /// <param name="accessConfigurations">Parameters to database connect.</param>
-        /// <returns>Created context. null if fail.</returns>
-        /// <exception cref="DbInitializationException">Error on database initialization.</exception>
-        public DbContext Initizlize(DatabaseAccessConfiguration accessConfigurations)
-        {
-            EntityConnectionStringBuilder connection = UpdateConnectionParameters(accessConfigurations);
-
-            try
-            {
-                _Context = new DragonflyEntities(connection.ToString());
-                _Context.Database.Connection.Open();
-            }
-            catch (Exception ex)
-            {
-                if (_Context != null)
-                    _Context.Dispose();
-                throw new DbInitializationException(ex.Message);
-            }
-            return _Context;
-        }
-
-        private EntityConnectionStringBuilder UpdateConnectionParameters(
-            DatabaseAccessConfiguration accessConfigurations)
-        {
-            var connection = new EntityConnectionStringBuilder(
-                ConfigurationManager.ConnectionStrings[nameof(DragonflyEntities)].ConnectionString);
-            var builder = new SqlConnectionStringBuilder(connection.ProviderConnectionString);
-
-            builder.ApplicationName = "Dragonfly server";
-            if (!string.IsNullOrWhiteSpace(accessConfigurations.ServerName))
-                builder.DataSource = accessConfigurations.ServerName;
-            if (!string.IsNullOrWhiteSpace(accessConfigurations.DbName))
-                builder.InitialCatalog = accessConfigurations.DbName;
-            if (!string.IsNullOrWhiteSpace(accessConfigurations.UserName))
-                builder.UserID = accessConfigurations.UserName;
-            if (!string.IsNullOrWhiteSpace(accessConfigurations.Password))
-                builder.Password = accessConfigurations.Password;
-
-            connection.ProviderConnectionString = builder.ToString();
-            return connection;
-        }
-
         public UserModel GetUserById(int userId)
         {
             UserModel model = null;
             User usr = null;
-            usr = SelectUserById(userId);
+            usr = _UserManager.GetUserById(userId);
             if (usr != null)
             {
                 model = CreateAUserModel(usr);
@@ -224,23 +215,6 @@ namespace Dragonfly.Database.MsSQL
                 Name = usr.Name,
                 EMail = usr.E_mail
             };
-        }
-
-        private User SelectUserById(decimal userId)
-        {
-            User usr;
-            try
-            {
-                usr = (from user in _Context.User
-                       where user.ID_User == userId
-                       select user).FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Database is down.", ex);
-            }
-
-            return usr;
         }
 
         public UserModel GetUserByLoginMail(string userLogin)
@@ -330,7 +304,7 @@ namespace Dragonfly.Database.MsSQL
             List<User> users = new List<User>();
             foreach (var userId in userIds)
             {
-                User usr = SelectUserById(userId);
+                User usr = _UserManager.GetUserById(userId);
                 if (usr != null)
                     users.Add(usr);
             }
@@ -353,7 +327,7 @@ namespace Dragonfly.Database.MsSQL
             catch (DbEntityValidationException ex)
             {
                 _Context.Project.Remove(project);
-                List<ValidationError> validationErrors = RetrieveValidationsErrors(ex);
+                List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
                 throw new InsertDbDataException(validationErrors);
             }
             catch (DbUpdateException ex)
@@ -361,18 +335,6 @@ namespace Dragonfly.Database.MsSQL
                 _Context.Project.Remove(project);
                 throw new InvalidOperationException("Unable to save project", ex);
             }
-        }
-
-        private static List<ValidationError> RetrieveValidationsErrors(DbEntityValidationException ex)
-        {
-            List<ValidationError> validationErrors = new List<ValidationError>();
-            foreach (var validResult in ex.EntityValidationErrors)
-            {
-                validationErrors.AddRange(validResult.ValidationErrors.Select(
-                    v => new ValidationError(v.PropertyName, v.ErrorMessage)));
-            }
-
-            return validationErrors;
         }
 
         private void KeepUserProject(decimal projectId, User_Project usProj)
@@ -385,7 +347,7 @@ namespace Dragonfly.Database.MsSQL
             catch (DbEntityValidationException ex)
             {
                 _Context.User_Project.Remove(usProj);
-                List<ValidationError> validationErrors = RetrieveValidationsErrors(ex);
+                List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
                 DeleteProject(projectId);
                 throw new InsertDbDataException(validationErrors);
             }
@@ -466,93 +428,6 @@ namespace Dragonfly.Database.MsSQL
             return projectModels;
         }
 
-        /// <summary>
-        /// Method check an access token to correct and that is not expired.
-        /// </summary>
-        /// <param name="userId">Current logged user, which token are presented.</param>
-        /// <param name="token">Token to check.</param>
-        /// <returns>True - if token is correct. False - otherwise.</returns>
-        public bool CheckAccessToken(decimal userId, string token)
-        {
-            DateTime now = DateTime.UtcNow.Date;
-            DeleteOldUserAccessTokens(userId, now);
-            var userAccesses = (from userAccess in _Context.User_Access
-                                where DbFunctions.TruncateTime(userAccess.Date_Expiration) >= now &&
-                                      userAccess.Access_Token.Equals(token)
-                                select userAccess).OrderByDescending(u => u.Date_Expiration);
-            //Delete multiple equals access tokens
-            if (userAccesses.Count() > 1)
-            {//TODO: write this to log as error
-                _Context.User_Access.RemoveRange(userAccesses.Skip(1));
-            }
-            return userAccesses.Count() >= 1;
-        }
 
-        private void DeleteOldUserAccessTokens(decimal userId, DateTime now)
-        {
-            var userAccesses =
-                (from userAccess in _Context.User_Access
-                 where userAccess.ID_User == userId &&
-                       DbFunctions.TruncateTime(userAccess.Date_Expiration) < now.Date
-                 select userAccess);
-            if (userAccesses.Count() > 0)
-                _Context.User_Access.RemoveRange(userAccesses);
-            try
-            {
-                _Context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        /// <summary>Method create an access token for current user.</summary>
-        /// <param name="userId">Id of user to create token.</param>
-        /// <returns>Created access toker, or null if was error.</returns>
-        /// <exception cref="InsertDbDataException"/>
-        /// <exception cref="InvalidOperationException"/>
-        public string CreateAccessToken(decimal userId)
-        {
-            string token = string.Empty;
-            DateTime now = DateTime.UtcNow;
-
-            DeleteOldUserAccessTokens(userId, now);
-            User currentUser = SelectUserById(userId);
-            if (currentUser != null)
-            {
-                token = GenerateAccessToken(now);
-                User_Access access = new User_Access()
-                {
-                    Access_Token = token,
-                    Date_Creation = now,
-                    Date_Expiration = now.AddDays(1),
-                    ID_User = currentUser.ID_User
-                };
-                try
-                {
-                    _Context.User_Access.Add(access);
-                    _Context.SaveChanges();
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    _Context.User_Access.Remove(access);
-                    List<ValidationError> validationErrors = RetrieveValidationsErrors(ex);
-                    throw new InsertDbDataException(validationErrors);
-                }
-                catch (DbUpdateException ex)
-                {
-                    _Context.User_Access.Remove(access);
-                    throw new InvalidOperationException("Unable to save user-access", ex);
-                }
-            }
-            return token;
-        }
-
-        private string GenerateAccessToken(DateTime now)
-        {
-            byte[] time = BitConverter.GetBytes(now.ToBinary());
-            byte[] key = Guid.NewGuid().ToByteArray();
-            return Convert.ToBase64String(time.Concat(key).ToArray());
-        }
     }
 }

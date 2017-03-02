@@ -1,6 +1,7 @@
 ﻿using Dragonfly.Core.Settings;
 using Dragonfly.Database;
 using Dragonfly.Database.MsSQL;
+using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,15 @@ namespace Dragonfly.Core
     /// <summary>Class represent a simple IoC.</summary>
     internal class BaseBindings
     {
+        static IDBFactory _DbFactory = null;
+
+
         public static ISettingsReader SettingsReader { get; }
 
         static BaseBindings()
         {
             SettingsReader = new SettingsLibReader();
+            _DbFactory = new MsSqlFactory();
         }
 
         /// <summary>Method create and return a database provider.</summary>
@@ -23,13 +28,13 @@ namespace Dragonfly.Core
         /// <exception cref="InvalidOperationException">
         /// Some error on creation provider.
         /// </exception>
-        public static IDataBaseProvider GetNewDbProvider()
+        public static IDataBaseProvider GetNewBaseDbProvider()
         {
-            IDataBaseProvider provider = null;
+            IDataBaseProvider baseProvider = null;
             try
             {
-                provider = new MsSqlDataProvider();
-                provider.Initizlize(SettingsReader.GetDbAccessSettings());
+                baseProvider = _DbFactory.CreateDBProvider();
+                baseProvider.Initizlize(SettingsReader.GetDbAccessSettings());
             }
             catch (InvalidOperationException ex)
             {
@@ -41,7 +46,7 @@ namespace Dragonfly.Core
                     "Error on creation db provider.",
                     ex);
             }
-            return provider;
+            return baseProvider;
         }
     }
 }

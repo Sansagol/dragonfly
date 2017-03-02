@@ -15,20 +15,9 @@ namespace Dragonfly.Controllers
     /// </summary>
     public class ProjectsController : Controller
     {
-        private IDataBaseProvider _DbProvider = null;
         private string _InitializationError = null;
 
-        public ProjectsController()
-        {
-            try
-            {
-                _DbProvider = BaseBindings.GetNewDbProvider();
-            }
-            catch (Exception ex)
-            {
-                _InitializationError = ex.ToString();
-            }
-        }
+        public ProjectsController() { }
 
         // GET: Projects
         public ActionResult Index()
@@ -39,10 +28,12 @@ namespace Dragonfly.Controllers
             }
 
             ProjectsModel model = new ProjectsModel();
-            var projects = _DbProvider.GetProjects(0, 10);
 
-            model.AvailableProjects = projects;
-
+            using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+            {
+                var projects = provider.GetProjects(0, 10);
+                model.AvailableProjects = projects;
+            }
             return View(model);
         }
     }

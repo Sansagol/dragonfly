@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Dragonfly.Database.MsSQL
 {
-    internal static class ClassConvertersExtensions
+    internal static class EntityModelConvertersExtensions
     {
         /// <summary>
         /// Convert a project from DB oject into model project.
