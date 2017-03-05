@@ -44,7 +44,7 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="accessConfigurations">Parameters to database connect.</param>
         /// <returns>Created context. null if fail.</returns>
         /// <exception cref="DbInitializationException">Error on database initialization.</exception>
-        public DbContext Initizlize(DatabaseAccessConfiguration accessConfigurations)
+        public DbContext Initialize(DatabaseAccessConfiguration accessConfigurations)
         {
             _Context = _ContextGenerator.GenerateContext(accessConfigurations);
             _UserManager.Initialize(_Context);

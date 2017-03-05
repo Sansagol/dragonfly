@@ -32,7 +32,8 @@ namespace Dragonfly.Database.MsSQL
 
         public IUserAccessProvider CreateUserAccessProvider()
         {
-            throw new NotImplementedException();
+            IUserAccessProvider provider = new UserAccessProvider(_UserDBDataManager, _ContextGenerator);
+            return provider;
         }
     }
 }

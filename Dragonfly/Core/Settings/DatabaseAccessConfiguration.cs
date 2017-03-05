@@ -6,6 +6,7 @@ using System.Web;
 namespace Dragonfly.Core.Settings
 {
     /// <summary>Class represent the parameters fo DB access.</summary>
+    [Serializable]
     public class DatabaseAccessConfiguration
     {
         /// <summary>Sever name, IP.</summary>

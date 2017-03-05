@@ -34,7 +34,7 @@ namespace Dragonfly.Core
             try
             {
                 baseProvider = _DbFactory.CreateDBProvider();
-                baseProvider.Initizlize(SettingsReader.GetDbAccessSettings());
+                baseProvider.Initialize(SettingsReader.GetDbAccessSettings());
             }
             catch (InvalidOperationException ex)
             {

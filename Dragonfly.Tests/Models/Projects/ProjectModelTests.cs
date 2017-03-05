@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Dragonfly.Database.MsSQL;
 using System.Data.Entity;
 using Dragonfly.Tests;
+using Dragonfly.Database;
 
 namespace Dragonfly.Models.Projects.Tests
 {
@@ -17,7 +18,7 @@ namespace Dragonfly.Models.Projects.Tests
         /// <summary>Common method to save a user.</summary>
         /// <param name="provider">DB provider.</param>
         /// <returns>Stored model of user.</returns>
-        private static UserModel SaveANewUser(MsSqlDataProvider provider)
+        private static UserModel SaveANewUser(IDataBaseProvider provider)
         {
             SignUpModel userData = new SignUpModel()
             {
@@ -34,8 +35,9 @@ namespace Dragonfly.Models.Projects.Tests
         [TestMethod()]
         public void SuccessSaveProjectTest()
         {
-            MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(Common.Connectionconfig);
+            MsSqlFactory factory = new MsSqlFactory();
+            IDataBaseProvider provider = factory.CreateDBProvider();
+            DbContext context = provider.Initialize(Common.Connectionconfig);
             UserModel userModel = null;
             ProjectModel projectModel = null;
             try
@@ -65,8 +67,9 @@ namespace Dragonfly.Models.Projects.Tests
         [TestMethod()]
         public void NoSaveProjectWithoutUsersTest()
         {
-            MsSqlDataProvider provider = new MsSqlDataProvider();
-            DbContext context = provider.Initizlize(Common.Connectionconfig);
+            MsSqlFactory factory = new MsSqlFactory();
+            IDataBaseProvider provider = factory.CreateDBProvider();
+            DbContext context = provider.Initialize(Common.Connectionconfig);
             ProjectModel projectModel = null;
             try
             {

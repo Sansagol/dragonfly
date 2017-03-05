@@ -22,7 +22,7 @@ namespace Dragonfly.Database
         /// <summary>The method initialize connection with database.</summary>
         ///<param name="accessConfigurations">Parameters to DB access.</param>
         /// <returns>Created context. null if fail.</returns>
-        DbContext Initizlize(DatabaseAccessConfiguration accessConfigurations);
+        DbContext Initialize(DatabaseAccessConfiguration accessConfigurations);
 
         bool CheckUserCredentials(string login, string password);
 
@@ -33,6 +33,8 @@ namespace Dragonfly.Database
         UserModel GetUserByLoginMail(string userLogin);
 
         void CreateProject(ProjectModel newProject);
+
+        void DeleteProject(decimal projectId);
 
         /// <summary>
         /// Method retrieves projects from database and returns it.
