@@ -11,12 +11,11 @@ namespace Dragonfly.Controllers
 {
     public class MainController : Controller
     {
-
         // GET: Main
         [HttpGet]
         public ActionResult Index()
         {
-            if (Session["UserId"] == null)
+            if (!CheckUserAccess())
             {
                 ViewBag.Logged = false;
                 //return RedirectToAction(nameof(Authorization), new AuthenticateModel());
@@ -24,7 +23,7 @@ namespace Dragonfly.Controllers
             else
             {
                 int userId = -1;
-                if (int.TryParse(Session["UserId"].ToString(), out userId))
+                if (int.TryParse(BaseBindings.CookiesManager.GetCookie(Request, CookieType.UserId), out userId))
                 {
                     using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
                     {
@@ -36,8 +35,32 @@ namespace Dragonfly.Controllers
                         }
                     }
                 }
+                else
+                {
+                    Logout();
+                    ViewBag.Logged = false;
+                }
             }
             return View();
+        }
+
+        /// <summary>
+        /// Method check is user can access to the portal.
+        /// </summary>
+        /// <returns>True - user have an access. False - otherwise.</returns>
+        private bool CheckUserAccess()
+        {
+            string accessToken =
+                BaseBindings.CookiesManager.GetCookie(Request, CookieType.UserAccessToken);
+
+            bool isCorrectAccess = false;
+            if (!string.IsNullOrWhiteSpace(accessToken))
+                using (var accessProvider = BaseBindings.GetNewUserAccessProvider())
+                {
+                    isCorrectAccess = accessProvider.CheckAccessToken(accessToken);
+                }
+
+            return isCorrectAccess;
         }
 
         [HttpGet]
@@ -52,6 +75,7 @@ namespace Dragonfly.Controllers
         [HttpPost]
         public ActionResult Authorization(AuthenticateModel authParameters)
         {
+            var cookMan = BaseBindings.CookiesManager;
             if (ModelState.IsValid)
             {
                 bool isTrueUser = authParameters.CheckUser();
@@ -62,9 +86,14 @@ namespace Dragonfly.Controllers
                         UserModel user = provider.GetUserByLoginMail(authParameters.Login);
                         if (user != null)
                         {
+                            using (var userAccessProvider = BaseBindings.GetNewUserAccessProvider())
+                            {
+                                string accToken = userAccessProvider.CreateAccessToken(user.Id);
+                                cookMan.SetToCookie(Response, CookieType.UserAccessToken, accToken);
+                                cookMan.SetToCookie(Response, CookieType.UserId, user.Id.ToString());
+                            }
                             Session["UserName"] = user.Login;
-                            Session["UserId"] = user.Id;
-                            return RedirectToAction("Index");
+                            return RedirectToAction(nameof(Index));
                         }
                     }
                 }
@@ -75,17 +104,29 @@ namespace Dragonfly.Controllers
                 }
             }
             else
-                Session["UserId"] = null;
+            {
+                cookMan.DeleteCookie(Response, CookieType.UserId);
+            }
             return View(authParameters);
         }
+
 
         /// <summary>Method log out current user.</summary>
         /// <returns></returns>
         [HttpGet]
         public ActionResult Logout()
         {
-            Session["UserId"] = null;
-            return RedirectToAction("Index");
+            var cookMan = BaseBindings.CookiesManager;
+            string token = cookMan.GetCookie(Request, CookieType.UserAccessToken);
+            using (var ap = BaseBindings.GetNewUserAccessProvider())
+            {
+                ap.DeleteAccessToken(token);
+            }
+
+            cookMan.DeleteCookie(Response, CookieType.UserAccessToken);
+            cookMan.DeleteCookie(Response, CookieType.UserId);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -147,6 +147,9 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Core\BaseBindings.cs" />
+    <Compile Include="Core\CookieMananger.cs" />
+    <Compile Include="Core\CookieType.cs" />
+    <Compile Include="Core\ICookiesManager.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />

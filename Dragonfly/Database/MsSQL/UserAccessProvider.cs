@@ -53,10 +53,10 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="userId">Current logged user, which token are presented.</param>
         /// <param name="token">Token to check.</param>
         /// <returns>True - if token is correct. False - otherwise.</returns>
-        public bool CheckAccessToken(decimal userId, string token)
+        public bool CheckAccessToken(string token)
         {
             DateTime now = DateTime.UtcNow.Date;
-            DeleteOldUserAccessTokens(userId, now);
+            //DeleteOldUserAccessTokens(userId, now);
             var userAccesses = (from userAccess in _Context.User_Access
                                 where DbFunctions.TruncateTime(userAccess.Date_Expiration) >= now &&
                                       userAccess.Access_Token.Equals(token)
@@ -76,6 +76,11 @@ namespace Dragonfly.Database.MsSQL
                  where userAccess.ID_User == userId &&
                        DbFunctions.TruncateTime(userAccess.Date_Expiration) < now.Date
                  select userAccess);
+            DeleteAccessTokens(userAccesses);
+        }
+
+        private void DeleteAccessTokens(IQueryable<User_Access> userAccesses)
+        {
             if (userAccesses.Count() > 0)
                 _Context.User_Access.RemoveRange(userAccesses);
             try
@@ -85,6 +90,14 @@ namespace Dragonfly.Database.MsSQL
             catch (Exception ex)
             {
             }
+        }
+
+        public void DeleteAccessToken(string token)
+        {
+            var accessTokens = (from ua in _Context.User_Access
+                                where ua.Access_Token.Equals(token)
+                                select ua);
+            DeleteAccessTokens(accessTokens);
         }
 
         /// <summary>Method create an access token for current user.</summary>

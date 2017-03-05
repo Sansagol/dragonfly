@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Dragonfly.Database.Providers
 {
-    public interface IUserAccessProvider: IDisposable
+    public interface IUserAccessProvider : IDisposable
     {
         void Initialize(DatabaseAccessConfiguration accessConfigurations);
 
@@ -17,7 +17,7 @@ namespace Dragonfly.Database.Providers
         /// <param name="userId">Current logged user, which token are presented.</param>
         /// <param name="token">Token to check.</param>
         /// <returns>True - if token is correct. False - otherwise.</returns>
-        bool CheckAccessToken(decimal userId, string token);
+        bool CheckAccessToken(string token);
 
         /// <summary>Method create an access token for current user.</summary>
         /// <param name="userId">Id of user to create token.</param>
@@ -25,5 +25,11 @@ namespace Dragonfly.Database.Providers
         /// <exception cref="InsertDbDataException"/>
         /// <exception cref="InvalidOperationException"/>
         string CreateAccessToken(decimal userId);
+
+        /// <summary>
+        /// Method delete a user access token from database.
+        /// </summary>
+        /// <param name="token">Token which need to delete from db.</param>
+        void DeleteAccessToken(string token);
     }
 }

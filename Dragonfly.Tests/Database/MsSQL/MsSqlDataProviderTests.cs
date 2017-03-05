@@ -356,7 +356,7 @@ namespace Dragonfly.Tests.Database.MsSQL
                 decimal userId = provider.AddUser(_UserSignUpData);
                 Assert.IsTrue(userId > 0, "Error occured on the user save.");
                 string token = accessProvider.CreateAccessToken(userId);
-                Assert.IsTrue(accessProvider.CheckAccessToken(userId, token));
+                Assert.IsTrue(accessProvider.CheckAccessToken(token));
             }
             finally
             {
