@@ -150,6 +150,7 @@
     <Compile Include="Core\CookieMananger.cs" />
     <Compile Include="Core\CookieType.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
+    <Compile Include="Core\IUserStateManager.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />

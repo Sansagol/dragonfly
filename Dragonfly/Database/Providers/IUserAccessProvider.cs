@@ -17,7 +17,7 @@ namespace Dragonfly.Database.Providers
         /// <param name="userId">Current logged user, which token are presented.</param>
         /// <param name="token">Token to check.</param>
         /// <returns>True - if token is correct. False - otherwise.</returns>
-        bool CheckAccessToken(string token);
+        bool CheckAccessToken(decimal userId, string token);
 
         /// <summary>Method create an access token for current user.</summary>
         /// <param name="userId">Id of user to create token.</param>

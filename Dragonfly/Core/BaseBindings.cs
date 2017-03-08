@@ -19,11 +19,15 @@ namespace Dragonfly.Core
 
         public static ICookiesManager CookiesManager { get { return _CooksManager; } }
 
+        public static IUserStateManager UsrStateManager { get { return _UsrStateManager; } }
+        private static IUserStateManager _UsrStateManager = null;
+
         static BaseBindings()
         {
             SettingsReader = new SettingsLibReader();
             _DbFactory = new MsSqlFactory();
             _CooksManager = new CookieMananger();
+            _UsrStateManager = new UserStateManager(_DbFactory, _CooksManager);
         }
 
         /// <summary>Method create and return a database provider.</summary>

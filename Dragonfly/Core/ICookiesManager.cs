@@ -17,7 +17,7 @@ namespace Dragonfly.Core
         /// </summary>
         /// <param name="type">Type of the cookie.</param>
         /// <returns>Name of the cookie.</returns>
-        string CookName(CookieType type);
+        string GetCookName(CookieType type);
 
         string GetCookie(HttpRequestBase request, CookieType type);
 

@@ -22,7 +22,7 @@ namespace Dragonfly.Core
         /// </summary>
         /// <param name="type">Type of the cookie.</param>
         /// <returns>Name of the cookie.</returns>
-        public string CookName(CookieType type)
+        public string GetCookName(CookieType type)
         {
             string name = _CookiesNames[type];
             return !string.IsNullOrWhiteSpace(name) ? name : string.Empty;
@@ -31,15 +31,15 @@ namespace Dragonfly.Core
         public string GetCookie(HttpRequestBase request, CookieType type)
         {
             string value = string.Empty;
-            if (request.Cookies[CookName(type)] != null)
-                value = request.Cookies.Get(CookName(type)).Value;
+            if (request.Cookies[GetCookName(type)] != null)
+                value = request.Cookies.Get(GetCookName(type)).Value;
             return value;
         }
 
         public void SetToCookie(HttpResponseBase resp, CookieType type, string value)
         {
-            HttpCookie cookie = new HttpCookie(CookName(type), value);
-            resp.Cookies.Remove(CookName(type));
+            HttpCookie cookie = new HttpCookie(GetCookName(type), value);
+            resp.Cookies.Remove(GetCookName(type));
             resp.SetCookie(cookie);
         }
 
@@ -48,14 +48,12 @@ namespace Dragonfly.Core
         /// <param name="type">Type of a cookie to delete.</param>
         public void DeleteCookie(HttpResponseBase resp, CookieType type)
         {
-            if (resp.Cookies[CookName(type)] != null)
+            if (resp.Cookies[GetCookName(type)] != null)
             {
-                var cook = resp.Cookies.Get(CookName(type));
+                var cook = resp.Cookies.Get(GetCookName(type));
                 cook.Expires = DateTime.Now.AddDays(-1);
                 resp.Cookies.Add(cook);
             }
-
-            //resp.Cookies.Remove(CookName(type));
         }
     }
 }
