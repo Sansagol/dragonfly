@@ -8,6 +8,9 @@ using System.Data.Entity.Validation;
 using System.Data.Entity.Infrastructure;
 using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Core.Settings;
+using System.Security.Claims;
+using Microsoft.Owin.Security.OAuth;
+using Microsoft.Owin.Security;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -144,10 +147,30 @@ namespace Dragonfly.Database.MsSQL
         }
 
         private string GenerateAccessToken(DateTime now)
-        {
+        {//TODO Change this to something good
             byte[] time = BitConverter.GetBytes(now.ToBinary());
-            byte[] key = Guid.NewGuid().ToByteArray();
-            return Convert.ToBase64String(time.Concat(key).ToArray());
+            string key = Guid.NewGuid().ToString("N");
+            string encodedTime = System.Web.HttpServerUtility.UrlTokenEncode(time);
+            return string.Concat(key, encodedTime).ToLower();
+        }
+
+        private string GenerateAccessToken(DateTime now, string userName)
+        {
+            var tokenExpiration = TimeSpan.FromDays(1);
+            ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
+
+            identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+
+            var props = new AuthenticationProperties()
+            {
+                IssuedUtc = DateTime.UtcNow,
+                ExpiresUtc = DateTime.UtcNow.Add(tokenExpiration),
+            };
+
+            var ticket = new AuthenticationTicket(identity, props);
+            OAuthBearerAuthenticationOptions opt = new OAuthBearerAuthenticationOptions();
+            var accessToken = opt.AccessTokenFormat.Protect(ticket);
+            return accessToken;
         }
     }
 }
