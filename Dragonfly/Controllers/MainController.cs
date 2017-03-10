@@ -13,9 +13,21 @@ namespace Dragonfly.Controllers
     {
         private IUserStateManager _UserStateManager = null;
 
+        /// <summary>
+        /// The default constructor for using in the app.
+        /// </summary>
         public MainController()
         {
             _UserStateManager = BaseBindings.UsrStateManager;
+        }
+
+        /// <summary>The constructor for using in tests.</summary>
+        /// <param name="usrStateMngr">Custom user state manager.</param>
+        public MainController(IUserStateManager usrStateMngr)
+        {
+            if (usrStateMngr == null)
+                throw new ArgumentNullException(nameof(usrStateMngr));
+            _UserStateManager = usrStateMngr;
         }
 
         // GET: Main
@@ -31,7 +43,7 @@ namespace Dragonfly.Controllers
             else
             {
                 int userId = -1;
-                if (int.TryParse(BaseBindings.CookiesManager.GetCookie(Request, CookieType.UserId), out userId))
+                if (int.TryParse(BaseBindings.CookiesManager.GetCookieValue(Request, CookieType.UserId), out userId))
                 {
                     using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
                     {
@@ -50,43 +62,7 @@ namespace Dragonfly.Controllers
                 }
             }
             return View();
-        }
-
-        ///// <summary>
-        ///// Method check is user can access to the portal.
-        ///// </summary>
-        ///// <returns>True - user have an access. False - otherwise.</returns>
-        //private bool CheckUserAccess()
-        //{
-        //    string accessToken =
-        //        BaseBindings.CookiesManager.GetCookie(Request, CookieType.UserAccessToken);
-        //    decimal userId = GetUserIdFromCookies();
-
-        //    bool isCorrectAccess = false;
-        //    if (!string.IsNullOrWhiteSpace(accessToken))
-        //        using (var accessProvider = BaseBindings.GetNewUserAccessProvider())
-        //        {
-        //            isCorrectAccess = accessProvider.CheckAccessToken(userId, accessToken);
-        //        }
-
-        //    return isCorrectAccess;
-        //}
-
-        //private decimal GetUserIdFromCookies()
-        //{
-        //    decimal userId = 0;
-        //    string user = BaseBindings.CookiesManager.GetCookie(Request, CookieType.UserId);
-        //    try
-        //    {
-        //        if (!string.IsNullOrWhiteSpace(user))
-        //            int.Parse(user);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //TODO log               
-        //    }
-        //    return userId;
-        //}
+        }  
 
         [HttpGet]
         public ViewResult Authorization()
@@ -142,7 +118,7 @@ namespace Dragonfly.Controllers
         public ActionResult Logout()
         {
             var cookMan = BaseBindings.CookiesManager;
-            string token = cookMan.GetCookie(Request, CookieType.UserAccessToken);
+            string token = cookMan.GetCookieValue(Request, CookieType.UserAccessToken);
             if (!string.IsNullOrWhiteSpace(token))
                 using (var ap = BaseBindings.GetNewUserAccessProvider())
                 {

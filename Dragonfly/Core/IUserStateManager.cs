@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Dragonfly.Core
 {
-    interface IUserStateManager
+    public interface IUserStateManager
     {
         bool CheckUserAccess(HttpRequestBase request);
     }

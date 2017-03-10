@@ -408,7 +408,7 @@ namespace Dragonfly.Database.MsSQL
         }
 
         public IEnumerable<ProjectModel> GetProjects(int offset, int count)
-        {
+        {//TODO get projects for a user
             if (offset < 0) offset = 0;
             if (count < 0) count = 1;
 

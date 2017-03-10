@@ -34,7 +34,7 @@ namespace Dragonfly.Core
         public bool CheckUserAccess(HttpRequestBase request)
         {
             string accessToken =
-                _CookiesManager.GetCookie(request, CookieType.UserAccessToken);
+                _CookiesManager.GetCookieValue(request, CookieType.UserAccessToken);
             decimal userId = GetUserIdFromCookies(request);
 
             bool isCorrectAccess = false;
@@ -50,7 +50,7 @@ namespace Dragonfly.Core
         private decimal GetUserIdFromCookies(HttpRequestBase request)
         {
             decimal userId = 0;
-            string user = _CookiesManager.GetCookie(request, CookieType.UserId);
+            string user = _CookiesManager.GetCookieValue(request, CookieType.UserId);
             try
             {
                 if (!string.IsNullOrWhiteSpace(user))

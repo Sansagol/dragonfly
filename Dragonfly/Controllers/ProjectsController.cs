@@ -17,24 +17,32 @@ namespace Dragonfly.Controllers
     {
         private string _InitializationError = null;
 
-        public ProjectsController() { }
+        private IUserStateManager _UserStateManager = null;
+
+        public ProjectsController()
+        {
+            _UserStateManager = BaseBindings.UsrStateManager;
+        }
 
         // GET: Projects
         public ActionResult Index()
         {
-            ViewBag.Logged = Session["UserId"] != null;
-            if (Session["UserId"] == null)
+            if (_UserStateManager.CheckUserAccess(Request))
             {
+                ViewBag.Logged = true;
+                ProjectsModel model = new ProjectsModel();
+                using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+                {
+                    var projects = provider.GetProjects(0, 10);
+                    model.AvailableProjects = projects;
+                }
+                return View(model);
             }
-
-            ProjectsModel model = new ProjectsModel();
-
-            using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+            else
             {
-                var projects = provider.GetProjects(0, 10);
-                model.AvailableProjects = projects;
+                ViewBag.Logged = false;
             }
-            return View(model);
+            return View();
         }
     }
 }

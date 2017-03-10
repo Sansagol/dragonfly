@@ -13,25 +13,27 @@ namespace Dragonfly.Controllers
     {
         private string _InitializationError = null;
 
-        public ProjectController() { }
+        private IUserStateManager _UserStateManager = null;
+
+        public ProjectController()
+        {
+            _UserStateManager = BaseBindings.UsrStateManager;
+        }
 
         /// <summary>Method run generatig page for add a new project.</summary>
         /// <returns></returns>
         [HttpGet]
         public ActionResult AddProject()
         {
-            ViewBag.Logged = Session["UserId"] != null;
-            if (Session["UserId"] != null)
+            if (_UserStateManager.CheckUserAccess(Request))
             {
-                int userId = -1;
-                if (int.TryParse(Session["UserId"].ToString(), out userId))
+                decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
+                ProjectModel project = new ProjectModel()
                 {
-                    ProjectModel project = new ProjectModel()
-                    {
-                        UserIds = new List<decimal>() { userId }
-                    };
-                    return View("CreateProject", project);
-                }
+                    UserIds = new List<decimal>() { userId }
+                };
+                ViewBag.Logged = true;
+                return View("CreateProject", project);
             }
             else
             {
@@ -46,12 +48,12 @@ namespace Dragonfly.Controllers
         [HttpPost]
         public ActionResult CreateProject(ProjectModel project)
         {
-            if (Session["UserId"] != null)
+            if (_UserStateManager.CheckUserAccess(Request))
             {
+                decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
                 using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
                 {
                     project.DbProvider = provider;
-                    decimal userId = Convert.ToDecimal(Session["UserId"].ToString());
                     project.UserIds = new List<decimal>() { userId };
                     if (project.SaveProject())
                         return RedirectToAction("Index", "Projects");
