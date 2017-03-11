@@ -31,11 +31,9 @@ namespace Dragonfly.Database.MsSQL
 
         }
 
-        public ClientType GetAvailableClientTypes()
+        public IEnumerable<ClientType> GetAvailableClientTypes()
         {
             throw new NotImplementedException();
         }
-
-
     }
 }

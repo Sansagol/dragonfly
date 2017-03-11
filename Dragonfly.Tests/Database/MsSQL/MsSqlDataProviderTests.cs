@@ -33,8 +33,8 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void InitializeConnection()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            var context = provider.Context;
             try
             {
                 Assert.IsNotNull(context, "Context not created.");
@@ -55,18 +55,18 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             Common.Connectionconfig.DbName = "Dragonfly";
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
             DbContext context = null;
             try
             {
-                context = provider.Initialize(Common.Connectionconfig);
+                MsSqlDataProvider provider =
+                    factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+                context = provider.Context;
                 Assert.IsNull(context, "Context created - is wrong.");
             }
             finally
             {
                 Common.Connectionconfig.DbName = "Dragonfly.Test";
-                if (context != null)
-                    context.Dispose();
+                context?.Dispose();
             }
         }
 
@@ -74,8 +74,8 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AddUserTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            DbContext context = provider.Context;
             SignUpModel model = new SignUpModel()
             {
                 Login = "TestDbUser",
@@ -130,8 +130,8 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AdduserWithoutEmailTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            DbContext context = provider.Context;
 
             SignUpModel model = new SignUpModel()
             {
@@ -153,8 +153,8 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AddUserWithDoubleEmailTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            DbContext context = provider.Context;
 
             SignUpModel model = new SignUpModel()
             {
@@ -184,8 +184,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CreateProjectTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
             SignUpModel userData = new SignUpModel()
             {
                 Login = "Test_user",
@@ -218,7 +217,7 @@ namespace Dragonfly.Tests.Database.MsSQL
                 Assert.AreEqual(model.Description, selectedProjectModel.Description);
 
                 //Check users
-                DragonflyEntities ents = context as DragonflyEntities;
+                DragonflyEntities ents = provider.Context as DragonflyEntities;
                 var projectUsers = (from usr in ents.User_Project
                                     where usr.ID_Project == selectedProjectModel.ProjectId
                                     select usr).ToList();
@@ -229,7 +228,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             {
                 if (model != null && model.ProjectId > 0)
                     provider.DeleteProject(model.ProjectId);
-                DeleteUserFromDB(context, userData.Login, userData.EMail);
+                DeleteUserFromDB(provider.Context, userData.Login, userData.EMail);
             }
         }
 
@@ -240,11 +239,9 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CreateAccessTokenTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            IUserAccessProvider accessProvider = factory.CreateUserAccessProvider();
-
-            DbContext context = provider.Initialize(Common.Connectionconfig);
-            accessProvider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            IUserAccessProvider accessProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
+            DbContext context = provider.Context;
 
             DragonflyEntities ents = context as DragonflyEntities;
             decimal createdAceessToken = 0;
@@ -304,11 +301,9 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void AccessTokenCascadeDeletionTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            IUserAccessProvider accessProvider = factory.CreateUserAccessProvider();
-
-            DbContext context = provider.Initialize(Common.Connectionconfig);
-            accessProvider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            IUserAccessProvider accessProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
+            DbContext context = provider.Context;
 
             DragonflyEntities ents = context as DragonflyEntities;
             decimal createdAceessToken = 0;
@@ -342,15 +337,11 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CheckAccessTokenTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
-            IUserAccessProvider accessProvider = factory.CreateUserAccessProvider();
-
-            DbContext context = provider.Initialize(Common.Connectionconfig);
-            accessProvider.Initialize(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            IUserAccessProvider accessProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
+            DbContext context = provider.Context;
 
             DragonflyEntities ents = context as DragonflyEntities;
-            decimal createdAceessToken = 0;
-
             try
             {
                 decimal userId = provider.AddUser(_UserSignUpData);

@@ -36,8 +36,7 @@ namespace Dragonfly.Models.Projects.Tests
         public void SuccessSaveProjectTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            IDataBaseProvider provider = factory.CreateDBProvider();
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
             UserModel userModel = null;
             ProjectModel projectModel = null;
             try
@@ -60,7 +59,7 @@ namespace Dragonfly.Models.Projects.Tests
             {
                 if (projectModel != null && projectModel.ProjectId > 0)
                     provider.DeleteProject(projectModel.ProjectId);
-                DeleteUserFromDB(context, userModel?.Login, userModel?.EMail);
+                DeleteUserFromDB(provider.Context, userModel?.Login, userModel?.EMail);
             }
         }
 
@@ -68,8 +67,8 @@ namespace Dragonfly.Models.Projects.Tests
         public void NoSaveProjectWithoutUsersTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            IDataBaseProvider provider = factory.CreateDBProvider();
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
+            DbContext context = provider.Context;
             ProjectModel projectModel = null;
             try
             {

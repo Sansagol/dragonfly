@@ -19,7 +19,8 @@ namespace Dragonfly.Database.MsSQL.Tests
         public void ToProjectModelTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
+            MsSqlDataProvider provider = factory.CreateDBProvider(
+                new Core.Settings.DatabaseAccessConfiguration()) as MsSqlDataProvider;
 
             Project proj = InitializeProject();
 
@@ -85,7 +86,8 @@ namespace Dragonfly.Database.MsSQL.Tests
         public void UserToUserModelTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
+            MsSqlDataProvider provider = factory.CreateDBProvider(
+                new Core.Settings.DatabaseAccessConfiguration()) as MsSqlDataProvider;
 
             User user = InitUser();
 
