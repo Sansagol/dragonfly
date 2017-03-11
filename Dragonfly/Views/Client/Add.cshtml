@@ -1,0 +1,88 @@
+﻿@model Dragonfly.Models.Clients.CreateClientModel
+
+@{
+    ViewBag.Title = "Add client";
+    PageData["Logged"] = ViewBag.Logged;
+}
+
+<h3>Add client</h3>
+@if (ViewBag.Logged == true && Model != null)
+{
+    using (Html.BeginForm(
+        "Create",
+        "Client",
+        FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <td>
+                    <label class="edit-row-label">Name</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(t => t.Client.Name, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="edit-row-label">Type</label>
+                </td>
+                <td>
+                    @Html.DropDownListFor(model=> model.Client.Type, 
+                        Model.AvailableTypes, 
+                        new { @class = "edit-row-text" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="edit-row-label">Inner name</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(t => t.Client.InnerName, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="edit-row-label">INN</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(t => t.Client.INN, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="edit-row-label">OGRN</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(t => t.Client.OGRN, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="edit-row-label">KPP</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(t => t.Client.KPP, new { @class = "edit-row-text" })
+                </td>
+            </tr>
+        </table>
+        <div class="text-left body-content">
+            <input class="btn btn-success"
+                   type="submit" value="Create" />
+        </div>
+    }
+}
+else
+{
+    if (!string.IsNullOrEmpty(ViewBag.InitError))
+    {
+        <div>
+            @ViewBag.InitError;
+        </div>
+    }
+    else
+    {
+        <div>
+            @ViewBag.Error
+        </div>
+    }
+}

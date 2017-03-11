@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dragonfly.Core.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,12 +15,14 @@ namespace Dragonfly.Database.Providers
         /// Method generate a base DB provider.
         /// </summary>
         /// <returns>A base DB provider.</returns>
-        IDataBaseProvider CreateDBProvider();
+        IDataBaseProvider CreateDBProvider(DatabaseAccessConfiguration dbConfig);
 
         /// <summary>
         /// Method generate a DB provider with the user acees operations.
         /// </summary>
         /// <returns>A user access provider.</returns>
-        IUserAccessProvider CreateUserAccessProvider();
+        IUserAccessProvider CreateUserAccessProvider(DatabaseAccessConfiguration dbConfig);
+
+        IClientsProvider CreateClientsProvider(DatabaseAccessConfiguration dbConfig);
     }
 }

@@ -173,6 +173,7 @@
     <Compile Include="Core\CookieType.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
     <Compile Include="Core\IUserStateManager.cs" />
+    <Compile Include="Database\MsSQL\ClientsProvider.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="Database\MsSQL\LowLevel\UserDBDataManager.cs" />
     <Compile Include="Database\MsSQL\MsSqlFactory.cs" />
     <Compile Include="Database\MsSQL\UserAccessProvider.cs" />
+    <Compile Include="Database\Providers\IClientsProvider.cs" />
     <Compile Include="Database\Providers\IDataBaseProvider.cs" />
     <Compile Include="Database\InsertDbDataException.cs" />
     <Compile Include="Database\MsSQL\Access_Function.cs">
@@ -285,6 +287,7 @@
     <Compile Include="Models\AuthenticateModel.cs" />
     <Compile Include="Models\Clients\ClientModel.cs" />
     <Compile Include="Models\Clients\ClientType.cs" />
+    <Compile Include="Models\Clients\CreateClientModel.cs" />
     <Compile Include="Models\LogUpModel.cs" />
     <Compile Include="Models\Projects\ProjectModel.cs" />
     <Compile Include="Models\Projects\ProjectsModel.cs" />
@@ -303,6 +306,7 @@
     <Content Include="Views\Shared\_SideBar.cshtml" />
     <Content Include="Views\Projects\Index.cshtml" />
     <Content Include="Views\Project\CreateProject.cshtml" />
+    <Content Include="Views\Client\Add.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -312,7 +316,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Client\" />
     <Folder Include="Views\Sidebar\" />
   </ItemGroup>
   <ItemGroup>

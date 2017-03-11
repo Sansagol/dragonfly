@@ -1,4 +1,5 @@
-﻿using Dragonfly.Database.MsSQL.LowLevel;
+﻿using Dragonfly.Core.Settings;
+using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
@@ -24,15 +25,24 @@ namespace Dragonfly.Database.MsSQL
             _UserDBDataManager = new UserDBDataManager();
         }
 
-        public IDataBaseProvider CreateDBProvider()
+        public IDataBaseProvider CreateDBProvider(DatabaseAccessConfiguration dbConfig)
         {
             IDataBaseProvider provider = new MsSqlDataProvider(_UserDBDataManager, _ContextGenerator);
+            provider.Initialize(dbConfig);
             return provider;
         }
 
-        public IUserAccessProvider CreateUserAccessProvider()
+        public IUserAccessProvider CreateUserAccessProvider(DatabaseAccessConfiguration dbConfig)
         {
             IUserAccessProvider provider = new UserAccessProvider(_UserDBDataManager, _ContextGenerator);
+            provider.Initialize(dbConfig);
+            return provider;
+        }
+
+        public IClientsProvider CreateClientsProvider(DatabaseAccessConfiguration dbConfig)
+        {
+            IClientsProvider provider = new ClientsProvider();
+            provider.Initialize(dbConfig);
             return provider;
         }
     }
