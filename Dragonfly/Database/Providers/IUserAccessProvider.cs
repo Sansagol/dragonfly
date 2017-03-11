@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Dragonfly.Database.Providers
 {
-    public interface IUserAccessProvider : IDisposable
+    public interface IUserAccessProvider : IDataProvider, IDisposable
     {
         void Initialize(DatabaseAccessConfiguration accessConfigurations);
 

@@ -14,40 +14,19 @@ using Microsoft.Owin.Security;
 
 namespace Dragonfly.Database.MsSQL
 {
-    class UserAccessProvider : IUserAccessProvider
+    class UserAccessProvider : DataProvider, IUserAccessProvider
     {
-        DragonflyEntities _Context = null;
-
         #region Low level interfaces
-        IDBContextGenerator _ContextGenerator = null;
-
         IUserDBDataManager _UserManager = null;
         #endregion
 
-        public UserAccessProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator)
+        public UserAccessProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator):
+            base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
-            if (contextgenerator == null)
-                throw new ArgumentNullException(nameof(contextgenerator));
 
             _UserManager = userDbDataManage;
-            _ContextGenerator = contextgenerator;
-        }
-
-        /// <summary>Method create and open context for database.</summary>
-        /// <param name="accessConfigurations">Parameters to database connect.</param>
-        /// <returns>Created context. null if fail.</returns>
-        /// <exception cref="DbInitializationException">Error on database initialization.</exception>
-        public void Initialize(DatabaseAccessConfiguration accessConfigurations)
-        {
-            _Context = _ContextGenerator.GenerateContext(accessConfigurations);
-        }
-
-        public void Dispose()
-        {
-            _Context?.Dispose();
-            _Context = null;
         }
 
         /// <summary>

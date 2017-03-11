@@ -11,7 +11,7 @@ namespace Dragonfly.Database.MsSQL
     /// <summary>
     /// Factory which generate providers for access to a MS SQL server DB.
     /// </summary>
-    public class MsSqlFactory : IDBFactory
+    class MsSqlFactory : IDBFactory
     {
         IDBContextGenerator _ContextGenerator = null;
         IUserDBDataManager _UserDBDataManager = null;
@@ -41,7 +41,7 @@ namespace Dragonfly.Database.MsSQL
 
         public IClientsProvider CreateClientsProvider(DatabaseAccessConfiguration dbConfig)
         {
-            IClientsProvider provider = new ClientsProvider();
+            IClientsProvider provider = new ClientsProvider(_ContextGenerator);
             provider.Initialize(dbConfig);
             return provider;
         }

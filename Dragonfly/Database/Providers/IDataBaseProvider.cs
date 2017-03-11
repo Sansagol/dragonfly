@@ -9,20 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dragonfly.Database
+namespace Dragonfly.Database.Providers
 {
     /// <summary>
     /// Interface implements providers, which will be
     /// provide access to databases.
     /// </summary>
-    public interface IDataBaseProvider: IDisposable
+    public interface IDataBaseProvider : IDataProvider, IDisposable
     {
         DbContext Context { get; }
-
-        /// <summary>The method initialize connection with database.</summary>
-        ///<param name="accessConfigurations">Parameters to DB access.</param>
-        /// <returns>Created context. null if fail.</returns>
-        DbContext Initialize(DatabaseAccessConfiguration accessConfigurations);
 
         bool CheckUserCredentials(string login, string password);
 

@@ -5,19 +5,18 @@ using System.Linq;
 using System.Web;
 using Dragonfly.Models.Clients;
 using Dragonfly.Core.Settings;
+using Dragonfly.Database.MsSQL.LowLevel;
 
 namespace Dragonfly.Database.MsSQL
 {
-    public class ClientsProvider : IClientsProvider
+    /// <summary>
+    /// Provider manipulate the data of clients.
+    /// </summary>
+    class ClientsProvider : DataProvider, IClientsProvider
     {
-        public void Initialize(DatabaseAccessConfiguration accessConfigurations)
+        public ClientsProvider(IDBContextGenerator contextgenerator):
+            base(contextgenerator)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
 
         public void CreateClient(ClientModel model)

@@ -8,18 +8,16 @@ using System.Web;
 namespace Dragonfly.Database.Providers
 {
     /// <summary>
-    /// Interface represent methods to manipulate of clients.
+    /// Interface represent methods to manipulate with clients objects.
     /// </summary>
-    public interface IClientsProvider : IDisposable
+    public interface IClientsProvider : IDataProvider, IDisposable
     {
-        void Initialize(DatabaseAccessConfiguration accessConfigurations);
-
         void CreateClient(ClientModel model);
 
         /// <summary>
         /// Method retrieve and return all available types of clients.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>All availave client types.</returns>
         IEnumerable<ClientType> GetAvailableClientTypes();
     }
 }

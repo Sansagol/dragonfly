@@ -1,5 +1,6 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Database;
+using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
