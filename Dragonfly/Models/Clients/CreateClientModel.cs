@@ -16,6 +16,11 @@ namespace Dragonfly.Models.Clients
         /// <summary>
         /// Available types of the clients.
         /// </summary>
-        public SelectListItem[] AvailableTypes { get; set; }
+        public IEnumerable<SelectListItem> AvailableTypes { get; set; }
+
+        public CreateClientModel()
+        {
+            AvailableTypes = new List<SelectListItem>();
+        }
     }
 }

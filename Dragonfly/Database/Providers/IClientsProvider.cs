@@ -20,6 +20,6 @@ namespace Dragonfly.Database.Providers
         /// Method retrieve and return all available types of clients.
         /// </summary>
         /// <returns></returns>
-        ClientType GetAvailableClientTypes();
+        IEnumerable<ClientType> GetAvailableClientTypes();
     }
 }

@@ -27,8 +27,8 @@
                     <label class="edit-row-label">Type</label>
                 </td>
                 <td>
-                    @Html.DropDownListFor(model=> model.Client.Type, 
-                        Model.AvailableTypes, 
+                    @Html.DropDownListFor(model => model.Client.Type,
+                        Model.AvailableTypes,
                         new { @class = "edit-row-text" })
                 </td>
             </tr>
@@ -71,18 +71,12 @@
         </div>
     }
 }
-else
+@if (!string.IsNullOrEmpty(ViewBag.InitError))
 {
-    if (!string.IsNullOrEmpty(ViewBag.InitError))
-    {
-        <div>
-            @ViewBag.InitError;
-        </div>
-    }
-    else
-    {
-        <div>
-            @ViewBag.Error
-        </div>
-    }
+    <div>
+        @ViewBag.InitError;
+    </div>
 }
+<div>
+    @ViewBag.Error
+</div>
