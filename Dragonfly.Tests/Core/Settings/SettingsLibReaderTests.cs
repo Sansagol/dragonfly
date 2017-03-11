@@ -9,14 +9,6 @@ namespace Dragonfly.Tests.Core.Settings
     [TestClass]
     public class SettingsLibReaderTests
     {
-        DatabaseConfig _DefaultConfiguration = new DatabaseConfig()
-        {
-            DbName = "Dragonfly.Test",
-            DbAddress = "10.10.0.117",
-            DefaultUserName = "Unit_Tester",
-            DefaultUserPassword = "SelectAllPasswords"
-        };
-
         SettingsLibReader _Raader = null;
         SettingsManager _LibManager = null;
 
@@ -58,20 +50,14 @@ namespace Dragonfly.Tests.Core.Settings
 
         private DragonflyConfig ReadCurrentConfiguration()
         {
-            DragonflyConfig currentConfig;
+            DragonflyConfig currentConfig = null;
             try
             {
                 currentConfig = _LibManager.LoadConfiguration();
             }
             catch (FileNotFoundException)
-            {//Need create config in system.
-                _LibManager.SaveConfiguration(new DragonflyConfig
-                {
-                    DbConfiguration = _DefaultConfiguration
-                });
-                currentConfig = _LibManager.LoadConfiguration();
+            {
             }
-
             return currentConfig;
         }
     }

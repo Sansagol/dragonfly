@@ -1,21 +1,22 @@
 ﻿using Dragonfly.Core.Settings;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dragonfly.Tests
 {
     internal class Common
-    {
-        public static readonly DatabaseAccessConfiguration Connectionconfig =
-            new DatabaseAccessConfiguration()
+    {        /// <summary>Test config file.</summary>
+        private static readonly string _DefaultPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "Dragonfly",
+            "config.test.xml");
+
+        public static readonly DatabaseAccessConfiguration Connectionconfig = null;
+
+        static Common()
         {
-            DbName = "Dragonfly.Test",
-            ServerName = "10.10.0.117",
-            UserName = "Unit_Tester",
-            Password = "SelectAllPasswords"
-        };
+            Connectionconfig = new SettingsLibReader().GetDbAccessSettings(_DefaultPath);
+        }
     }
 }
