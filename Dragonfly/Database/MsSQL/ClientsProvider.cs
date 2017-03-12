@@ -6,6 +6,7 @@ using System.Web;
 using Dragonfly.Models.Clients;
 using Dragonfly.Core.Settings;
 using Dragonfly.Database.MsSQL.LowLevel;
+using System.Data.Entity;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -14,9 +15,14 @@ namespace Dragonfly.Database.MsSQL
     /// </summary>
     class ClientsProvider : DataProvider, IClientsProvider
     {
-        public ClientsProvider(IDBContextGenerator contextgenerator):
+        public ClientsProvider(IDBContextGenerator contextgenerator) :
             base(contextgenerator)
         {
+        }
+
+        public decimal CreateAClientType(string typeName)
+        {
+            throw new NotImplementedException();
         }
 
         public void CreateClient(ClientModel model)

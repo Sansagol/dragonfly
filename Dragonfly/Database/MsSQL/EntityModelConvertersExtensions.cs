@@ -1,5 +1,6 @@
 ﻿using Dragonfly.Database.Providers;
 using Dragonfly.Models;
+using Dragonfly.Models.Clients;
 using Dragonfly.Models.Projects;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,16 @@ namespace Dragonfly.Database.MsSQL
                 Name = user.Name
             };
             return model;
+        }
+
+        public static ClientType ToClientType(this Client_Type type)
+        {
+            ClientType tp = new ClientType()
+            {
+                ID = type.ID_Client_Type,
+                 TypeName = type.Type_Name                
+            };
+            return tp;
         }
     }
 }

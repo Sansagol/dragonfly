@@ -3,6 +3,7 @@ using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -15,6 +16,10 @@ namespace Dragonfly.Database.MsSQL
     {
         private IDBContextGenerator _ContextGenerator = null;
 
+        public DbContext Context
+        {
+            get { return _Context; }
+        }
         protected DragonflyEntities _Context = null;
 
         public DataProvider(IDBContextGenerator contextgenerator)
