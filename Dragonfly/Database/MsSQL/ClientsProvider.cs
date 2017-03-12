@@ -7,6 +7,8 @@ using Dragonfly.Models.Clients;
 using Dragonfly.Core.Settings;
 using Dragonfly.Database.MsSQL.LowLevel;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Data.Entity.Infrastructure;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -22,7 +24,34 @@ namespace Dragonfly.Database.MsSQL
 
         public decimal CreateAClientType(string typeName)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(typeName))
+                throw new ArgumentNullException(nameof(typeName));
+            Client_Type newType = new Client_Type()
+            {
+                Type_Name = typeName
+            };
+            try
+            {
+                _Context.Client_Type.Add(newType);
+                _Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.Client_Type.Remove(newType);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.Client_Type.Remove(newType);
+                throw new InsertDbDataException($"Update entity error: {ex.Message}");
+            }
+            return newType.ID_Client_Type;
         }
 
         public void CreateClient(ClientModel model)
@@ -33,12 +62,44 @@ namespace Dragonfly.Database.MsSQL
                 throw new ArgumentException("Name can not be empty", nameof(model));
             if (model.Type == null)
                 throw new ArgumentException("Type can not be empty", nameof(model));
-
+            Client client = model.ToClient();
+            try
+            {
+                _Context.Client.Add(client);
+                _Context.SaveChanges();
+                model.ID = client.ID_Client;
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _Context.Client.Remove(client);
+                List<ValidationError> validationErrors = new List<ValidationError>();
+                foreach (var validResult in ex.EntityValidationErrors)
+                {
+                    validationErrors.AddRange(validResult.ValidationErrors.Select(
+                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                }
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                _Context.Client.Remove(client);
+                throw new InsertDbDataException($"Update entity error: {ex.Message}");
+            }
         }
 
         public IEnumerable<ClientType> GetAvailableClientTypes()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var types = (from t in _Context.Client_Type
+                             select t).ToList();
+                return types.Select(t => t.ToClientType());
+            }
+            catch (Exception ex)
+            {
+                //TODO log
+            }
+            return new List<ClientType>();
         }
     }
 }

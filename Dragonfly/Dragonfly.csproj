@@ -187,6 +187,7 @@
     <Compile Include="Database\MsSQL\LowLevel\IDBDataManager.cs" />
     <Compile Include="Database\MsSQL\LowLevel\IUserDBDataManager.cs" />
     <Compile Include="Database\MsSQL\LowLevel\UserDBDataManager.cs" />
+    <Compile Include="Database\MsSQL\ModelConvertersExtensions.cs" />
     <Compile Include="Database\MsSQL\MsSqlFactory.cs" />
     <Compile Include="Database\MsSQL\UserAccessProvider.cs" />
     <Compile Include="Database\Providers\IClientsProvider.cs" />
