@@ -62,5 +62,20 @@ namespace Dragonfly.Database.MsSQL
             };
             return tp;
         }
+
+        public static ClientModel ToClientModel(this Client client)
+        {
+            ClientModel model = new ClientModel()
+            {
+                ID = client.ID_Client,
+                Name = client.Name,
+                INN = client.INN,
+                OGRN = client.OGRN,
+                KPP = client.KPP,
+                InnerName = client.Inner_Name,
+                Type = client.Client_Type.ToClientType()
+            };
+            return model;
+        }
     }
 }

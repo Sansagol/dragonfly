@@ -165,6 +165,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
@@ -289,6 +290,7 @@
     </Compile>
     <Compile Include="Models\AuthenticateModel.cs" />
     <Compile Include="Models\Clients\ClientModel.cs" />
+    <Compile Include="Models\Clients\ClientsModel.cs" />
     <Compile Include="Models\Clients\ClientType.cs" />
     <Compile Include="Models\Clients\CreateClientModel.cs" />
     <Compile Include="Models\LogUpModel.cs" />
@@ -319,6 +321,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Clients\" />
     <Folder Include="Views\Sidebar\" />
   </ItemGroup>
   <ItemGroup>

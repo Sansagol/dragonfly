@@ -87,6 +87,26 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
+        /// <summary>
+        /// Method retrieve all clients from the database.
+        /// </summary>
+        /// <returns>All clients from the DB.</returns>
+        /// <exception cref="InvalidOperationException"/>
+        public IEnumerable<ClientModel> GetAllClients()
+        {
+            try
+            {
+                var clients = (from t in _Context.Client
+                               select t).ToList();
+                return clients.Select(t => t.ToClientModel());
+            }
+            catch (Exception ex)
+            {
+                //TODO log
+                throw new InvalidOperationException("Error occured on retrieving clients from DB.");
+            }
+        }
+
         public IEnumerable<ClientType> GetAvailableClientTypes()
         {
             try

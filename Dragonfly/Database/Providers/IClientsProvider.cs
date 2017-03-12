@@ -26,5 +26,11 @@ namespace Dragonfly.Database.Providers
         /// </summary>
         /// <returns>All availave client types.</returns>
         IEnumerable<ClientType> GetAvailableClientTypes();
+
+        /// <summary>
+        /// Method fetch all flients from the database.
+        /// </summary>
+        /// <returns>All existing clients.</returns>
+        IEnumerable<ClientModel> GetAllClients();
     }
 }
