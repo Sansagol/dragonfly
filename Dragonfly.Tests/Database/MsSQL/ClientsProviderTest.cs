@@ -22,6 +22,13 @@ namespace Dragonfly.Tests.Database.MsSQL
             return factory.CreateClientsProvider(Common.Connectionconfig);
         }
 
+        private void ClearResources(DragonflyEntities context)
+        {
+            context.Client.RemoveRange(context.Client);
+            context.Client_Type.RemoveRange(context.Client_Type);
+            context.SaveChanges();
+        }
+
         [TestMethod]
         public void CreateClientTypeTest()
         {
@@ -30,9 +37,9 @@ namespace Dragonfly.Tests.Database.MsSQL
             try
             {
                 context = provider.Context as DragonflyEntities;
-                context.Client_Type.RemoveRange(context.Client_Type);
-                decimal id = provider.CreateAClientType("Test client type");
-                Assert.IsTrue(id > 0, "Bad id returned.");
+                ClearResources(context);
+                decimal id = provider.CreateAClientType("Test client type", 1);
+                Assert.AreEqual(1, id, $"Bad id returned: {id}.");
                 var type = (from c in context.Client_Type
                             where c.ID_Client_Type == id
                             select c).FirstOrDefault();
@@ -40,7 +47,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                context?.Client_Type.RemoveRange(context.Client_Type);
+                ClearResources(context);
                 provider?.Dispose();
             }
         }
@@ -52,8 +59,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             var context = provider.Context as DragonflyEntities;
             try
             {
-                context.Client.RemoveRange(context.Client);
-                context.Client_Type.RemoveRange(context.Client_Type);
+                ClearResources(context);
                 ClientType type = CreateClientType(provider, context);
                 var model = new ClientModel()
                 {
@@ -81,15 +87,14 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                context?.Client.RemoveRange(context.Client);
-                context?.Client_Type.RemoveRange(context.Client_Type);
+                ClearResources(context);
                 provider?.Dispose();
             }
         }
 
         private static ClientType CreateClientType(IClientsProvider provider, DragonflyEntities context)
         {
-            decimal id = provider.CreateAClientType("Test client type");
+            decimal id = provider.CreateAClientType("Test client type", 1);
             var type = (from c in context.Client_Type
                         where c.ID_Client_Type == id
                         select c).FirstOrDefault().ToClientType();
@@ -104,8 +109,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             var context = provider.Context as DragonflyEntities;
             try
             {
-                context.Client.RemoveRange(context.Client);
-                context.Client_Type.RemoveRange(context.Client_Type);
+                ClearResources(context);
                 ClientType type = CreateClientType(provider, context);
 
                 var model = new ClientModel()
@@ -123,8 +127,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                context?.Client.RemoveRange(context.Client);
-                context?.Client_Type.RemoveRange(context.Client_Type);
+                ClearResources(context);
                 provider?.Dispose();
             }
         }
@@ -137,6 +140,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             var context = provider.Context as DragonflyEntities;
             try
             {
+                ClearResources(context);
                 CreateClientType(provider, context);
                 var clientTypes = provider.GetAvailableClientTypes();
                 var realTypes = (from t in context.Client_Type
@@ -150,7 +154,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             }
             finally
             {
-                context?.Client_Type.RemoveRange(context.Client_Type);
+                ClearResources(context);
                 provider?.Dispose();
             }
         }

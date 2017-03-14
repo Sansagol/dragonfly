@@ -9,6 +9,7 @@ using Dragonfly.Database.MsSQL.LowLevel;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Data.Entity.Infrastructure;
+using Dragonfly.Core;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -22,13 +23,14 @@ namespace Dragonfly.Database.MsSQL
         {
         }
 
-        public decimal CreateAClientType(string typeName)
+        public decimal CreateAClientType(string typeName, decimal id)
         {
             if (string.IsNullOrWhiteSpace(typeName))
                 throw new ArgumentNullException(nameof(typeName));
             Client_Type newType = new Client_Type()
             {
-                Type_Name = typeName
+                Type_Name = typeName,
+                ID_Client_Type = id
             };
             try
             {
@@ -83,7 +85,7 @@ namespace Dragonfly.Database.MsSQL
             catch (DbUpdateException ex)
             {
                 _Context.Client.Remove(client);
-                throw new InsertDbDataException($"Update entity error: {ex.Message}");
+                throw new InsertDbDataException($"Update entity error: {ex.GetFullMessage()}");
             }
         }
 

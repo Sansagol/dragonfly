@@ -49,8 +49,10 @@ namespace Dragonfly.Models.Projects.Tests
                     Description = "ProjectDescr",
                     UserIds = new List<decimal>() { userModel.Id }
                 };
-                Assert.IsTrue(projectModel.SaveProject());
-                Assert.IsTrue(projectModel.ProjectId > 0);
+                Assert.IsTrue(projectModel.SaveProject(), "Unable to sabe project");
+                Assert.IsTrue(
+                    projectModel.ProjectId > 0,
+                    $"Retuen the bad project ID: {projectModel.ProjectId}");
                 Assert.IsNotNull(
                     ((DragonflyEntities)provider.Context).User_Project.FirstOrDefault(
                         u => u.ID_Project == projectModel.ProjectId),

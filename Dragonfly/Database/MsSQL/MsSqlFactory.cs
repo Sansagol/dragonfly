@@ -23,10 +23,13 @@ namespace Dragonfly.Database.MsSQL
         {
             _ContextGenerator = new DBContextGenerator();
             _UserDBDataManager = new UserDBDataManager();
+            
         }
 
         public IDataBaseProvider CreateDBProvider(DatabaseAccessConfiguration dbConfig)
         {
+            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext(dbConfig));
+
             IDataBaseProvider provider = new MsSqlDataProvider(_UserDBDataManager, _ContextGenerator);
             provider.Initialize(dbConfig);
             return provider;
@@ -34,6 +37,8 @@ namespace Dragonfly.Database.MsSQL
 
         public IUserAccessProvider CreateUserAccessProvider(DatabaseAccessConfiguration dbConfig)
         {
+            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext(dbConfig));
+
             IUserAccessProvider provider = new UserAccessProvider(_UserDBDataManager, _ContextGenerator);
             provider.Initialize(dbConfig);
             return provider;

@@ -18,8 +18,9 @@ namespace Dragonfly.Database.Providers
         /// Method creates a type of client in database.
         /// </summary>
         /// <param name="typeName">Name of the type.</param>
+        /// <param name="id">Id of the new type (is not auto increment).</param>
         /// <returns>Created type id.</returns>
-        decimal CreateAClientType(string typeName);
+        decimal CreateAClientType(string typeName, decimal id);
 
         /// <summary>
         /// Method retrieve and return all available types of clients.

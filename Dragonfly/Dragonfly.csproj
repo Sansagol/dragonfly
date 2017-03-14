@@ -172,6 +172,7 @@
     <Compile Include="Core\BaseBindings.cs" />
     <Compile Include="Core\CookieMananger.cs" />
     <Compile Include="Core\CookieType.cs" />
+    <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
     <Compile Include="Core\IUserStateManager.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
