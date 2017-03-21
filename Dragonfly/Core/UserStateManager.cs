@@ -39,10 +39,25 @@ namespace Dragonfly.Core
 
             bool isCorrectAccess = false;
             if (!string.IsNullOrWhiteSpace(accessToken))
-                using (var accessProvider = BaseBindings.GetNewUserAccessProvider())
+                isCorrectAccess = GetIsCorrectAccess(accessToken, userId);
+
+            return isCorrectAccess;
+        }
+
+        private static bool GetIsCorrectAccess(string accessToken, decimal userId)
+        {
+            bool isCorrectAccess=false;
+            try
+            {
+                using (var accessProvider = BaseBindings.DBFactory.CreateUserAccessProvider(
+                    BaseBindings.SettingsReader.GetDbAccessSettings()))
                 {
                     isCorrectAccess = accessProvider.CheckAccessToken(userId, accessToken);
                 }
+            }
+            catch (Exception ex)
+            {//Log
+            }
 
             return isCorrectAccess;
         }

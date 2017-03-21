@@ -28,7 +28,7 @@ namespace Dragonfly.Models.Clients
         public string INN { get; set; }
         public string OGRN { get; set; }
         public string KPP { get; set; }
-
+        
         /// <summary>
         /// Type of client
         /// </summary>

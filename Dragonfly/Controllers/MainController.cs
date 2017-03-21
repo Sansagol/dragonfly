@@ -63,7 +63,7 @@ namespace Dragonfly.Controllers
                 }
             }
             return View();
-        }  
+        }
 
         [HttpGet]
         public ViewResult Authorization()
@@ -83,14 +83,16 @@ namespace Dragonfly.Controllers
                 bool isTrueUser = authParameters.CheckUser();
                 if (isTrueUser)
                 {
-                    using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+                    using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
+                        BaseBindings.SettingsReader.GetDbAccessSettings()))
                     {
                         UserModel user = provider.GetUserByLoginMail(authParameters.Login);
                         if (user != null)
                         {
-                            using (var userAccessProvider = BaseBindings.GetNewUserAccessProvider())
+                            using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
+                                BaseBindings.SettingsReader.GetDbAccessSettings()))
                             {
-                                string accToken = userAccessProvider.CreateAccessToken(user.Id);
+                                string accToken = ap.CreateAccessToken(user.Id);
                                 cookMan.SetToCookie(Response, CookieType.UserAccessToken, accToken);
                                 cookMan.SetToCookie(Response, CookieType.UserId, user.Id.ToString());
                             }
@@ -120,11 +122,18 @@ namespace Dragonfly.Controllers
         {
             var cookMan = BaseBindings.CookiesManager;
             string token = cookMan.GetCookieValue(Request, CookieType.UserAccessToken);
-            if (!string.IsNullOrWhiteSpace(token))
-                using (var ap = BaseBindings.GetNewUserAccessProvider())
-                {
-                    ap.DeleteAccessToken(token);
-                }
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(token))
+                    using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
+                        BaseBindings.SettingsReader.GetDbAccessSettings()))
+                    {
+                        ap.DeleteAccessToken(token);
+                    }
+            }
+            catch (Exception ex)
+            {//TODO log
+            }
 
             cookMan.DeleteCookie(Response, CookieType.UserAccessToken);
             cookMan.DeleteCookie(Response, CookieType.UserId);

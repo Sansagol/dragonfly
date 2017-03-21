@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Dragonfly.Controllers
 {
@@ -42,6 +43,20 @@ namespace Dragonfly.Controllers
                 ViewBag.Error = "Access denied. Please log in.";
             }
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Add(object value)
+        {
+            CreateClientModel model = null;
+            if (_UserStateManager.CheckUserAccess(Request))
+            {
+                if (value != null && value is CreateClientModel)
+                    model = value as CreateClientModel;
+                return View(model);
+            }
+            else
+                return View("Add");
         }
 
         private CreateClientModel PrepareDateToAddClient()
@@ -99,6 +114,8 @@ namespace Dragonfly.Controllers
             if (_UserStateManager.CheckUserAccess(Request))
             {
                 ViewBag.Logged = true;
+                if (!ModelState.IsValid)
+                    return View("Add", model);
                 try
                 {
                     using (var clientsProvider = _DatabaseFactory.CreateClientsProvider(
@@ -112,11 +129,12 @@ namespace Dragonfly.Controllers
                 {   //Back to creation with entered data.
                     ViewBag.Error = ex.Message;
                     _CreateModel = model;
-                    return RedirectToAction("Add", "Client");
+                    return View("Add", model);
                 }
             }
             else
             {
+                ViewBag.Logged = false;
                 return RedirectToAction("Add", "Client");
             }
         }
