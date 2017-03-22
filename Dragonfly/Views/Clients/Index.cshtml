@@ -1,0 +1,41 @@
+﻿@model Dragonfly.Models.Clients.ClientsModel
+
+@{
+    ViewBag.Title = "Index";
+    PageData["Logged"] = ViewBag.Logged;
+    PageData["UserName"] = ViewBag.UserName;
+}
+
+<h3>Index</h3>
+@if (ViewBag.Logged == false)
+{
+    <div>
+        <span>No clients available. Need to login.</span>
+    </div>
+}
+else
+{
+    <div>
+        <table class="info_table">
+            <col width="10%" />
+            <col width="50%" />
+            <col width="20%" />
+            <col width="20%" />
+            <tr>
+                <th class="info_table_header">ID</th>
+                <th class="info_table_header">Name</th>
+                <th class="info_table_header">Type</th>
+                <th class="info_table_header">INN</th>
+            </tr>
+            @foreach (var client in Model.Clients)
+            {
+                <tr>
+                    <td class="f-cell i_t_cell">@client.ID</td>
+                    <td class="i_t_cell">@client.Name</td>
+                    <td class="i_t_cell">@client.Type.TypeName</td>
+                    <td class="i_t_cell">@client.INN</td>
+                </tr>
+            }
+        </table>
+    </div>
+}

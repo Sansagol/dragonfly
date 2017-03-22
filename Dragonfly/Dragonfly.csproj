@@ -313,6 +313,7 @@
     <Content Include="Views\Projects\Index.cshtml" />
     <Content Include="Views\Project\CreateProject.cshtml" />
     <Content Include="Views\Client\Add.cshtml" />
+    <Content Include="Views\Clients\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -322,7 +323,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Clients\" />
     <Folder Include="Views\Sidebar\" />
   </ItemGroup>
   <ItemGroup>

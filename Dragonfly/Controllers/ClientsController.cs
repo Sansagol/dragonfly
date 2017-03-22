@@ -31,6 +31,7 @@ namespace Dragonfly.Controllers
             ClientsModel model = null;
             if (_UserStateManager.CheckUserAccess(Request))
             {
+                ViewBag.Logged = true;
                 try
                 {
                     using (var clientsProvider = _DatabaseFactory.CreateClientsProvider(
@@ -52,6 +53,7 @@ namespace Dragonfly.Controllers
             else
             {
                 ViewBag.Logged = false;
+                ViewBag.UserName = Session["UserName"];
                 ViewBag.Error = "Access denied. Please log in.";
             }
             return View(model);
