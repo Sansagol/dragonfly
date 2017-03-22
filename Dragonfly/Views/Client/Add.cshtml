@@ -8,6 +8,12 @@
 <h3>Add client</h3>
 @if (ViewBag.Logged == true && Model != null)
 {
+    <div>
+        @if (!string.IsNullOrWhiteSpace(Model.CreationErrors))
+        {
+            @Model.CreationErrors
+        }
+    </div>
     using (Html.BeginForm(
         "Create",
         "Client",

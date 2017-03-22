@@ -115,7 +115,21 @@ namespace Dragonfly.Controllers
             {
                 ViewBag.Logged = true;
                 if (!ModelState.IsValid)
+                {
+                    List<string> errors = new List<string>();
+                    foreach (ModelState modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (ModelError error in modelState.Errors)
+                        {
+                            if (!string.IsNullOrWhiteSpace(error.ErrorMessage))
+                                errors.Add(error.ErrorMessage);
+                            if (!string.IsNullOrWhiteSpace(error.Exception?.Message))
+                                errors.Add(error.Exception.Message);
+                        }
+                    }
+                    model.CreationErrors = string.Join("; ", errors);
                     return View("Add", model);
+                }
                 try
                 {
                     using (var clientsProvider = _DatabaseFactory.CreateClientsProvider(

@@ -18,6 +18,11 @@ namespace Dragonfly.Models.Clients
         /// </summary>
         public IEnumerable<SelectListItem> AvailableTypes { get; set; }
 
+        /// <summary>
+        /// Errors, which was coused on the client creation.
+        /// </summary>
+        public string CreationErrors { get; set; }
+
         public CreateClientModel()
         {
             AvailableTypes = new List<SelectListItem>();
