@@ -33,7 +33,7 @@
                     <label class="edit-row-label">Type</label>
                 </td>
                 <td>
-                    @Html.DropDownListFor(model => model.Client.Type,
+                    @Html.DropDownListFor(model => model.Client.Type.TypeName,
                         Model.AvailableTypes,
                         new { @class = "edit-row-text" })
                 </td>
