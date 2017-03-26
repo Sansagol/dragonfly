@@ -1,5 +1,6 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Database;
+using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Dragonfly.Models.Projects
             Users = new List<UserModel>();
         }
 
-        public ProjectModel(IDataBaseProvider dbProvider):
+        public ProjectModel(IDataBaseProvider dbProvider) :
             this()
         {
             _DbProvider = dbProvider;

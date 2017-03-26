@@ -9,6 +9,7 @@ using Dragonfly.Database.MsSQL;
 using System.Data.Entity;
 using Dragonfly.Tests;
 using Dragonfly.Database;
+using Dragonfly.Database.Providers;
 
 namespace Dragonfly.Models.Projects.Tests
 {
@@ -36,8 +37,7 @@ namespace Dragonfly.Models.Projects.Tests
         public void SuccessSaveProjectTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            IDataBaseProvider provider = factory.CreateDBProvider();
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
             UserModel userModel = null;
             ProjectModel projectModel = null;
             try
@@ -49,8 +49,10 @@ namespace Dragonfly.Models.Projects.Tests
                     Description = "ProjectDescr",
                     UserIds = new List<decimal>() { userModel.Id }
                 };
-                Assert.IsTrue(projectModel.SaveProject());
-                Assert.IsTrue(projectModel.ProjectId > 0);
+                Assert.IsTrue(projectModel.SaveProject(), "Unable to sabe project");
+                Assert.IsTrue(
+                    projectModel.ProjectId > 0,
+                    $"Retuen the bad project ID: {projectModel.ProjectId}");
                 Assert.IsNotNull(
                     ((DragonflyEntities)provider.Context).User_Project.FirstOrDefault(
                         u => u.ID_Project == projectModel.ProjectId),
@@ -60,7 +62,7 @@ namespace Dragonfly.Models.Projects.Tests
             {
                 if (projectModel != null && projectModel.ProjectId > 0)
                     provider.DeleteProject(projectModel.ProjectId);
-                DeleteUserFromDB(context, userModel?.Login, userModel?.EMail);
+                DeleteUserFromDB(provider.Context, userModel?.Login, userModel?.EMail);
             }
         }
 
@@ -68,8 +70,8 @@ namespace Dragonfly.Models.Projects.Tests
         public void NoSaveProjectWithoutUsersTest()
         {
             MsSqlFactory factory = new MsSqlFactory();
-            IDataBaseProvider provider = factory.CreateDBProvider();
-            DbContext context = provider.Initialize(Common.Connectionconfig);
+            IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
+            DbContext context = provider.Context;
             ProjectModel projectModel = null;
             try
             {

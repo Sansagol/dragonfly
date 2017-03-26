@@ -11,6 +11,9 @@ namespace Dragonfly.Models.Clients
     /// </summary>
     public class ClientModel
     {
+        /// <summary>ID of the client.</summary>
+        public decimal ID { get; set; }
+
         /// <summary>
         /// Official name of the client.
         /// </summary>
@@ -25,7 +28,7 @@ namespace Dragonfly.Models.Clients
         public string INN { get; set; }
         public string OGRN { get; set; }
         public string KPP { get; set; }
-
+        
         /// <summary>
         /// Type of client
         /// </summary>

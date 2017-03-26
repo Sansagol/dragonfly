@@ -1,4 +1,6 @@
-﻿using Dragonfly.Models;
+﻿using Dragonfly.Database.Providers;
+using Dragonfly.Models;
+using Dragonfly.Models.Clients;
 using Dragonfly.Models.Projects;
 using System;
 using System.Collections.Generic;
@@ -47,6 +49,31 @@ namespace Dragonfly.Database.MsSQL
                 EMail = user.E_mail,
                 Login = user.Login,
                 Name = user.Name
+            };
+            return model;
+        }
+
+        public static ClientType ToClientType(this Client_Type type)
+        {
+            ClientType tp = new ClientType()
+            {
+                ID = type.ID_Client_Type,
+                 TypeName = type.Type_Name                
+            };
+            return tp;
+        }
+
+        public static ClientModel ToClientModel(this Client client)
+        {
+            ClientModel model = new ClientModel()
+            {
+                ID = client.ID_Client,
+                Name = client.Name,
+                INN = client.INN,
+                OGRN = client.OGRN,
+                KPP = client.KPP,
+                InnerName = client.Inner_Name,
+                Type = client.Client_Type.ToClientType()
             };
             return model;
         }

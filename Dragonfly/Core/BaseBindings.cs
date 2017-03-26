@@ -12,7 +12,6 @@ namespace Dragonfly.Core
     /// <summary>Class represent a simple IoC.</summary>
     internal class BaseBindings
     {
-        static IDBFactory _DbFactory = null;
         static ICookiesManager _CooksManager = null;
         
         public static ISettingsReader SettingsReader { get; }
@@ -21,6 +20,9 @@ namespace Dragonfly.Core
 
         public static IUserStateManager UsrStateManager { get { return _UsrStateManager; } }
         private static IUserStateManager _UsrStateManager = null;
+
+        public static IDBFactory DBFactory { get { return _DbFactory; } }
+        static IDBFactory _DbFactory = null;
 
         static BaseBindings()
         {
@@ -35,13 +37,13 @@ namespace Dragonfly.Core
         /// <exception cref="InvalidOperationException">
         /// Some error on creation provider.
         /// </exception>
+        [Obsolete]
         public static IDataBaseProvider GetNewBaseDbProvider()
         {
             IDataBaseProvider baseProvider = null;
             try
             {
-                baseProvider = _DbFactory.CreateDBProvider();
-                baseProvider.Initialize(SettingsReader.GetDbAccessSettings());
+                baseProvider = _DbFactory.CreateDBProvider(SettingsReader.GetDbAccessSettings());
             }
             catch (InvalidOperationException ex)
             {
@@ -55,13 +57,13 @@ namespace Dragonfly.Core
             return baseProvider;
         }
 
+        [Obsolete]
         public static IUserAccessProvider GetNewUserAccessProvider()
         {
             IUserAccessProvider baseProvider = null;
             try
             {
-                baseProvider = _DbFactory.CreateUserAccessProvider();
-                baseProvider.Initialize(SettingsReader.GetDbAccessSettings());
+                baseProvider = _DbFactory.CreateUserAccessProvider(SettingsReader.GetDbAccessSettings());
             }
             catch (InvalidOperationException ex)
             {

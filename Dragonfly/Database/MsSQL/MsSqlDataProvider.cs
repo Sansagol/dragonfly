@@ -15,47 +15,26 @@ using System.Threading;
 using System.Data.Entity.Infrastructure;
 using Dragonfly.Models.Projects;
 using Dragonfly.Database.MsSQL.LowLevel;
+using Dragonfly.Database.Providers;
 
 namespace Dragonfly.Database.MsSQL
 {
-    internal class MsSqlDataProvider : IDataBaseProvider
+    internal class MsSqlDataProvider : DataProvider, IDataBaseProvider
     {
-        DragonflyEntities _Context = null;
         public DbContext Context { get { return _Context; } }
 
         #region Low level interfaces
-        IDBContextGenerator _ContextGenerator = null;
-
         IUserDBDataManager _UserManager = null;
         #endregion
 
-        public MsSqlDataProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator)
+        public MsSqlDataProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator):
+            base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
-            if (contextgenerator == null)
-                throw new ArgumentNullException(nameof(contextgenerator));
 
             _UserManager = userDbDataManage;
-            _ContextGenerator = contextgenerator;
-        }
-
-        /// <summary>Method create and open context for database.</summary>
-        /// <param name="accessConfigurations">Parameters to database connect.</param>
-        /// <returns>Created context. null if fail.</returns>
-        /// <exception cref="DbInitializationException">Error on database initialization.</exception>
-        public DbContext Initialize(DatabaseAccessConfiguration accessConfigurations)
-        {
-            _Context = _ContextGenerator.GenerateContext(accessConfigurations);
-            _UserManager.Initialize(_Context);
-            return _Context;
-        }
-
-        public void Dispose()
-        {
-            _Context?.Dispose();
-            _Context = null;
-        }
+        }      
 
         /// <summary>
         /// 

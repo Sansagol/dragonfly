@@ -1,4 +1,5 @@
-﻿using Dragonfly.Database.MsSQL.LowLevel;
+﻿using Dragonfly.Core.Settings;
+using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Dragonfly.Database.MsSQL
     /// <summary>
     /// Factory which generate providers for access to a MS SQL server DB.
     /// </summary>
-    public class MsSqlFactory : IDBFactory
+    class MsSqlFactory : IDBFactory
     {
         IDBContextGenerator _ContextGenerator = null;
         IUserDBDataManager _UserDBDataManager = null;
@@ -22,17 +23,31 @@ namespace Dragonfly.Database.MsSQL
         {
             _ContextGenerator = new DBContextGenerator();
             _UserDBDataManager = new UserDBDataManager();
+            
         }
 
-        public IDataBaseProvider CreateDBProvider()
+        public IDataBaseProvider CreateDBProvider(DatabaseAccessConfiguration dbConfig)
         {
+            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext(dbConfig));
+
             IDataBaseProvider provider = new MsSqlDataProvider(_UserDBDataManager, _ContextGenerator);
+            provider.Initialize(dbConfig);
             return provider;
         }
 
-        public IUserAccessProvider CreateUserAccessProvider()
+        public IUserAccessProvider CreateUserAccessProvider(DatabaseAccessConfiguration dbConfig)
         {
+            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext(dbConfig));
+
             IUserAccessProvider provider = new UserAccessProvider(_UserDBDataManager, _ContextGenerator);
+            provider.Initialize(dbConfig);
+            return provider;
+        }
+
+        public IClientsProvider CreateClientsProvider(DatabaseAccessConfiguration dbConfig)
+        {
+            IClientsProvider provider = new ClientsProvider(_ContextGenerator);
+            provider.Initialize(dbConfig);
             return provider;
         }
     }

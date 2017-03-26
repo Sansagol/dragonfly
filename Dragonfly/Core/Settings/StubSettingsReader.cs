@@ -11,8 +11,8 @@ namespace Dragonfly.Core.Settings
         => new DatabaseAccessConfiguration()
             {
                 DbName = "Dragonfly",
-                ServerName = "10.10.0.117",
-                UserName = "DMaster",
+                ServerName = "127.0.1.1",
+                UserName = "UserName",
                 Password = "SomeUnbreakablePassword"
         };
     }

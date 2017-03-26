@@ -6,6 +6,9 @@ using System.Web;
 
 namespace Dragonfly.Database.MsSQL.LowLevel
 {
+    /// <summary>
+    /// Class represent low lwvwl operations on users using a database.
+    /// </summary>
     public class UserDBDataManager : IUserDBDataManager
     {
         DragonflyEntities _Context = null;
