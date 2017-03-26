@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,10 +12,19 @@ namespace Dragonfly.Core
     /// </summary>
     public class ControllersExceptionAttribute : FilterAttribute, IExceptionFilter
     {
+        Logger _Lg = null;
+        public ControllersExceptionAttribute()
+        {
+            _Lg = LogManager.GetCurrentClassLogger();
+        }
+
         public void OnException(ExceptionContext filterContext)
         {
             if (!filterContext.ExceptionHandled)
             {
+                _Lg.Error("{0}\n{1}",
+                    filterContext.Exception.GetFullMessage(),
+                    filterContext.Exception.GetStackTrace());
                 filterContext.Result = new RedirectResult("~/Content/CommonErrorPage.html");
                 filterContext.ExceptionHandled = true;
             }

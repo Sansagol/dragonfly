@@ -2,16 +2,19 @@
 using Dragonfly.Database;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models;
+using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
 namespace Dragonfly.Controllers
-{
+{   
     public class MainController : Controller
     {
+        Logger _Lg = LogManager.GetCurrentClassLogger();
         private IUserStateManager _UserStateManager = null;
 
         /// <summary>
@@ -19,7 +22,15 @@ namespace Dragonfly.Controllers
         /// </summary>
         public MainController()
         {
-            _UserStateManager = BaseBindings.UsrStateManager;
+            try
+            {
+                _UserStateManager = BaseBindings.UsrStateManager;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex.GetFullMessage());
+                throw ex;
+            }
         }
 
         /// <summary>The constructor for using in tests.</summary>

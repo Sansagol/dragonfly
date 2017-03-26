@@ -11,6 +11,9 @@ namespace Dragonfly.SettingsLib
         /// <summary>Configuration of database access.</summary>
         public DatabaseConfig DbConfiguration { get; set; }
 
+        /// <summary>Get or set a log directory.</summary>
+        public string LogDirectory { get; set; }
+
         /// <summary>Initialize all properties.</summary>
         public DragonflyConfig()
         {

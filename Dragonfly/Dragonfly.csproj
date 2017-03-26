@@ -72,6 +72,10 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.4\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
@@ -176,6 +180,8 @@
     <Compile Include="Core\CookieType.cs" />
     <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
+    <Compile Include="Core\Logging\BasicNLogConfig.cs" />
+    <Compile Include="Core\Logging\ILogConfiguration.cs" />
     <Compile Include="Core\IUserStateManager.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />

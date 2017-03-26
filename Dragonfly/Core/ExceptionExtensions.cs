@@ -19,5 +19,14 @@ namespace Dragonfly.Core
                 messages.Add(ex.InnerException.GetFullMessage());
             return string.Join("; ", messages);
         }
+
+        public static string GetStackTrace(this Exception ex)
+        {
+            List<string> staclTrace = new List<string>();
+            staclTrace.Add(ex.StackTrace);
+            if (ex.InnerException != null)
+                staclTrace.Add(ex.InnerException.GetStackTrace());
+            return string.Join("; ", staclTrace);
+        }
     }
 }

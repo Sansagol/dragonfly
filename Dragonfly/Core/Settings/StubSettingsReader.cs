@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 
@@ -15,5 +16,10 @@ namespace Dragonfly.Core.Settings
                 UserName = "UserName",
                 Password = "SomeUnbreakablePassword"
         };
+
+        public string GetLogDirectory()
+        {
+            return Path.Combine(Path.GetTempPath(), "DragonflyTestLogs");
+        }
     }
 }

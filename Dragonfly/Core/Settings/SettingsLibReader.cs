@@ -13,6 +13,7 @@ namespace Dragonfly.Core.Settings
         {
             _Manager = new SettingsManager();
         }
+
         /// <summary>Method create a settings to database access.</summary>
         /// <returns>Settings to access to database.</returns>
         /// <exception cref="InvalidOperationException">
@@ -20,7 +21,7 @@ namespace Dragonfly.Core.Settings
         /// </exception>
         public DatabaseAccessConfiguration GetDbAccessSettings()
         {
-          return  GetDbAccessSettings(null);
+            return GetDbAccessSettings(null);
         }
 
         /// <summary>Method create a settings to database access.</summary>
@@ -30,16 +31,7 @@ namespace Dragonfly.Core.Settings
         /// </exception>
         public DatabaseAccessConfiguration GetDbAccessSettings(string configPath)
         {
-            if (_Manager == null)
-                throw new InvalidOperationException(
-                    "Settings manager not loaded.");
-
-            DragonflyConfig fullConfig = _Manager.LoadConfiguration(configPath);
-            if (fullConfig.DbConfiguration == null)
-            {
-                throw new InvalidOperationException(
-                    "database configuraion not presented in config file.");
-            }
+            DragonflyConfig fullConfig = LoadConfigurationFile(configPath);
 
             DatabaseAccessConfiguration dbConfig = new DatabaseAccessConfiguration()
             {
@@ -49,6 +41,27 @@ namespace Dragonfly.Core.Settings
                 DbName = fullConfig.DbConfiguration.DbName
             };
             return dbConfig;
+        }
+
+        private DragonflyConfig LoadConfigurationFile(string configPath)
+        {
+            if (_Manager == null)
+                throw new InvalidOperationException("Settings manager not loaded.");
+
+            DragonflyConfig fullConfig = _Manager.LoadConfiguration(configPath);
+            if (fullConfig.DbConfiguration == null)
+            {
+                throw new InvalidOperationException(
+                    "database configuraion not presented in config file.");
+            }
+
+            return fullConfig;
+        }
+
+        public string GetLogDirectory()
+        {
+            DragonflyConfig fullConfig = LoadConfigurationFile(string.Empty);
+            return fullConfig.LogDirectory;
         }
     }
 }

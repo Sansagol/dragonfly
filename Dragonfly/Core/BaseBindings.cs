@@ -1,7 +1,9 @@
-﻿using Dragonfly.Core.Settings;
+﻿using Dragonfly.Core.Logging;
+using Dragonfly.Core.Settings;
 using Dragonfly.Database;
 using Dragonfly.Database.MsSQL;
 using Dragonfly.Database.Providers;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,8 @@ namespace Dragonfly.Core
     /// <summary>Class represent a simple IoC.</summary>
     internal class BaseBindings
     {
+        static Logger _Lg = null;
+
         static ICookiesManager _CooksManager = null;
         
         public static ISettingsReader SettingsReader { get; }
@@ -24,12 +28,21 @@ namespace Dragonfly.Core
         public static IDBFactory DBFactory { get { return _DbFactory; } }
         static IDBFactory _DbFactory = null;
 
+        public static ILogConfiguration LogConfiguration { get { return _LogConfiguration; } }
+        static ILogConfiguration _LogConfiguration = null;
+
         static BaseBindings()
         {
             SettingsReader = new SettingsLibReader();
             _DbFactory = new MsSqlFactory();
             _CooksManager = new CookieMananger();
             _UsrStateManager = new UserStateManager(_DbFactory, _CooksManager);
+
+            _LogConfiguration = new BasicNLogConfig(SettingsReader.GetLogDirectory());
+            _LogConfiguration.InitConfig();
+
+            _Lg = LogManager.GetCurrentClassLogger();
+            _Lg.Info("Basic bindings initialized successguly.");
         }
 
         /// <summary>Method create and return a database provider.</summary>
@@ -37,7 +50,7 @@ namespace Dragonfly.Core
         /// <exception cref="InvalidOperationException">
         /// Some error on creation provider.
         /// </exception>
-        [Obsolete]
+        [Obsolete("Use the DBFactory from this class")]
         public static IDataBaseProvider GetNewBaseDbProvider()
         {
             IDataBaseProvider baseProvider = null;
@@ -57,7 +70,7 @@ namespace Dragonfly.Core
             return baseProvider;
         }
 
-        [Obsolete]
+        [Obsolete("Use the DBFactory from this class")]
         public static IUserAccessProvider GetNewUserAccessProvider()
         {
             IUserAccessProvider baseProvider = null;
