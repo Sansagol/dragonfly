@@ -140,5 +140,14 @@ namespace Dragonfly.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+#if DEBUG
+        /// <summary>Must invoke manually.</summary>
+        [ControllersException]
+        public void ErrFun()
+        {
+            throw new Exception("Err");
+        }
+#endif
     }
 }
