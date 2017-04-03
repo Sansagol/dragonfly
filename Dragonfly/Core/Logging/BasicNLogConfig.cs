@@ -43,7 +43,7 @@ namespace Dragonfly.Core.Logging
 
             var fileTarget = new FileTarget("logFile");
             fileTarget.FileName = Path.Combine(_LogDirectory, "Common.log");
-            fileTarget.Layout = @"${level}|${date:format=dd.MM.yyyy HH\:mm\:ss}|${message}|${exception:innerFormat=Message:maxInnerExceptionLevel=3}";
+            fileTarget.Layout = @"${date:format=dd.MM.yyyy HH\:mm\:ss}|${level}|${message}|${exception:innerFormat=Message:maxInnerExceptionLevel=3}";
             config.AddTarget(fileTarget);
 
             var rule = new LoggingRule("*", LogLevel.Debug, fileTarget);

@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace Dragonfly.Controllers
 {
+    [ControllersException]
     public class ProjectController : Controller
     {
         private string _InitializationError = null;

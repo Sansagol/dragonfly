@@ -12,6 +12,7 @@ namespace Dragonfly.Controllers
     /// <summary>
     /// Controller for pages with clients representation.
     /// </summary>
+    [ControllersException]
     public class ClientsController : Controller
     {
         private IUserStateManager _UserStateManager = null;
@@ -58,5 +59,13 @@ namespace Dragonfly.Controllers
             }
             return View(model);
         }
+
+#if DEBUG
+        /// <summary>Must invoke manually.</summary>
+        public void ErrFun()
+        {
+            throw new Exception("Clients manual Error");
+        }
+#endif
     }
 }

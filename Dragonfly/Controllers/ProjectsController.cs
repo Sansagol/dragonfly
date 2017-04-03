@@ -14,6 +14,7 @@ namespace Dragonfly.Controllers
     /// Controller is responsoble for the build a projects data
     /// for the user.
     /// </summary>
+    [ControllersException]
     public class ProjectsController : Controller
     {
         private string _InitializationError = null;
@@ -32,7 +33,8 @@ namespace Dragonfly.Controllers
             {
                 ViewBag.Logged = true;
                 ProjectsModel model = new ProjectsModel();
-                using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+                using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
+                    BaseBindings.SettingsReader.GetDbAccessSettings()))
                 {
                     var projects = provider.GetProjects(0, 10);
                     model.AvailableProjects = projects;

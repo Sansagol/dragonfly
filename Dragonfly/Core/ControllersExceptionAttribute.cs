@@ -18,6 +18,8 @@ namespace Dragonfly.Core
             _Lg = LogManager.GetCurrentClassLogger();
         }
 
+        /// <summary>Default errors handler.</summary>
+        /// <param name="filterContext">Exception context.</param>
         public void OnException(ExceptionContext filterContext)
         {
             if (!filterContext.ExceptionHandled)

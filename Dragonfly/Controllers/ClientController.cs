@@ -10,6 +10,7 @@ using System.Web.Routing;
 
 namespace Dragonfly.Controllers
 {
+    [ControllersException]
     public class ClientController : Controller
     {
         private IUserStateManager _UserStateManager = null;
