@@ -14,7 +14,7 @@ namespace Dragonfly.Controllers
     [ControllersException]
     public class ClientController : Controller
     {
-        private IUserStateManager _UserStateManager = null;
+        private IUserAuthenticateStateManager _UserStateManager = null;
         private ICookiesManager _CookManager = null;
         private IDBFactory _DatabaseFactory = null;
 
@@ -35,7 +35,7 @@ namespace Dragonfly.Controllers
         public ActionResult Add()
         {
             CreateClientModel model = null;
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 model = PrepareDateToAddClient();
             }
@@ -51,7 +51,7 @@ namespace Dragonfly.Controllers
         public ActionResult Add(object value)
         {
             CreateClientModel model = null;
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 if (value != null && value is CreateClientModel)
                     model = value as CreateClientModel;
@@ -113,7 +113,7 @@ namespace Dragonfly.Controllers
         [HttpPost]
         public ActionResult Create(CreateClientModel model)
         {
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 ViewBag.Logged = true;
                 if (!ModelState.IsValid)

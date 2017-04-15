@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -183,7 +184,7 @@
     <Compile Include="Core\UserAccess\AuthenticationException.cs" />
     <Compile Include="Core\Logging\BasicNLogConfig.cs" />
     <Compile Include="Core\Logging\ILogConfiguration.cs" />
-    <Compile Include="Core\UserAccess\IUserStateManager.cs" />
+    <Compile Include="Core\UserAccess\IUserAuthenticateStateManager.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
@@ -191,7 +192,7 @@
     <Compile Include="Core\Settings\ISettingsReader.cs" />
     <Compile Include="Core\Settings\SettingsLibReader.cs" />
     <Compile Include="Core\Settings\StubSettingsReader.cs" />
-    <Compile Include="Core\UserAccess\UserStateManager.cs" />
+    <Compile Include="Core\UserAccess\UserAuthenticateStateManager.cs" />
     <Compile Include="Database\DbInitializationException.cs" />
     <Compile Include="Database\MsSQL\LowLevel\DBContextGenerator.cs" />
     <Compile Include="Database\MsSQL\LowLevel\IDBContextGenerator.cs" />
@@ -332,6 +333,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Authentication\" />
     <Folder Include="Views\Sidebar\" />
   </ItemGroup>
   <ItemGroup>

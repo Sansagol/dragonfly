@@ -20,7 +20,7 @@ namespace Dragonfly.Controllers
     {
         private string _InitializationError = null;
 
-        private IUserStateManager _UserStateManager = null;
+        private IUserAuthenticateStateManager _UserStateManager = null;
 
         public ProjectsController()
         {
@@ -30,7 +30,7 @@ namespace Dragonfly.Controllers
         // GET: Projects
         public ActionResult Index()
         {
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 ViewBag.Logged = true;
                 ProjectsModel model = new ProjectsModel();

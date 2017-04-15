@@ -12,11 +12,11 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace Dragonfly.Controllers
-{   
+{
     public class MainController : Controller
     {
         Logger _Lg = LogManager.GetCurrentClassLogger();
-        private IUserStateManager _UserStateManager = null;
+        private IUserAuthenticateStateManager _UserStateManager = null;
 
         /// <summary>
         /// The default constructor for using in the app.
@@ -36,7 +36,7 @@ namespace Dragonfly.Controllers
 
         /// <summary>The constructor for using in tests.</summary>
         /// <param name="usrStateMngr">Custom user state manager.</param>
-        public MainController(IUserStateManager usrStateMngr)
+        public MainController(IUserAuthenticateStateManager usrStateMngr)
         {
             if (usrStateMngr == null)
                 throw new ArgumentNullException(nameof(usrStateMngr));
@@ -48,33 +48,27 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult Index()
         {
-            if (!_UserStateManager.CheckUserAccess(Request))
+            ViewBag.Logged = false;
+            _UserStateManager.CheckUserAccess(Request, Response);
+
+            int userId = -1;
+            if (int.TryParse(BaseBindings.CookiesManager.GetCookieValue(Request, CookieType.UserId), out userId))
             {
-                Logout();
-                ViewBag.Logged = false;
-                //return RedirectToAction(nameof(Authorization), new AuthenticateModel());
+                using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
+                {
+                    UserModel user = provider.GetUserById(userId);
+                    if (user != null)
+                    {
+                        ViewBag.Logged = true;
+                        ViewBag.UserName = user.Login;
+                    }
+                }
             }
             else
             {
-                int userId = -1;
-                if (int.TryParse(BaseBindings.CookiesManager.GetCookieValue(Request, CookieType.UserId), out userId))
-                {
-                    using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
-                    {
-                        UserModel user = provider.GetUserById(userId);
-                        if (user != null)
-                        {
-                            ViewBag.Logged = true;
-                            ViewBag.UserName = user.Login;
-                        }
-                    }
-                }
-                else
-                {
-                    Logout();
-                    ViewBag.Logged = false;
-                }
+                _UserStateManager.LogOut(Request, Response);
             }
+
             return View();
         }
 
@@ -125,33 +119,6 @@ namespace Dragonfly.Controllers
                 cookMan.DeleteCookie(Response, CookieType.UserId);
             }
             return View(authParameters);
-        }
-
-
-        /// <summary>Method log out current user.</summary>
-        /// <returns></returns>
-        [HttpGet]
-        public ActionResult Logout()
-        {
-            var cookMan = BaseBindings.CookiesManager;
-            string token = cookMan.GetCookieValue(Request, CookieType.UserAccessToken);
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(token))
-                    using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings()))
-                    {
-                        ap.DeleteAccessToken(token);
-                    }
-            }
-            catch (Exception ex)
-            {//TODO log
-            }
-
-            cookMan.DeleteCookie(Response, CookieType.UserAccessToken);
-            cookMan.DeleteCookie(Response, CookieType.UserId);
-
-            return RedirectToAction(nameof(Index));
         }
 
 #if DEBUG

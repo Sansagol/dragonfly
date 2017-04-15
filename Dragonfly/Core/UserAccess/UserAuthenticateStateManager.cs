@@ -9,7 +9,8 @@ using System.Web;
 
 namespace Dragonfly.Core.UserAccess
 {
-    internal class UserStateManager : IUserStateManager
+    /// <summary>Manage of user authentication.</summary>
+    internal class UserAuthenticateStateManager : IUserAuthenticateStateManager
     {
         private IDBFactory _DatabaseFactory = null;
         private ICookiesManager _CookiesManager = null;
@@ -17,7 +18,7 @@ namespace Dragonfly.Core.UserAccess
         /// <summary>Initialize a user's manager.</summary>
         /// <param name="dbFactory">Provider to database</param>
         /// <exception cref="ArgumentNullException">Passed an empty parameter.</exception>
-        public UserStateManager(IDBFactory dbFactory, ICookiesManager cookiesManager)
+        public UserAuthenticateStateManager(IDBFactory dbFactory, ICookiesManager cookiesManager)
         {
             if (dbFactory == null)
                 throw new ArgumentNullException(nameof(dbFactory));
@@ -31,7 +32,7 @@ namespace Dragonfly.Core.UserAccess
         /// Method check is user can access to the portal.
         /// </summary>
         /// <returns>True - user have an access. False - otherwise.</returns>
-        public bool CheckUserAccess(HttpRequestBase request)
+        public bool CheckUserAccess(HttpRequestBase request, HttpResponseBase response)
         {
             string accessToken =
                 _CookiesManager.GetCookieValue(request, CookieType.UserAccessToken);
@@ -40,6 +41,8 @@ namespace Dragonfly.Core.UserAccess
             if (!string.IsNullOrWhiteSpace(accessToken) &&
                 GetIsCorrectAccess(accessToken, userId))
                 return true;
+
+            LogOut(request, response);
             throw new AuthenticationException(_CookiesManager.GetCookieValue(request, CookieType.UserName));
         }
 
@@ -76,6 +79,27 @@ namespace Dragonfly.Core.UserAccess
                 //TODO log               
             }
             return userId;
+        }
+
+        public void LogOut(HttpRequestBase request, HttpResponseBase response)
+        {
+            var cookMan = BaseBindings.CookiesManager;
+            string token = cookMan.GetCookieValue(request, CookieType.UserAccessToken);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(token))
+                    using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
+                        BaseBindings.SettingsReader.GetDbAccessSettings()))
+                    {
+                        ap.DeleteAccessToken(token);
+                    }
+            }
+            catch (Exception ex)
+            {//TODO log
+            }
+
+            cookMan.DeleteCookie(response, CookieType.UserAccessToken);
+            cookMan.DeleteCookie(response, CookieType.UserId);
         }
     }
 }

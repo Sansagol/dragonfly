@@ -16,7 +16,7 @@ namespace Dragonfly.Controllers
     {
         private string _InitializationError = null;
 
-        private IUserStateManager _UserStateManager = null;
+        private IUserAuthenticateStateManager _UserStateManager = null;
 
         public ProjectController()
         {
@@ -28,7 +28,7 @@ namespace Dragonfly.Controllers
         [HttpGet]
         public ActionResult AddProject()
         {
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
                 ProjectModel project = new ProjectModel()
@@ -51,7 +51,7 @@ namespace Dragonfly.Controllers
         [HttpPost]
         public ActionResult CreateProject(ProjectModel project)
         {
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
                 using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())

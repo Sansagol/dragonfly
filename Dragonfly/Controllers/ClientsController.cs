@@ -16,7 +16,7 @@ namespace Dragonfly.Controllers
     [ControllersException]
     public class ClientsController : Controller
     {
-        private IUserStateManager _UserStateManager = null;
+        private IUserAuthenticateStateManager _UserStateManager = null;
         private ICookiesManager _CookManager = null;
         private IDBFactory _DatabaseFactory = null;
 
@@ -31,7 +31,7 @@ namespace Dragonfly.Controllers
         public ActionResult Index()
         {
             ClientsModel model = null;
-            if (_UserStateManager.CheckUserAccess(Request))
+            if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 ViewBag.Logged = true;
                 try

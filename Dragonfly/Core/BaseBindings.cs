@@ -23,8 +23,8 @@ namespace Dragonfly.Core
 
         public static ICookiesManager CookiesManager { get { return _CooksManager; } }
 
-        public static IUserStateManager UsrStateManager { get { return _UsrStateManager; } }
-        private static IUserStateManager _UsrStateManager = null;
+        public static IUserAuthenticateStateManager UsrStateManager { get { return _UsrStateManager; } }
+        private static IUserAuthenticateStateManager _UsrStateManager = null;
 
         public static IDBFactory DBFactory { get { return _DbFactory; } }
         static IDBFactory _DbFactory = null;
@@ -37,7 +37,7 @@ namespace Dragonfly.Core
             SettingsReader = new SettingsLibReader();
             _DbFactory = new MsSqlFactory();
             _CooksManager = new CookieMananger();
-            _UsrStateManager = new UserStateManager(_DbFactory, _CooksManager);
+            _UsrStateManager = new UserAuthenticateStateManager(_DbFactory, _CooksManager);
 
             _LogConfiguration = new BasicNLogConfig(SettingsReader.GetLogDirectory());
             _LogConfiguration.InitConfig();
