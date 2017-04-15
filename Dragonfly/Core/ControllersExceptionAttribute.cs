@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Dragonfly.Core.UserAccess;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +25,30 @@ namespace Dragonfly.Core
         {
             if (!filterContext.ExceptionHandled)
             {
-                _Lg.Error("{0}\n{1}",
-                    filterContext.Exception.GetFullMessage(),
-                    filterContext.Exception.GetStackTrace());
-                filterContext.Result = new RedirectResult("~/Content/CommonErrorPage.html");
+                if (filterContext.Exception is AuthenticationException)
+                    HandleAuthenticationException(filterContext);
+                else
+                {
+                    _Lg.Error("{0}\n{1}",
+                        filterContext.Exception.GetFullMessage(),
+                        filterContext.Exception.GetStackTrace());
+                    filterContext.Result = new RedirectResult("~/Content/CommonErrorPage.html");
+                }
                 filterContext.ExceptionHandled = true;
             }
+        }
+
+        private void HandleAuthenticationException(ExceptionContext filterContext)
+        {
+            filterContext.Result = new RedirectToRouteResult("Default", new System.Web.Routing.RouteValueDictionary()
+            {
+                {"controller", "Main" },
+                {"action", "Authorization" }
+            });
+        }
+
+        private void HandleauthorizationException()
+        {
         }
     }
 }

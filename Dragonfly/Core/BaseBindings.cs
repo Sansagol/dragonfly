@@ -1,5 +1,6 @@
 ﻿using Dragonfly.Core.Logging;
 using Dragonfly.Core.Settings;
+using Dragonfly.Core.UserAccess;
 using Dragonfly.Database;
 using Dragonfly.Database.MsSQL;
 using Dragonfly.Database.Providers;

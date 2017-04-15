@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Dragonfly.Core
+namespace Dragonfly.Core.UserAccess
 {
     public interface IUserStateManager
     {

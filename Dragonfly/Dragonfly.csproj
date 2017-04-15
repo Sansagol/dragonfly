@@ -180,9 +180,10 @@
     <Compile Include="Core\CookieType.cs" />
     <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
+    <Compile Include="Core\UserAccess\AuthenticationException.cs" />
     <Compile Include="Core\Logging\BasicNLogConfig.cs" />
     <Compile Include="Core\Logging\ILogConfiguration.cs" />
-    <Compile Include="Core\IUserStateManager.cs" />
+    <Compile Include="Core\UserAccess\IUserStateManager.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
@@ -190,7 +191,7 @@
     <Compile Include="Core\Settings\ISettingsReader.cs" />
     <Compile Include="Core\Settings\SettingsLibReader.cs" />
     <Compile Include="Core\Settings\StubSettingsReader.cs" />
-    <Compile Include="Core\UserStateManager.cs" />
+    <Compile Include="Core\UserAccess\UserStateManager.cs" />
     <Compile Include="Database\DbInitializationException.cs" />
     <Compile Include="Database\MsSQL\LowLevel\DBContextGenerator.cs" />
     <Compile Include="Database\MsSQL\LowLevel\IDBContextGenerator.cs" />

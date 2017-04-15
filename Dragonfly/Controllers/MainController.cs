@@ -1,4 +1,5 @@
 ﻿using Dragonfly.Core;
+using Dragonfly.Core.UserAccess;
 using Dragonfly.Database;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models;
@@ -44,6 +45,7 @@ namespace Dragonfly.Controllers
 
         // GET: Main
         [HttpGet]
+        [ControllersException]
         public ActionResult Index()
         {
             if (!_UserStateManager.CheckUserAccess(Request))

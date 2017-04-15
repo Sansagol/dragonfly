@@ -7,9 +7,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
-namespace Dragonfly.Core
+namespace Dragonfly.Core.UserAccess
 {
-    internal class UserStateManager: IUserStateManager
+    internal class UserStateManager : IUserStateManager
     {
         private IDBFactory _DatabaseFactory = null;
         private ICookiesManager _CookiesManager = null;
@@ -37,16 +37,15 @@ namespace Dragonfly.Core
                 _CookiesManager.GetCookieValue(request, CookieType.UserAccessToken);
             decimal userId = GetUserIdFromCookies(request);
 
-            bool isCorrectAccess = false;
-            if (!string.IsNullOrWhiteSpace(accessToken))
-                isCorrectAccess = GetIsCorrectAccess(accessToken, userId);
-
-            return isCorrectAccess;
+            if (!string.IsNullOrWhiteSpace(accessToken) &&
+                GetIsCorrectAccess(accessToken, userId))
+                return true;
+            throw new AuthenticationException(_CookiesManager.GetCookieValue(request, CookieType.UserName));
         }
 
         private static bool GetIsCorrectAccess(string accessToken, decimal userId)
         {
-            bool isCorrectAccess=false;
+            bool isCorrectAccess = false;
             try
             {
                 using (var accessProvider = BaseBindings.DBFactory.CreateUserAccessProvider(
@@ -57,6 +56,7 @@ namespace Dragonfly.Core
             }
             catch (Exception ex)
             {//Log
+                throw new AuthenticationException(ex.Message, null);
             }
 
             return isCorrectAccess;
