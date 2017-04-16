@@ -26,41 +26,31 @@ namespace Dragonfly.Controllers
         /// <summary>Method run generatig page for add a new project.</summary>
         /// <returns></returns>
         [HttpGet]
+        [ControllersException]
         public ActionResult AddProject()
         {
-            if (_UserStateManager.CheckUserAccess(Request, Response))
+            _UserStateManager.CheckUserAccess(Request, Response);
+            decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
+            ProjectModel project = new ProjectModel()
             {
-                decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
-                ProjectModel project = new ProjectModel()
-                {
-                    UserIds = new List<decimal>() { userId }
-                };
-                ViewBag.Logged = true;
-                return View("CreateProject", project);
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(_InitializationError))
-                    ViewBag.InitError = _InitializationError;
-                else
-                    ViewBag.Error = "User not logged";
-            }
-            return View("CreateProject");
+                UserIds = new List<decimal>() { userId }
+            };
+            ViewBag.Logged = true;
+            return View("CreateProject", project);
         }
 
         [HttpPost]
+        [ControllersException]
         public ActionResult CreateProject(ProjectModel project)
         {
-            if (_UserStateManager.CheckUserAccess(Request, Response))
+            _UserStateManager.CheckUserAccess(Request, Response);
+            decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
+            using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
             {
-                decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
-                using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
-                {
-                    project.DbProvider = provider;
-                    project.UserIds = new List<decimal>() { userId };
-                    if (project.SaveProject())
-                        return RedirectToAction("Index", "Projects");
-                }
+                project.DbProvider = provider;
+                project.UserIds = new List<decimal>() { userId };
+                if (project.SaveProject())
+                    return RedirectToAction("Index", "Projects");
             }
             return View("CreateProject");
         }

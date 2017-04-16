@@ -51,29 +51,16 @@ namespace Dragonfly.Controllers
             ViewBag.Logged = false;
             _UserStateManager.CheckUserAccess(Request, Response);
 
-            int userId = -1;
-            if (int.TryParse(BaseBindings.CookiesManager.GetCookieValue(Request, CookieType.UserId), out userId))
-            {
-                using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
-                {
-                    UserModel user = provider.GetUserById(userId);
-                    if (user != null)
-                    {
-                        ViewBag.Logged = true;
-                        ViewBag.UserName = user.Login;
-                    }
-                }
-            }
-            else
-            {
-                _UserStateManager.LogOut(Request, Response);
-            }
+            ViewBag.Logged = true;
+            ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
+                Request,
+                CookieType.UserName);
 
             return View();
         }
 
         [HttpGet]
-        public ViewResult Authorization()
+        public ViewResult LogIn()
         {
             return View(new AuthenticateModel());
         }
@@ -82,43 +69,23 @@ namespace Dragonfly.Controllers
         /// <param name="authParameters">Auth parameters.</param>
         /// <returns>Reload page (if error), or return to main.</returns>
         [HttpPost]
-        public ActionResult Authorization(AuthenticateModel authParameters)
+        public ActionResult LogIn(AuthenticateModel authParameters)
         {
             var cookMan = BaseBindings.CookiesManager;
             if (ModelState.IsValid)
             {
-                bool isTrueUser = authParameters.CheckUser();
-                if (isTrueUser)
+                if (_UserStateManager.LogIn(Response, authParameters))
                 {
-                    using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings()))
-                    {
-                        UserModel user = provider.GetUserByLoginMail(authParameters.Login);
-                        if (user != null)
-                        {
-                            using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
-                                BaseBindings.SettingsReader.GetDbAccessSettings()))
-                            {
-                                string accToken = ap.CreateAccessToken(user.Id);
-                                cookMan.SetToCookie(Response, CookieType.UserAccessToken, accToken);
-                                cookMan.SetToCookie(Response, CookieType.UserId, user.Id.ToString());
-                            }
-                            Session["UserName"] = user.Login;
-                            return RedirectToAction(nameof(Index));
-                        }
-                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    authParameters.IsTrueUser = false;
-                    authParameters.ErrorOnUserChecking = "User not found";
-                }
-            }
-            else
-            {
-                cookMan.DeleteCookie(Response, CookieType.UserId);
             }
             return View(authParameters);
+        }
+
+        public ActionResult LogOut()
+        {
+            _UserStateManager.LogOut(Request, Response);
+            return RedirectToAction(nameof(Index));
         }
 
 #if DEBUG

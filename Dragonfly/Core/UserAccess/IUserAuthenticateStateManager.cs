@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dragonfly.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,7 @@ namespace Dragonfly.Core.UserAccess
         bool CheckUserAccess(HttpRequestBase request, HttpResponseBase response);
 
         void LogOut(HttpRequestBase request, HttpResponseBase response);
+
+        bool LogIn(HttpResponseBase response, AuthenticateModel authParameters);
     }
 }

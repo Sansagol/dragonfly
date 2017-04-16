@@ -1,4 +1,5 @@
-﻿using Dragonfly.Core.UserAccess;
+﻿using Dragonfly.Controllers;
+using Dragonfly.Core.UserAccess;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Dragonfly.Core
             filterContext.Result = new RedirectToRouteResult("Default", new System.Web.Routing.RouteValueDictionary()
             {
                 {"controller", "Main" },
-                {"action", "Authorization" }
+                {"action", nameof(MainController.LogIn) }
             });
         }
 

@@ -169,7 +169,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
@@ -314,7 +313,7 @@
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
     <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\Main\Authorization.cshtml" />
+    <Content Include="Views\Main\LogIn.cshtml" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="Views\Shared\_MainLayout.cshtml" />
     <Content Include="Views\Shared\_Header.cshtml" />
@@ -333,7 +332,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Authentication\" />
     <Folder Include="Views\Sidebar\" />
   </ItemGroup>
   <ItemGroup>
