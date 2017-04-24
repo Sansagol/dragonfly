@@ -184,6 +184,7 @@ _pkginfo.txt
 
 # Others
 ClientBin/
+tools/
 ~$*
 *~
 *.dbmdl
