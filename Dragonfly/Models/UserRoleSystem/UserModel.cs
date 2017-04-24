@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Dragonfly.Models
+namespace Dragonfly.Models.UserRoleSystem
 {
+    /// <summary>The model represent a user in the system.</summary>
     public class UserModel
     {
         public string Login{get;set;}
@@ -13,5 +14,8 @@ namespace Dragonfly.Models
         public string EMail { get; set; }
 
         public decimal Id { get; set; }
+
+        /// <summary>The roles assigned to the user.</summary>
+        List<GlobalUserRoleModel> Roles { get; set; }
     }
 }

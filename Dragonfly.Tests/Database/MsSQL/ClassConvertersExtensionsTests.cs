@@ -9,6 +9,7 @@ using Dragonfly.Models.Projects;
 using System.Data.Entity;
 using Dragonfly.Tests;
 using Dragonfly.Models;
+using Dragonfly.Models.UserRoleSystem;
 
 namespace Dragonfly.Database.MsSQL.Tests
 {

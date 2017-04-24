@@ -10,6 +10,7 @@ using System.Data.Entity;
 using Dragonfly.Tests;
 using Dragonfly.Database;
 using Dragonfly.Database.Providers;
+using Dragonfly.Models.UserRoleSystem;
 
 namespace Dragonfly.Models.Projects.Tests
 {

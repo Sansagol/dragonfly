@@ -1,6 +1,7 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Database;
 using Dragonfly.Database.Providers;
+using Dragonfly.Models.UserRoleSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;

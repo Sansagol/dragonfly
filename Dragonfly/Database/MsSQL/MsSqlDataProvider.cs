@@ -16,6 +16,7 @@ using System.Data.Entity.Infrastructure;
 using Dragonfly.Models.Projects;
 using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.Providers;
+using Dragonfly.Models.UserRoleSystem;
 
 namespace Dragonfly.Database.MsSQL
 {

@@ -306,7 +306,7 @@
     <Compile Include="Models\LogUpModel.cs" />
     <Compile Include="Models\Projects\ProjectModel.cs" />
     <Compile Include="Models\Projects\ProjectsModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\UserRoleSystem\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

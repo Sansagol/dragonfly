@@ -2,6 +2,7 @@
 using Dragonfly.Database.MsSQL;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models;
+using Dragonfly.Models.UserRoleSystem;
 using NLog;
 using System;
 using System.Collections.Generic;
