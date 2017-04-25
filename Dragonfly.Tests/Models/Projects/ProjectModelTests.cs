@@ -11,6 +11,7 @@ using Dragonfly.Tests;
 using Dragonfly.Database;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models.UserRoleSystem;
+using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Models.Projects.Tests
 {
@@ -20,7 +21,7 @@ namespace Dragonfly.Models.Projects.Tests
         /// <summary>Common method to save a user.</summary>
         /// <param name="provider">DB provider.</param>
         /// <returns>Stored model of user.</returns>
-        private static UserModel SaveANewUser(IDataBaseProvider provider)
+        private static UserModel SaveANewUser(IDataBaseProvider provider, IUserAccessProvider userProvider)
         {
             SignUpModel userData = new SignUpModel()
             {
@@ -29,7 +30,9 @@ namespace Dragonfly.Models.Projects.Tests
                 Password = "Test user password"
             };
             provider.AddUser(userData);
-            UserModel userModel = provider.GetUserByLoginMail("test@mail.mail");
+            UserModel userModel = userProvider
+                .GetUserByLoginMail("test@mail.mail")
+                .ToUserModel(userProvider);
             return userModel;
         }
 
@@ -39,11 +42,12 @@ namespace Dragonfly.Models.Projects.Tests
         {
             MsSqlFactory factory = new MsSqlFactory();
             IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
+            IUserAccessProvider usProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
             UserModel userModel = null;
             ProjectModel projectModel = null;
             try
             {
-                userModel = SaveANewUser(provider);
+                userModel = SaveANewUser(provider, usProvider);
                 projectModel = new ProjectModel(provider)
                 {
                     ProjectName = "Test project name 1",

@@ -17,15 +17,14 @@ namespace Dragonfly.Core.UserAccess
         /// </summary>
         UsersManage = 1,
 
-        ProjectsRead = 2,
-        ProjectsManage = 3,
+        ProjectsManage = 2,
 
-        ClientsRead = 4,
-        ClientsManage = 5,
+        ClientsRead = 3,
+        ClientsManage = 4,
 
         /// <summary>
         /// Access to the tech support functions.
         /// </summary>
-        TechSupport = 6
+        TechSupport = 5
     }
 }

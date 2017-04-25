@@ -1,4 +1,5 @@
 ﻿using Dragonfly.Core.Settings;
+using Dragonfly.Database.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -9,8 +10,6 @@ namespace Dragonfly.Database.Providers
 {
     public interface IUserAccessProvider : IDataProvider, IDisposable
     {
-        void Initialize(DatabaseAccessConfiguration accessConfigurations);
-
         /// <summary>
         /// Method check an access token to correct and that is not expired.
         /// </summary>
@@ -31,5 +30,9 @@ namespace Dragonfly.Database.Providers
         /// </summary>
         /// <param name="token">Token which need to delete from db.</param>
         void DeleteAccessToken(string token);
+
+        EUser GetUserById(decimal id);
+
+        EUser GetUserByLoginMail(string userLogin);
     }
 }

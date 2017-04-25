@@ -10,6 +10,7 @@ using System.Data.Entity;
 using Dragonfly.Tests;
 using Dragonfly.Models;
 using Dragonfly.Models.UserRoleSystem;
+using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Database.MsSQL.Tests
 {
@@ -24,9 +25,9 @@ namespace Dragonfly.Database.MsSQL.Tests
 
             Project proj = InitializeProject();
 
-            ProjectModel model = proj.ToProjectModel(provider);
+            EProject model = proj.ToEProject();
 
-            Assert.AreEqual(proj.ID_Project, model.ProjectId, "Bad project id");
+            Assert.AreEqual(proj.ID_Project, model.Id, "Bad project id");
             Assert.AreEqual(proj.Name, model.ProjectName, "Bad name");
             Assert.AreEqual(proj.Date_Create, model.DateCreation, "Bad date of creation");
             Assert.AreEqual(proj.Description, model.Description, "Bad description");
@@ -74,13 +75,13 @@ namespace Dragonfly.Database.MsSQL.Tests
             };
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ToProjectModelWithoutProviderTest()
-        {
-            Project proj = InitializeProject();
-            ProjectModel model = proj.ToProjectModel(null);
-        }
+        //[TestMethod()]
+        //[ExpectedException(typeof(ArgumentNullException))]
+        //public void ToProjectModelWithoutProviderTest()
+        //{
+        //    Project proj = InitializeProject();
+        //    EProject model = proj.ToEProject();
+        //}
 
         [TestMethod()]
         public void UserToUserModelTest()
@@ -91,7 +92,7 @@ namespace Dragonfly.Database.MsSQL.Tests
 
             User user = InitUser();
 
-            UserModel model = user.ToUserModel(provider);
+            EUser model = user.ToEUser();
 
             Assert.AreEqual(user.ID_User, model.Id, "Bad user id");
             Assert.AreEqual(user.Name, model.Name, "Bad name");

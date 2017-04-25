@@ -1,5 +1,6 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Core.Settings;
+using Dragonfly.Database.Entities;
 using Dragonfly.Models;
 using Dragonfly.Models.Projects;
 using Dragonfly.Models.UserRoleSystem;
@@ -18,15 +19,9 @@ namespace Dragonfly.Database.Providers
     /// </summary>
     public interface IDataBaseProvider : IDataProvider, IDisposable
     {
-        DbContext Context { get; }
-
         bool CheckUserCredentials(string login, string password);
 
         decimal AddUser(SignUpModel userRegisterData);
-
-        UserModel GetUserById(int userId);
-
-        UserModel GetUserByLoginMail(string userLogin);
 
         void CreateProject(ProjectModel newProject);
 
@@ -38,6 +33,6 @@ namespace Dragonfly.Database.Providers
         /// <param name="offset">Offset from a first project.</param>
         /// <param name="count">Count projects to return.</param>
         /// <returns>Retrieved projects.</returns>
-        IEnumerable<ProjectModel> GetProjects(int offset, int count);
+        IEnumerable<EProject> GetProjects(int offset, int count);
     }
 }

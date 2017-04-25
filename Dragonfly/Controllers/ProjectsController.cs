@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Dragonfly.Models.Projects;
 
 namespace Dragonfly.Controllers
 {
@@ -33,12 +34,14 @@ namespace Dragonfly.Controllers
             if (_UserStateManager.CheckUserAccess(Request, Response))
             {
                 ViewBag.Logged = true;
-                ProjectsModel model = new ProjectsModel();
+                ProjectsModel model = null;
                 using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
                     BaseBindings.SettingsReader.GetDbAccessSettings()))
                 {
-                    var projects = provider.GetProjects(0, 10);
-                    model.AvailableProjects = projects;
+                    model = new ProjectsModel(provider);
+                    model.AvailableProjects = model.GetProjects(0, 10);
+                    //var projects = provider.GetProjects(0, 10);
+                    //model.AvailableProjects = projects.ToList().ForEach(p => p.ToProjectModel());
                 }
                 return View(model);
             }

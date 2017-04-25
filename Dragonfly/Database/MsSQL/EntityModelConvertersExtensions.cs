@@ -1,4 +1,5 @@
-﻿using Dragonfly.Database.Providers;
+﻿using Dragonfly.Database.Entities;
+using Dragonfly.Database.Providers;
 using Dragonfly.Models;
 using Dragonfly.Models.Clients;
 using Dragonfly.Models.Projects;
@@ -19,14 +20,12 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="provider">Provider of database.</param>
         /// <returns>Created project model.</returns>
         /// <exception cref="ArgumentNullException">Empty provider was set.</exception>
-        public static ProjectModel ToProjectModel(this Project project, IDataBaseProvider provider)
+        public static EProject ToEProject(this Project project)
         {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
 
-            ProjectModel projMod = new ProjectModel(provider)
+            EProject projMod = new EProject()
             {
-                ProjectId = project.ID_Project,
+                Id = project.ID_Project,
                 ProjectName = project.Name,
                 Description = project.Description,
                 DateCreation = project.Date_Create,
@@ -34,25 +33,25 @@ namespace Dragonfly.Database.MsSQL
             foreach (var up in project.User_Project)
             {
                 projMod.UserIds.Add(up.ID_User);
-                projMod.Users.Add(up.User.ToUserModel(provider));
+                projMod.Users.Add(up.User.ToEUser());//.ToUserModel(provider));
             }
 
             return projMod;
         }
 
-        public static UserModel ToUserModel(this User user, IDataBaseProvider provider)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-            UserModel model = new UserModel()
-            {
-                Id = user.ID_User,
-                EMail = user.E_mail,
-                Login = user.Login,
-                Name = user.Name
-            };
-            return model;
-        }
+        //public static UserModel ToUserModel(this User user, IDataBaseProvider provider)
+        //{
+        //    if (provider == null)
+        //        throw new ArgumentNullException(nameof(provider));
+        //    UserModel model = new UserModel()
+        //    {
+        //        Id = user.ID_User,
+        //        EMail = user.E_mail,
+        //        Login = user.Login,
+        //        Name = user.Name
+        //    };
+        //    return model;
+        //}
 
         public static ClientType ToClientType(this Client_Type type)
         {
@@ -77,6 +76,24 @@ namespace Dragonfly.Database.MsSQL
                 Type = client.Client_Type.ToClientType()
             };
             return model;
+        }
+
+        public static EUser ToEUser(this User src)
+        {
+            if (src == null)
+                return null;
+            EUser user = new EUser()
+            {
+                Id = src.ID_User,
+                DateOfCreation = src.Date_Creation,
+                EMail = src.E_mail,
+                Login = src.Login,
+                Name = src.Name,
+                Surname = src.Surname,
+                IsLdapUser = src.Is_Ldap_User,
+                IsBlocked = false
+            };
+            return user;
         }
     }
 }

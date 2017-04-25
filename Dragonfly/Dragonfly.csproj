@@ -180,10 +180,13 @@
     <Compile Include="Core\CookieType.cs" />
     <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
+    <Compile Include="Core\UserAccess\AccessFunction.cs" />
     <Compile Include="Core\UserAccess\AuthenticationException.cs" />
     <Compile Include="Core\Logging\BasicNLogConfig.cs" />
     <Compile Include="Core\Logging\ILogConfiguration.cs" />
     <Compile Include="Core\UserAccess\IUserAuthenticateStateManager.cs" />
+    <Compile Include="Database\Entities\EProject.cs" />
+    <Compile Include="Database\Entities\EUser.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
@@ -304,8 +307,11 @@
     <Compile Include="Models\Clients\ClientType.cs" />
     <Compile Include="Models\Clients\CreateClientModel.cs" />
     <Compile Include="Models\LogUpModel.cs" />
+    <Compile Include="Models\Projects\Extensions.cs" />
     <Compile Include="Models\Projects\ProjectModel.cs" />
     <Compile Include="Models\Projects\ProjectsModel.cs" />
+    <Compile Include="Models\UserRoleSystem\Extensions.cs" />
+    <Compile Include="Models\UserRoleSystem\GlobalUserRoleModel.cs" />
     <Compile Include="Models\UserRoleSystem\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

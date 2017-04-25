@@ -11,6 +11,7 @@ using Dragonfly.Core.Settings;
 using System.Security.Claims;
 using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.Security;
+using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -20,7 +21,9 @@ namespace Dragonfly.Database.MsSQL
         IUserDBDataManager _UserManager = null;
         #endregion
 
-        public UserAccessProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator):
+        public UserAccessProvider(
+            IUserDBDataManager userDbDataManage,
+            IDBContextGenerator contextgenerator) :
             base(contextgenerator)
         {
             if (userDbDataManage == null)
@@ -150,6 +153,37 @@ namespace Dragonfly.Database.MsSQL
             OAuthBearerAuthenticationOptions opt = new OAuthBearerAuthenticationOptions();
             var accessToken = opt.AccessTokenFormat.Protect(ticket);
             return accessToken;
+        }
+
+        public EUser GetUserById(decimal id)
+        {
+            EUser user = null;
+            User usr = null;
+            usr = _UserManager.GetUserById(id);
+            user = usr?.ToEUser();
+            return user;
+        }
+
+        public EUser GetUserByLoginMail(string userLogin)
+        {
+            EUser model = null;
+            User usr = null;
+            try
+            {
+                usr = (from user in _Context.User
+                       where user.Login.Equals(userLogin) ||
+                             user.E_mail.Equals(userLogin)
+                       select user).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Database is down.", ex);
+            }
+            if (usr != null)
+            {
+                model = usr.ToEUser();
+            }
+            return model;
         }
     }
 }

@@ -17,6 +17,7 @@ using Dragonfly.Models.Projects;
 using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models.UserRoleSystem;
+using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -28,14 +29,14 @@ namespace Dragonfly.Database.MsSQL
         IUserDBDataManager _UserManager = null;
         #endregion
 
-        public MsSqlDataProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator):
+        public MsSqlDataProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator) :
             base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
 
             _UserManager = userDbDataManage;
-        }      
+        }
 
         /// <summary>
         /// 
@@ -172,51 +173,6 @@ namespace Dragonfly.Database.MsSQL
 
             Thread.Sleep(150);
             return false;
-        }
-
-        public UserModel GetUserById(int userId)
-        {
-            UserModel model = null;
-            User usr = null;
-            usr = _UserManager.GetUserById(userId);
-            if (usr != null)
-            {
-                model = CreateAUserModel(usr);
-            }
-            return model;
-        }
-
-        private static UserModel CreateAUserModel(User usr)
-        {
-            return new UserModel()
-            {
-                Id = usr.ID_User,
-                Login = usr.Login,
-                Name = usr.Name,
-                EMail = usr.E_mail
-            };
-        }
-
-        public UserModel GetUserByLoginMail(string userLogin)
-        {
-            UserModel model = null;
-            User usr = null;
-            try
-            {
-                usr = (from user in _Context.User
-                       where user.Login.Equals(userLogin) ||
-                             user.E_mail.Equals(userLogin)
-                       select user).FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Database is down.", ex);
-            }
-            if (usr != null)
-            {
-                model = CreateAUserModel(usr);
-            }
-            return model;
         }
 
         /// <summary>Method create new project.</summary>
@@ -387,19 +343,19 @@ namespace Dragonfly.Database.MsSQL
             return model;
         }
 
-        public IEnumerable<ProjectModel> GetProjects(int offset, int count)
+        public IEnumerable<EProject> GetProjects(int offset, int count)
         {//TODO get projects for a user
             if (offset < 0) offset = 0;
             if (count < 0) count = 1;
 
             var projects = (from proj in _Context.Project
                             select proj).OrderBy(p => p.ID_Project).Skip(offset).Take(count);
-            List<ProjectModel> projectModels = new List<ProjectModel>();
+            List<EProject> projectModels = new List<EProject>();
             foreach (var project in projects)
             {
                 try
                 {
-                    projectModels.Add(project.ToProjectModel(this));
+                    projectModels.Add(project.ToEProject());
                 }
                 catch (Exception ex)
                 {//TODO log exception
@@ -407,7 +363,5 @@ namespace Dragonfly.Database.MsSQL
             }
             return projectModels;
         }
-
-
     }
 }

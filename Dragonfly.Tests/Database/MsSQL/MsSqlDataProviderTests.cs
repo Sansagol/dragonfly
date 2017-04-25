@@ -10,6 +10,7 @@ using Dragonfly.Models;
 using Dragonfly.Models.Projects;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models.UserRoleSystem;
+using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Tests.Database.MsSQL
 {
@@ -186,6 +187,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
+            IUserAccessProvider userProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
             SignUpModel userData = new SignUpModel()
             {
                 Login = "Test_user",
@@ -193,7 +195,7 @@ namespace Dragonfly.Tests.Database.MsSQL
                 Password = "Test user password"
             };
             provider.AddUser(userData);
-            UserModel userModel = provider.GetUserByLoginMail("test@mail.mail");
+            EUser userModel = userProvider.GetUserByLoginMail("test@mail.mail");
 
             ProjectModel model = new ProjectModel(provider)
             {

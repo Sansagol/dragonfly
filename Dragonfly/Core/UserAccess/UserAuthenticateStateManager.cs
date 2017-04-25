@@ -122,23 +122,28 @@ namespace Dragonfly.Core.UserAccess
                 using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
                          BaseBindings.SettingsReader.GetDbAccessSettings()))
                 {
-                    UserModel user = provider.GetUserByLoginMail(authParameters.Login);
-                    if (user != null)
+                    using (IUserAccessProvider uprovider = BaseBindings.DBFactory.CreateUserAccessProvider(
+                             BaseBindings.SettingsReader.GetDbAccessSettings()))
                     {
-                        using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
-                            BaseBindings.SettingsReader.GetDbAccessSettings()))
+                        UserModel user = new UserModel(uprovider);
+                        user = user.GetUserByEmailLogin(authParameters.Login);
+                        if (user != null)
                         {
-                            string accToken = ap.CreateAccessToken(user.Id);
-                            _CookiesManager.SetToCookie(
-                                response,
-                                CookieType.UserAccessToken, accToken);
-                            _CookiesManager.SetToCookie(
-                                response,
-                                CookieType.UserId, user.Id.ToString());
-                            _CookiesManager.SetToCookie(
-                                response,
-                                CookieType.UserName, user.Name ?? user.Login);
-                            isLogged = true;
+                            using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
+                                BaseBindings.SettingsReader.GetDbAccessSettings()))
+                            {
+                                string accToken = ap.CreateAccessToken(user.Id);
+                                _CookiesManager.SetToCookie(
+                                    response,
+                                    CookieType.UserAccessToken, accToken);
+                                _CookiesManager.SetToCookie(
+                                    response,
+                                    CookieType.UserId, user.Id.ToString());
+                                _CookiesManager.SetToCookie(
+                                    response,
+                                    CookieType.UserName, user.Name ?? user.Login);
+                                isLogged = true;
+                            }
                         }
                     }
                 }
