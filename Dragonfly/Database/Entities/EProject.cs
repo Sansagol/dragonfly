@@ -23,6 +23,13 @@ namespace Dragonfly.Database.Entities
         /// <summary>
         /// Get or set a data, when prodect was creted.
         /// </summary>
+
         public DateTime DateCreation { get; set; }
+
+        public EProject()
+        {
+            UserIds = new List<decimal>();
+            Users = new List<EUser>();
+        }
     }
 }

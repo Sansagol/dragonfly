@@ -36,15 +36,13 @@ namespace Dragonfly.Controllers
                 ViewBag.Logged = true;
                 try
                 {
-                    using (var clientsProvider = _DatabaseFactory.CreateClientsProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings()))
+                    var clientsProvider = _DatabaseFactory.CreateClientsProvider(
+                        BaseBindings.SettingsReader.GetDbAccessSettings());
+                    IEnumerable<ClientModel> clients = clientsProvider.GetAllClients();
+                    model = new ClientsModel()
                     {
-                        IEnumerable<ClientModel> clients = clientsProvider.GetAllClients();
-                        model = new ClientsModel()
-                        {
-                            Clients = clients.ToList()
-                        };
-                    }
+                        Clients = clients.ToList()
+                    };
                 }
                 catch (Exception ex)
                 {

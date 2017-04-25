@@ -45,10 +45,9 @@ namespace Dragonfly.Models
             {
                 try
                 {
-                    using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
-                    {
-                        IsTrueUser = provider.CheckUserCredentials(Login, Password);
-                    }
+                    IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
+                         BaseBindings.SettingsReader.GetDbAccessSettings());
+                    IsTrueUser = provider.CheckUserCredentials(Login, Password);
                     if (!IsTrueUser)
                         ErrorOnUserChecking = "Incorrect login or password";
                 }

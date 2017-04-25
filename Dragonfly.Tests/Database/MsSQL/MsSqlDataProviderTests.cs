@@ -36,15 +36,9 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
-            var context = provider.Context;
-            try
+            using (var context = provider.GenerateContext(Common.Connectionconfig))
             {
                 Assert.IsNotNull(context, "Context not created.");
-            }
-            finally
-            {
-                if (context != null)
-                    context.Dispose();
             }
         }
 
@@ -62,7 +56,7 @@ namespace Dragonfly.Tests.Database.MsSQL
             {
                 MsSqlDataProvider provider =
                     factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
-                context = provider.Context;
+                context = provider.GenerateContext(Common.Connectionconfig);
                 Assert.IsNull(context, "Context created - is wrong.");
             }
             finally
@@ -77,38 +71,40 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
-            DbContext context = provider.Context;
-            SignUpModel model = new SignUpModel()
+            using (DbContext context = provider.GenerateContext(Common.Connectionconfig))
             {
-                Login = "TestDbUser",
-                Password = "testDbPassword",
-                EMail = "some@mail.rrr"
-            };
-            try
-            {
-                Assert.IsTrue(provider.AddUser(model) > 0, "User not saved without error.");
-
-                Assert.IsTrue(provider.CheckUserCredentials(model.Login, model.Password), "Wrong user saved (login)");
-                Assert.IsTrue(provider.CheckUserCredentials(model.EMail, model.Password), "Wrong user saved (email)");
-
-
-                DragonflyEntities ents = context as DragonflyEntities;
-                if (ents != null)
+                SignUpModel model = new SignUpModel()
                 {
-                    User foundUser = (from u in ents.User
-                                      where u.Login.Equals(model.Login)
-                                      select u).FirstOrDefault();
-                    if (foundUser != null)
+                    Login = "TestDbUser",
+                    Password = "testDbPassword",
+                    EMail = "some@mail.rrr"
+                };
+                try
+                {
+                    Assert.IsTrue(provider.AddUser(model) > 0, "User not saved without error.");
+
+                    Assert.IsTrue(provider.CheckUserCredentials(model.Login, model.Password), "Wrong user saved (login)");
+                    Assert.IsTrue(provider.CheckUserCredentials(model.EMail, model.Password), "Wrong user saved (email)");
+
+
+                    DragonflyEntities ents = context as DragonflyEntities;
+                    if (ents != null)
                     {
-                        Assert.AreEqual(model.EMail, foundUser.E_mail, "Wrong e-mail saved.");
-                        //TODO check stored password
+                        User foundUser = (from u in ents.User
+                                          where u.Login.Equals(model.Login)
+                                          select u).FirstOrDefault();
+                        if (foundUser != null)
+                        {
+                            Assert.AreEqual(model.EMail, foundUser.E_mail, "Wrong e-mail saved.");
+                            //TODO check stored password
+                        }
                     }
                 }
-            }
-            finally
-            {
-                DeleteUserFromDB(context, model.Login, model.EMail);
-                //TODO delete test user
+                finally
+                {
+                    DeleteUserFromDB(context, model.Login, model.EMail);
+                    //TODO delete test user
+                }
             }
         }
 
@@ -133,21 +129,22 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
-            DbContext context = provider.Context;
-
-            SignUpModel model = new SignUpModel()
+            using (DbContext context = provider.GenerateContext(Common.Connectionconfig))
             {
-                Login = "TestDbUser",
-                Password = "testDbPassword"
-            };
-            try
-            {
-                Assert.IsFalse(provider.AddUser(model) > 0, "Inserted without e-mail");
-            }
-            finally
-            {
-                DeleteUserFromDB(context, model.Login, model.EMail);
-                //TODO delete test user
+                SignUpModel model = new SignUpModel()
+                {
+                    Login = "TestDbUser",
+                    Password = "testDbPassword"
+                };
+                try
+                {
+                    Assert.IsFalse(provider.AddUser(model) > 0, "Inserted without e-mail");
+                }
+                finally
+                {
+                    DeleteUserFromDB(context, model.Login, model.EMail);
+                    //TODO delete test user
+                }
             }
         }
 
@@ -156,28 +153,29 @@ namespace Dragonfly.Tests.Database.MsSQL
         {
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
-            DbContext context = provider.Context;
-
-            SignUpModel model = new SignUpModel()
+            using (DbContext context = provider.GenerateContext(Common.Connectionconfig))
             {
-                Login = "TestDbUser",
-                Password = "testDbPassword",
-                EMail = "some@mail.rrr"
-            };
-            try
-            {
-                Assert.IsTrue(provider.AddUser(model) > 0, "Insert failed");
-                Assert.IsFalse(provider.AddUser(model) > 0, "Double insert equals user");
-            }
-            catch (InsertDbDataException ex)
-            {
-                Assert.IsTrue(ex.FieldNames.Count() > 0,
-                    $"Exception thrown, but without error fields: {ex.Message}");
-            }
-            finally
-            {
-                DeleteUserFromDB(context, model.Login, model.EMail);
-                //TODO delete test user
+                SignUpModel model = new SignUpModel()
+                {
+                    Login = "TestDbUser",
+                    Password = "testDbPassword",
+                    EMail = "some@mail.rrr"
+                };
+                try
+                {
+                    Assert.IsTrue(provider.AddUser(model) > 0, "Insert failed");
+                    Assert.IsFalse(provider.AddUser(model) > 0, "Double insert equals user");
+                }
+                catch (InsertDbDataException ex)
+                {
+                    Assert.IsTrue(ex.FieldNames.Count() > 0,
+                        $"Exception thrown, but without error fields: {ex.Message}");
+                }
+                finally
+                {
+                    DeleteUserFromDB(context, model.Login, model.EMail);
+                    //TODO delete test user
+                }
             }
         }
 
@@ -220,18 +218,23 @@ namespace Dragonfly.Tests.Database.MsSQL
                 Assert.AreEqual(model.Description, selectedProjectModel.Description);
 
                 //Check users
-                DragonflyEntities ents = provider.Context as DragonflyEntities;
-                var projectUsers = (from usr in ents.User_Project
-                                    where usr.ID_Project == selectedProjectModel.ProjectId
-                                    select usr).ToList();
-                Assert.IsTrue(projectUsers.All(pu => model.UserIds.Contains(pu.ID_User)),
-                    "Not all users added to project management.");
+                using (DragonflyEntities ents = provider.GenerateContext(Common.Connectionconfig))
+                {
+                    var projectUsers = (from usr in ents.User_Project
+                                        where usr.ID_Project == selectedProjectModel.ProjectId
+                                        select usr).ToList();
+                    Assert.IsTrue(projectUsers.All(pu => model.UserIds.Contains(pu.ID_User)),
+                        "Not all users added to project management.");
+                }
             }
             finally
             {
                 if (model != null && model.ProjectId > 0)
                     provider.DeleteProject(model.ProjectId);
-                DeleteUserFromDB(provider.Context, userData.Login, userData.EMail);
+                using (DragonflyEntities ents = provider.GenerateContext(Common.Connectionconfig))
+                {
+                    DeleteUserFromDB(ents, userData.Login, userData.EMail);
+                }
             }
         }
 
@@ -244,37 +247,38 @@ namespace Dragonfly.Tests.Database.MsSQL
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
             IUserAccessProvider accessProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
-            DbContext context = provider.Context;
-
-            DragonflyEntities ents = context as DragonflyEntities;
-            decimal createdAceessToken = 0;
-
-            try
+            using (DbContext context = provider.GenerateContext(Common.Connectionconfig))
             {
-                decimal userId = provider.AddUser(_UserSignUpData);
-                Assert.IsTrue(userId > 0, "Error occured on the user save.");
-                string token = accessProvider.CreateAccessToken(userId);
-                var accessTokens = (from at in ents.User_Access
-                                    where at.ID_User == userId
-                                    select at);
-                if (accessTokens.Count() > 1)
+                DragonflyEntities ents = context as DragonflyEntities;
+                decimal createdAceessToken = 0;
+
+                try
                 {
-                    foreach (var foundToken in accessTokens)
-                        DeleteAccessTokenFromDB(context, foundToken.ID_User_Access);
-                    Assert.Fail("Too many access tokens");
+                    decimal userId = provider.AddUser(_UserSignUpData);
+                    Assert.IsTrue(userId > 0, "Error occured on the user save.");
+                    string token = accessProvider.CreateAccessToken(userId);
+                    var accessTokens = (from at in ents.User_Access
+                                        where at.ID_User == userId
+                                        select at);
+                    if (accessTokens.Count() > 1)
+                    {
+                        foreach (var foundToken in accessTokens)
+                            DeleteAccessTokenFromDB(context, foundToken.ID_User_Access);
+                        Assert.Fail("Too many access tokens");
+                    }
+                    else if (accessTokens.Count() == 1)
+                    {
+                        createdAceessToken = accessTokens.First().ID_User_Access;
+                        Assert.AreEqual(token, accessTokens.First().Access_Token);
+                    }
+                    else
+                        Assert.Fail("Access tokens not found in the DB.");
                 }
-                else if (accessTokens.Count() == 1)
+                finally
                 {
-                    createdAceessToken = accessTokens.First().ID_User_Access;
-                    Assert.AreEqual(token, accessTokens.First().Access_Token);
+                    DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
+                    DeleteAccessTokenFromDB(context, createdAceessToken);
                 }
-                else
-                    Assert.Fail("Access tokens not found in the DB.");
-            }
-            finally
-            {
-                DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
-                DeleteAccessTokenFromDB(context, createdAceessToken);
             }
         }
 
@@ -306,33 +310,34 @@ namespace Dragonfly.Tests.Database.MsSQL
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
             IUserAccessProvider accessProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
-            DbContext context = provider.Context;
-
-            DragonflyEntities ents = context as DragonflyEntities;
-            decimal createdAceessToken = 0;
-
-            try
+            using (DbContext context = provider.GenerateContext(Common.Connectionconfig))
             {
-                decimal userId = provider.AddUser(_UserSignUpData);
-                Assert.IsTrue(userId > 0, "Error occured on the user save.");
-                string token = accessProvider.CreateAccessToken(userId);
-                var accessTokens = (from at in ents.User_Access
-                                    where at.ID_User == userId
-                                    select at);
-                if (accessTokens.Count() == 1)
+                DragonflyEntities ents = context as DragonflyEntities;
+                decimal createdAceessToken = 0;
+
+                try
                 {
-                    createdAceessToken = accessTokens.First().ID_User_Access;
-                    DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
-                    var tokensCount = (from at in ents.User_Access
-                                       where at.ID_User == userId
-                                       select at).Count();
-                    Assert.AreEqual(0, tokensCount, "Access tokens for user stay in the DB");
+                    decimal userId = provider.AddUser(_UserSignUpData);
+                    Assert.IsTrue(userId > 0, "Error occured on the user save.");
+                    string token = accessProvider.CreateAccessToken(userId);
+                    var accessTokens = (from at in ents.User_Access
+                                        where at.ID_User == userId
+                                        select at);
+                    if (accessTokens.Count() == 1)
+                    {
+                        createdAceessToken = accessTokens.First().ID_User_Access;
+                        DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
+                        var tokensCount = (from at in ents.User_Access
+                                           where at.ID_User == userId
+                                           select at).Count();
+                        Assert.AreEqual(0, tokensCount, "Access tokens for user stay in the DB");
+                    }
                 }
-            }
-            finally
-            {
-                DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
-                DeleteAccessTokenFromDB(context, createdAceessToken);
+                finally
+                {
+                    DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
+                    DeleteAccessTokenFromDB(context, createdAceessToken);
+                }
             }
         }
 
@@ -342,19 +347,20 @@ namespace Dragonfly.Tests.Database.MsSQL
             MsSqlFactory factory = new MsSqlFactory();
             MsSqlDataProvider provider = factory.CreateDBProvider(Common.Connectionconfig) as MsSqlDataProvider;
             IUserAccessProvider accessProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
-            DbContext context = provider.Context;
-
-            DragonflyEntities ents = context as DragonflyEntities;
-            try
+            using (DbContext context = provider.GenerateContext(Common.Connectionconfig))
             {
-                decimal userId = provider.AddUser(_UserSignUpData);
-                Assert.IsTrue(userId > 0, "Error occured on the user save.");
-                string token = accessProvider.CreateAccessToken(userId);
-                Assert.IsTrue(accessProvider.CheckAccessToken(userId, token));
-            }
-            finally
-            {
-                DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
+                DragonflyEntities ents = context as DragonflyEntities;
+                try
+                {
+                    decimal userId = provider.AddUser(_UserSignUpData);
+                    Assert.IsTrue(userId > 0, "Error occured on the user save.");
+                    string token = accessProvider.CreateAccessToken(userId);
+                    Assert.IsTrue(accessProvider.CheckAccessToken(userId, token));
+                }
+                finally
+                {
+                    DeleteUserFromDB(context, _UserSignUpData.Login, _UserSignUpData.EMail);
+                }
             }
         }
     }

@@ -35,14 +35,12 @@ namespace Dragonfly.Controllers
             {
                 ViewBag.Logged = true;
                 ProjectsModel model = null;
-                using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
-                    BaseBindings.SettingsReader.GetDbAccessSettings()))
-                {
-                    model = new ProjectsModel(provider);
-                    model.AvailableProjects = model.GetProjects(0, 10);
-                    //var projects = provider.GetProjects(0, 10);
-                    //model.AvailableProjects = projects.ToList().ForEach(p => p.ToProjectModel());
-                }
+                IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
+                    BaseBindings.SettingsReader.GetDbAccessSettings());
+                model = new ProjectsModel(provider);
+                model.AvailableProjects = model.GetProjects(0, 10);
+                //var projects = provider.GetProjects(0, 10);
+                //model.AvailableProjects = projects.ToList().ForEach(p => p.ToProjectModel());
                 return View(model);
             }
             else

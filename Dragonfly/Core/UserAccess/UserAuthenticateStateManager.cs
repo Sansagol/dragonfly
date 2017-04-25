@@ -55,11 +55,9 @@ namespace Dragonfly.Core.UserAccess
             bool isCorrectAccess = false;
             try
             {
-                using (var accessProvider = BaseBindings.DBFactory.CreateUserAccessProvider(
-                    BaseBindings.SettingsReader.GetDbAccessSettings()))
-                {
-                    isCorrectAccess = accessProvider.CheckAccessToken(userId, accessToken);
-                }
+                var accessProvider = BaseBindings.DBFactory.CreateUserAccessProvider(
+                     BaseBindings.SettingsReader.GetDbAccessSettings());
+                isCorrectAccess = accessProvider.CheckAccessToken(userId, accessToken);
             }
             catch (Exception ex)
             {
@@ -93,11 +91,11 @@ namespace Dragonfly.Core.UserAccess
             try
             {
                 if (!string.IsNullOrWhiteSpace(token))
-                    using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings()))
-                    {
-                        ap.DeleteAccessToken(token);
-                    }
+                {
+                    var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
+                        BaseBindings.SettingsReader.GetDbAccessSettings());
+                    ap.DeleteAccessToken(token);
+                }
             }
             catch (Exception ex)
             {
@@ -119,33 +117,26 @@ namespace Dragonfly.Core.UserAccess
             bool isLogged = false;
             if (CheckUser(authParameters.Login, authParameters.Password))
             {
-                using (IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
-                         BaseBindings.SettingsReader.GetDbAccessSettings()))
+                IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
+                         BaseBindings.SettingsReader.GetDbAccessSettings());
+                IUserAccessProvider uprovider = BaseBindings.DBFactory.CreateUserAccessProvider(
+                              BaseBindings.SettingsReader.GetDbAccessSettings());
+
+                UserModel user = new UserModel(uprovider);
+                user = user.GetUserByEmailLogin(authParameters.Login);
+                if (user != null)
                 {
-                    using (IUserAccessProvider uprovider = BaseBindings.DBFactory.CreateUserAccessProvider(
-                             BaseBindings.SettingsReader.GetDbAccessSettings()))
-                    {
-                        UserModel user = new UserModel(uprovider);
-                        user = user.GetUserByEmailLogin(authParameters.Login);
-                        if (user != null)
-                        {
-                            using (var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
-                                BaseBindings.SettingsReader.GetDbAccessSettings()))
-                            {
-                                string accToken = ap.CreateAccessToken(user.Id);
-                                _CookiesManager.SetToCookie(
-                                    response,
-                                    CookieType.UserAccessToken, accToken);
-                                _CookiesManager.SetToCookie(
-                                    response,
-                                    CookieType.UserId, user.Id.ToString());
-                                _CookiesManager.SetToCookie(
-                                    response,
-                                    CookieType.UserName, user.Name ?? user.Login);
-                                isLogged = true;
-                            }
-                        }
-                    }
+                    string accToken = uprovider.CreateAccessToken(user.Id);
+                    _CookiesManager.SetToCookie(
+                        response,
+                        CookieType.UserAccessToken, accToken);
+                    _CookiesManager.SetToCookie(
+                        response,
+                        CookieType.UserId, user.Id.ToString());
+                    _CookiesManager.SetToCookie(
+                        response,
+                        CookieType.UserName, user.Name ?? user.Login);
+                    isLogged = true;
                 }
             }
             else
@@ -170,13 +161,11 @@ namespace Dragonfly.Core.UserAccess
             {
                 try
                 {
-                    using (var ap = BaseBindings.DBFactory.CreateDBProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings()))
-                    {
-                        isTrueUser = ap.CheckUserCredentials(login, password);
-                        if (!isTrueUser)
-                            errorOnUserChecking = "Incorrect login or password";
-                    }
+                    var ap = BaseBindings.DBFactory.CreateDBProvider(
+                        BaseBindings.SettingsReader.GetDbAccessSettings());
+                    isTrueUser = ap.CheckUserCredentials(login, password);
+                    if (!isTrueUser)
+                        errorOnUserChecking = "Incorrect login or password";
                 }
                 catch (InvalidOperationException ex)
                 {

@@ -21,15 +21,21 @@ namespace Dragonfly.Database.MsSQL
         IUserDBDataManager _UserManager = null;
         #endregion
 
+        DatabaseAccessConfiguration _DatabaseConfig = null;
+
         public UserAccessProvider(
             IUserDBDataManager userDbDataManage,
-            IDBContextGenerator contextgenerator) :
+            IDBContextGenerator contextgenerator,
+            DatabaseAccessConfiguration dbConfig) :
             base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
+            if (dbConfig == null)
+                throw new ArgumentNullException(nameof(dbConfig));
 
             _UserManager = userDbDataManage;
+            _DatabaseConfig = dbConfig;
         }
 
         /// <summary>
@@ -41,49 +47,61 @@ namespace Dragonfly.Database.MsSQL
         public bool CheckAccessToken(decimal userId, string token)
         {
             DateTime now = DateTime.UtcNow.Date;
-            //DeleteOldUserAccessTokens(userId, now);
-            var userAccesses = (from userAccess in _Context.User_Access
-                                where DbFunctions.TruncateTime(userAccess.Date_Expiration) >= now &&
-                                      userAccess.Access_Token.Equals(token) &&
-                                      userAccess.ID_User == userId
-                                select userAccess).OrderByDescending(u => u.Date_Expiration);
-            //Delete multiple equals access tokens
-            if (userAccesses.Count() > 1)
-            {//TODO: write this to log as error
-                _Context.User_Access.RemoveRange(userAccesses.Skip(1));
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            {
+                var userAccesses = (from userAccess in context.User_Access
+                                    where DbFunctions.TruncateTime(userAccess.Date_Expiration) >= now &&
+                                          userAccess.Access_Token.Equals(token) &&
+                                          userAccess.ID_User == userId
+                                    select userAccess).OrderByDescending(u => u.Date_Expiration);
+                //Delete multiple equals access tokens
+                if (userAccesses.Count() > 1)
+                {//TODO: write this to log as error
+                    context.User_Access.RemoveRange(userAccesses.Skip(1));
+                    try
+                    {
+                        context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {//TODO log
+                    }
+                }
+                return userAccesses.Count() >= 1;
             }
-            return userAccesses.Count() >= 1;
         }
 
-        private void DeleteOldUserAccessTokens(decimal userId, DateTime now)
+        private void DeleteOldUserAccessTokens(decimal userId, DateTime now, DragonflyEntities context)
         {
             var userAccesses =
-                (from userAccess in _Context.User_Access
+                (from userAccess in context.User_Access
                  where userAccess.ID_User == userId &&
                        DbFunctions.TruncateTime(userAccess.Date_Expiration) < now.Date
                  select userAccess);
-            DeleteAccessTokens(userAccesses);
+            DeleteAccessTokens(userAccesses, context);
         }
 
-        private void DeleteAccessTokens(IQueryable<User_Access> userAccesses)
+        private void DeleteAccessTokens(IQueryable<User_Access> userAccesses, DragonflyEntities context)
         {
             if (userAccesses.Count() > 0)
-                _Context.User_Access.RemoveRange(userAccesses);
+                context.User_Access.RemoveRange(userAccesses);
             try
             {
-                _Context.SaveChanges();
+                context.SaveChanges();
             }
             catch (Exception ex)
-            {
+            {//TODO log
             }
         }
 
         public void DeleteAccessToken(string token)
         {
-            var accessTokens = (from ua in _Context.User_Access
-                                where ua.Access_Token.Equals(token)
-                                select ua);
-            DeleteAccessTokens(accessTokens);
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            {
+                var accessTokens = (from ua in context.User_Access
+                                    where ua.Access_Token.Equals(token)
+                                    select ua);
+                DeleteAccessTokens(accessTokens, context);
+            }
         }
 
         /// <summary>Method create an access token for current user.</summary>
@@ -95,34 +113,36 @@ namespace Dragonfly.Database.MsSQL
         {
             string token = string.Empty;
             DateTime now = DateTime.UtcNow;
-
-            DeleteOldUserAccessTokens(userId, now);
-            User currentUser = _UserManager.GetUserById(userId);
-            if (currentUser != null)
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                token = GenerateAccessToken(now);
-                User_Access access = new User_Access()
+                DeleteOldUserAccessTokens(userId, now, context);
+                User currentUser = _UserManager.GetUserById(userId);
+                if (currentUser != null)
                 {
-                    Access_Token = token,
-                    Date_Creation = now,
-                    Date_Expiration = now.AddDays(1),
-                    ID_User = currentUser.ID_User
-                };
-                try
-                {
-                    _Context.User_Access.Add(access);
-                    _Context.SaveChanges();
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    _Context.User_Access.Remove(access);
-                    List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
-                    throw new InsertDbDataException(validationErrors);
-                }
-                catch (DbUpdateException ex)
-                {
-                    _Context.User_Access.Remove(access);
-                    throw new InvalidOperationException("Unable to save user-access", ex);
+                    token = GenerateAccessToken(now);
+                    User_Access access = new User_Access()
+                    {
+                        Access_Token = token,
+                        Date_Creation = now,
+                        Date_Expiration = now.AddDays(1),
+                        ID_User = currentUser.ID_User
+                    };
+                    try
+                    {
+                        context.User_Access.Add(access);
+                        context.SaveChanges();
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        context.User_Access.Remove(access);
+                        List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
+                        throw new InsertDbDataException(validationErrors);
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        context.User_Access.Remove(access);
+                        throw new InvalidOperationException("Unable to save user-access", ex);
+                    }
                 }
             }
             return token;
@@ -170,10 +190,13 @@ namespace Dragonfly.Database.MsSQL
             User usr = null;
             try
             {
-                usr = (from user in _Context.User
-                       where user.Login.Equals(userLogin) ||
-                             user.E_mail.Equals(userLogin)
-                       select user).FirstOrDefault();
+                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                {
+                    usr = (from user in context.User
+                           where user.Login.Equals(userLogin) ||
+                                 user.E_mail.Equals(userLogin)
+                           select user).FirstOrDefault();
+                }
             }
             catch (Exception ex)
             {

@@ -14,13 +14,7 @@ namespace Dragonfly.Database.MsSQL
     /// </summary>
     class DataProvider 
     {
-        private IDBContextGenerator _ContextGenerator = null;
-
-        public DbContext Context
-        {
-            get { return _Context; }
-        }
-        protected DragonflyEntities _Context = null;
+        protected IDBContextGenerator _ContextGenerator = null;
 
         public DataProvider(IDBContextGenerator contextgenerator)
         {
@@ -33,15 +27,18 @@ namespace Dragonfly.Database.MsSQL
         /// <summary>Method create and open context for database.</summary>
         /// <param name="accessConfigurations">Parameters to database connect.</param>
         /// <exception cref="DbInitializationException">Error on database initialization.</exception>
-        public void Initialize(DatabaseAccessConfiguration accessConfigurations)
+        public void Initialize()
         {
-            _Context = _ContextGenerator.GenerateContext(accessConfigurations);
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Hack method to generate the context of the database.
+        /// </summary>
+        /// <param name="accessConfigurations"></param>
+        /// <returns></returns>
+        public DragonflyEntities GenerateContext(DatabaseAccessConfiguration accessConfigurations)
         {
-            _Context?.Dispose();
-            _Context = null;
+            return _ContextGenerator.GenerateContext(accessConfigurations);
         }
     }
 }

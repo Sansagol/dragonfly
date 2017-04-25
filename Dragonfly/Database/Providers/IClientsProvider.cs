@@ -10,7 +10,7 @@ namespace Dragonfly.Database.Providers
     /// <summary>
     /// Interface represent methods to manipulate with clients objects.
     /// </summary>
-    public interface IClientsProvider : IDataProvider, IDisposable
+    public interface IClientsProvider : IDataProvider
     {
         void CreateClient(ClientModel model);
 

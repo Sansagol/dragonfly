@@ -17,7 +17,7 @@ namespace Dragonfly.Database.Providers
     /// Interface implements providers, which will be
     /// provide access to databases.
     /// </summary>
-    public interface IDataBaseProvider : IDataProvider, IDisposable
+    public interface IDataBaseProvider : IDataProvider
     {
         bool CheckUserCredentials(string login, string password);
 

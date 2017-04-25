@@ -23,19 +23,25 @@ namespace Dragonfly.Database.MsSQL
 {
     internal class MsSqlDataProvider : DataProvider, IDataBaseProvider
     {
-        public DbContext Context { get { return _Context; } }
-
         #region Low level interfaces
         IUserDBDataManager _UserManager = null;
         #endregion
 
-        public MsSqlDataProvider(IUserDBDataManager userDbDataManage, IDBContextGenerator contextgenerator) :
+        DatabaseAccessConfiguration _DatabaseConfig = null;
+
+        public MsSqlDataProvider(
+            IUserDBDataManager userDbDataManage,
+            IDBContextGenerator contextgenerator,
+            DatabaseAccessConfiguration dbConfig) :
             base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
+            if (dbConfig == null)
+                throw new ArgumentNullException(nameof(dbConfig));
 
             _UserManager = userDbDataManage;
+            _DatabaseConfig = dbConfig;
         }
 
         /// <summary>
@@ -61,26 +67,30 @@ namespace Dragonfly.Database.MsSQL
                 Date_Creation = DateTime.Now,
                 E_mail = userRegisterData.EMail
             };
-            _Context.User.Add(usr);
-            try
+
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                _Context.SaveChanges();
-            }
-            catch (DbEntityValidationException ex)
-            {
-                _Context.User.Remove(usr);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
+                context.User.Add(usr);
+                try
                 {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    context.SaveChanges();
                 }
-                throw new InsertDbDataException(validationErrors);
-            }
-            catch (DbUpdateException ex)
-            {
-                _Context.User.Remove(usr);
-                throw new InsertDbDataException($"Update entity error: {ex.Message}");
+                catch (DbEntityValidationException ex)
+                {
+                    context.User.Remove(usr);
+                    List<ValidationError> validationErrors = new List<ValidationError>();
+                    foreach (var validResult in ex.EntityValidationErrors)
+                    {
+                        validationErrors.AddRange(validResult.ValidationErrors.Select(
+                            v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    }
+                    throw new InsertDbDataException(validationErrors);
+                }
+                catch (DbUpdateException ex)
+                {
+                    context.User.Remove(usr);
+                    throw new InsertDbDataException($"Update entity error: {ex.Message}");
+                }
             }
             return usr.ID_User;
         }
@@ -89,20 +99,23 @@ namespace Dragonfly.Database.MsSQL
         private void CheckExistingUsers(SignUpModel userRegisterData)
         {
             List<ValidationError> validationErrors = new List<ValidationError>();
-            int existsUsersCount = (from u in _Context.User
-                                    where u.Login.Equals(userRegisterData.Login)
-                                    select u).Count();
-            if (existsUsersCount > 0)
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                validationErrors.Add(new ValidationError("Login", "The user with  the specified login exists."));
-            }
-            else
-            {
-                existsUsersCount = (from u in _Context.User
-                                    where u.E_mail.Equals(userRegisterData.EMail)
-                                    select u).Count();
+                int existsUsersCount = (from u in context.User
+                                        where u.Login.Equals(userRegisterData.Login)
+                                        select u).Count();
                 if (existsUsersCount > 0)
-                    validationErrors.Add(new ValidationError("Email", "The user with  the specified Email exists."));
+                {
+                    validationErrors.Add(new ValidationError("Login", "The user with  the specified login exists."));
+                }
+                else
+                {
+                    existsUsersCount = (from u in context.User
+                                        where u.E_mail.Equals(userRegisterData.EMail)
+                                        select u).Count();
+                    if (existsUsersCount > 0)
+                        validationErrors.Add(new ValidationError("Email", "The user with  the specified Email exists."));
+                }
             }
             if (validationErrors.Count > 0)
                 throw new InsertDbDataException(validationErrors);
@@ -141,15 +154,16 @@ namespace Dragonfly.Database.MsSQL
         /// <exception cref="InvalidOperationException"/>
         public bool CheckUserCredentials(string login, string password)
         {
-            if (_Context == null)
-                return false;
             User usr = null;
             try
             {
-                usr = (from user in _Context.User
-                       where user.Login.Equals(login) ||
-                             user.E_mail.Equals(login)
-                       select user).FirstOrDefault();
+                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                {
+                    usr = (from user in context.User
+                           where user.Login.Equals(login) ||
+                                 user.E_mail.Equals(login)
+                           select user).FirstOrDefault();
+                }
             }
             catch (Exception ex)
             {
@@ -193,24 +207,28 @@ namespace Dragonfly.Database.MsSQL
                 Date_Create = DateTime.Now,
                 Description = newProject.Description
             };
-            SaveNewProjectInDB(proj);
-            newProject.ProjectId = proj.ID_Project;
 
-            Project_Role prRole = (from pr in _Context.Project_Role
-                                   where pr.Is_Admin
-                                   select pr).FirstOrDefault();
-            if (prRole == null)
-                throw new InvalidOperationException("An admin role for project not found.");
-
-            foreach (User user in users)
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                User_Project usProj = new User_Project()
+                SaveNewProjectInDB(proj, context);
+                newProject.ProjectId = proj.ID_Project;
+
+                Project_Role prRole = (from pr in context.Project_Role
+                                       where pr.Is_Admin
+                                       select pr).FirstOrDefault();
+                if (prRole == null)
+                    throw new InvalidOperationException("An admin role for project not found.");
+
+                foreach (User user in users)
                 {
-                    ID_Project = proj.ID_Project,
-                    ID_User = user.ID_User,
-                    ID_Project_Role = prRole.ID_Project_Role
-                };
-                KeepUserProject(proj.ID_Project, usProj);
+                    User_Project usProj = new User_Project()
+                    {
+                        ID_Project = proj.ID_Project,
+                        ID_User = user.ID_User,
+                        ID_Project_Role = prRole.ID_Project_Role
+                    };
+                    KeepUserProject(proj.ID_Project, usProj, context);
+                }
             }
         }
 
@@ -253,43 +271,43 @@ namespace Dragonfly.Database.MsSQL
         /// <param name="project">Project to save</param>
         /// <exception cref="InvalidOperationException"/>
         /// <exception cref="InsertDbDataException"/>
-        private void SaveNewProjectInDB(Project project)
+        private void SaveNewProjectInDB(Project project, DragonflyEntities context)
         {
             try
             {
-                _Context.Project.Add(project);
-                _Context.SaveChanges();
+                context.Project.Add(project);
+                context.SaveChanges();
             }
             catch (DbEntityValidationException ex)
             {
-                _Context.Project.Remove(project);
+                context.Project.Remove(project);
                 List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
                 throw new InsertDbDataException(validationErrors);
             }
             catch (DbUpdateException ex)
             {
-                _Context.Project.Remove(project);
+                context.Project.Remove(project);
                 throw new InvalidOperationException("Unable to save project", ex);
             }
         }
 
-        private void KeepUserProject(decimal projectId, User_Project usProj)
+        private void KeepUserProject(decimal projectId, User_Project usProj, DragonflyEntities context)
         {
             try
             {
-                _Context.User_Project.Add(usProj);
-                _Context.SaveChanges();
+                context.User_Project.Add(usProj);
+                context.SaveChanges();
             }
             catch (DbEntityValidationException ex)
             {
-                _Context.User_Project.Remove(usProj);
+                context.User_Project.Remove(usProj);
                 List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
                 DeleteProject(projectId);
                 throw new InsertDbDataException(validationErrors);
             }
             catch (DbUpdateException ex)
             {
-                _Context.User_Project.Remove(usProj);
+                context.User_Project.Remove(usProj);
                 DeleteProject(projectId);
                 throw new InvalidOperationException("Unable to save user-project relation", ex);
             }
@@ -306,11 +324,18 @@ namespace Dragonfly.Database.MsSQL
 
             try
             {
-                Project proj = (from p in _Context.Project
-                                where p.ID_Project == projectId
-                                select p).FirstOrDefault();
-                if (proj != null)
-                    _Context.Project.Remove(proj);
+                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                {
+                    Project proj = (from p in context.Project
+                                    where p.ID_Project == projectId
+                                    select p).FirstOrDefault();
+                    if (proj != null)
+                    {
+                        context.Project.Remove(proj);
+                        context.SaveChanges();
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -325,16 +350,19 @@ namespace Dragonfly.Database.MsSQL
             ProjectModel model = null;
             try
             {
-                Project proj = (from p in _Context.Project
-                                where p.ID_Project == projectId
-                                select p).FirstOrDefault();
-                if (proj != null)
-                    model = new ProjectModel(this)
-                    {
-                        Description = proj.Description,
-                        ProjectName = proj.Name,
-                        UserIds = proj.User_Project.Select(u => u.ID_User).ToList()
-                    };
+                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                {
+                    Project proj = (from p in context.Project
+                                    where p.ID_Project == projectId
+                                    select p).FirstOrDefault();
+                    if (proj != null)
+                        model = new ProjectModel(this)
+                        {
+                            Description = proj.Description,
+                            ProjectName = proj.Name,
+                            UserIds = proj.User_Project.Select(u => u.ID_User).ToList()
+                        };
+                }
             }
             catch (Exception ex)
             {
@@ -347,21 +375,23 @@ namespace Dragonfly.Database.MsSQL
         {//TODO get projects for a user
             if (offset < 0) offset = 0;
             if (count < 0) count = 1;
-
-            var projects = (from proj in _Context.Project
-                            select proj).OrderBy(p => p.ID_Project).Skip(offset).Take(count);
-            List<EProject> projectModels = new List<EProject>();
-            foreach (var project in projects)
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                try
+                var projects = (from proj in context.Project
+                                select proj).OrderBy(p => p.ID_Project).Skip(offset).Take(count);
+                List<EProject> projectModels = new List<EProject>();
+                foreach (var project in projects)
                 {
-                    projectModels.Add(project.ToEProject());
+                    try
+                    {
+                        projectModels.Add(project.ToEProject());
+                    }
+                    catch (Exception ex)
+                    {//TODO log exception
+                    }
                 }
-                catch (Exception ex)
-                {//TODO log exception
-                }
+                return projectModels;
             }
-            return projectModels;
         }
     }
 }

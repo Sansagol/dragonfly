@@ -45,13 +45,11 @@ namespace Dragonfly.Controllers
         {
             _UserStateManager.CheckUserAccess(Request, Response);
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
-            using (IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider())
-            {
-                project.DbProvider = provider;
-                project.UserIds = new List<decimal>() { userId };
-                if (project.SaveProject())
-                    return RedirectToAction("Index", "Projects");
-            }
+            IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider();
+            project.DbProvider = provider;
+            project.UserIds = new List<decimal>() { userId };
+            if (project.SaveProject())
+                return RedirectToAction("Index", "Projects");
             return View("CreateProject");
         }
     }

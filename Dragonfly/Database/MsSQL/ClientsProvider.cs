@@ -18,9 +18,16 @@ namespace Dragonfly.Database.MsSQL
     /// </summary>
     class ClientsProvider : DataProvider, IClientsProvider
     {
-        public ClientsProvider(IDBContextGenerator contextgenerator) :
+        DatabaseAccessConfiguration _DatabaseConfig = null;
+
+        public ClientsProvider(IDBContextGenerator contextgenerator,
+            DatabaseAccessConfiguration dbConfig) :
             base(contextgenerator)
         {
+            if (dbConfig == null)
+                throw new ArgumentNullException(nameof(dbConfig));
+
+            _DatabaseConfig = dbConfig;
         }
 
         public decimal CreateAClientType(string typeName, decimal id)
@@ -32,26 +39,29 @@ namespace Dragonfly.Database.MsSQL
                 Type_Name = typeName,
                 ID_Client_Type = id
             };
-            try
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                _Context.Client_Type.Add(newType);
-                _Context.SaveChanges();
-            }
-            catch (DbEntityValidationException ex)
-            {
-                _Context.Client_Type.Remove(newType);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
+                try
                 {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    context.Client_Type.Add(newType);
+                    context.SaveChanges();
                 }
-                throw new InsertDbDataException(validationErrors);
-            }
-            catch (DbUpdateException ex)
-            {
-                _Context.Client_Type.Remove(newType);
-                throw new InsertDbDataException($"Update entity error: {ex.Message}");
+                catch (DbEntityValidationException ex)
+                {
+                    context.Client_Type.Remove(newType);
+                    List<ValidationError> validationErrors = new List<ValidationError>();
+                    foreach (var validResult in ex.EntityValidationErrors)
+                    {
+                        validationErrors.AddRange(validResult.ValidationErrors.Select(
+                            v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    }
+                    throw new InsertDbDataException(validationErrors);
+                }
+                catch (DbUpdateException ex)
+                {
+                    context.Client_Type.Remove(newType);
+                    throw new InsertDbDataException($"Update entity error: {ex.Message}");
+                }
             }
             return newType.ID_Client_Type;
         }
@@ -65,27 +75,30 @@ namespace Dragonfly.Database.MsSQL
             if (model.Type == null)
                 throw new ArgumentException("Type can not be empty", nameof(model));
             Client client = model.ToClient();
-            try
+            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
             {
-                _Context.Client.Add(client);
-                _Context.SaveChanges();
-                model.ID = client.ID_Client;
-            }
-            catch (DbEntityValidationException ex)
-            {
-                _Context.Client.Remove(client);
-                List<ValidationError> validationErrors = new List<ValidationError>();
-                foreach (var validResult in ex.EntityValidationErrors)
+                try
                 {
-                    validationErrors.AddRange(validResult.ValidationErrors.Select(
-                        v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    context.Client.Add(client);
+                    context.SaveChanges();
+                    model.ID = client.ID_Client;
                 }
-                throw new InsertDbDataException(validationErrors);
-            }
-            catch (DbUpdateException ex)
-            {
-                _Context.Client.Remove(client);
-                throw new InsertDbDataException($"Update entity error: {ex.GetFullMessage()}");
+                catch (DbEntityValidationException ex)
+                {
+                    context.Client.Remove(client);
+                    List<ValidationError> validationErrors = new List<ValidationError>();
+                    foreach (var validResult in ex.EntityValidationErrors)
+                    {
+                        validationErrors.AddRange(validResult.ValidationErrors.Select(
+                            v => new ValidationError(v.PropertyName, v.ErrorMessage)));
+                    }
+                    throw new InsertDbDataException(validationErrors);
+                }
+                catch (DbUpdateException ex)
+                {
+                    context.Client.Remove(client);
+                    throw new InsertDbDataException($"Update entity error: {ex.GetFullMessage()}");
+                }
             }
         }
 
@@ -98,9 +111,12 @@ namespace Dragonfly.Database.MsSQL
         {
             try
             {
-                var clients = (from t in _Context.Client
-                               select t).ToList();
-                return clients.Select(t => t.ToClientModel());
+                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                {
+                    var clients = (from t in context.Client
+                                   select t).ToList();
+                    return clients.Select(t => t.ToClientModel());
+                }
             }
             catch (Exception ex)
             {
@@ -113,9 +129,12 @@ namespace Dragonfly.Database.MsSQL
         {
             try
             {
-                var types = (from t in _Context.Client_Type
-                             select t).ToList();
-                return types.Select(t => t.ToClientType());
+                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                {
+                    var types = (from t in context.Client_Type
+                                 select t).ToList();
+                    return types.Select(t => t.ToClientType());
+                }
             }
             catch (Exception ex)
             {

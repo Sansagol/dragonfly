@@ -8,7 +8,7 @@ using System.Web;
 
 namespace Dragonfly.Database.Providers
 {
-    public interface IUserAccessProvider : IDataProvider, IDisposable
+    public interface IUserAccessProvider : IDataProvider
     {
         /// <summary>
         /// Method check an access token to correct and that is not expired.

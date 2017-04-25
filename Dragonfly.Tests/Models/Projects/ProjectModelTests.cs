@@ -45,6 +45,7 @@ namespace Dragonfly.Models.Projects.Tests
             IUserAccessProvider usProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
             UserModel userModel = null;
             ProjectModel projectModel = null;
+
             try
             {
                 userModel = SaveANewUser(provider, usProvider);
@@ -54,12 +55,13 @@ namespace Dragonfly.Models.Projects.Tests
                     Description = "ProjectDescr",
                     UserIds = new List<decimal>() { userModel.Id }
                 };
-                Assert.IsTrue(projectModel.SaveProject(), "Unable to sabe project");
+                Assert.IsTrue(projectModel.SaveProject(), "Unable to save project");
                 Assert.IsTrue(
                     projectModel.ProjectId > 0,
                     $"Retuen the bad project ID: {projectModel.ProjectId}");
+                var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig);
                 Assert.IsNotNull(
-                    ((DragonflyEntities)provider.Context).User_Project.FirstOrDefault(
+                    context.User_Project.FirstOrDefault(
                         u => u.ID_Project == projectModel.ProjectId),
                     "User_project is not saved");
             }
@@ -67,7 +69,10 @@ namespace Dragonfly.Models.Projects.Tests
             {
                 if (projectModel != null && projectModel.ProjectId > 0)
                     provider.DeleteProject(projectModel.ProjectId);
-                DeleteUserFromDB(provider.Context, userModel?.Login, userModel?.EMail);
+                using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+                {
+                    DeleteUserFromDB(context, userModel?.Login, userModel?.EMail);
+                }
             }
         }
 
@@ -76,26 +81,28 @@ namespace Dragonfly.Models.Projects.Tests
         {
             MsSqlFactory factory = new MsSqlFactory();
             IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
-            DbContext context = provider.Context;
-            ProjectModel projectModel = null;
-            try
+            using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
             {
-                projectModel = new ProjectModel(provider)
+                ProjectModel projectModel = null;
+                try
                 {
-                    ProjectName = "Test project name 1",
-                    Description = "ProjectDescr"
-                };
-                Assert.IsFalse(projectModel.SaveProject());
-                Assert.IsTrue(projectModel.ProjectId == 0);
-                Assert.IsNull(
-                    ((DragonflyEntities)provider.Context).User_Project.FirstOrDefault(
-                        u => u.ID_Project == projectModel.ProjectId),
-                    "User_project is saved");
-            }
-            finally
-            {
-                if (projectModel != null && projectModel.ProjectId > 0)
-                    provider.DeleteProject(projectModel.ProjectId);
+                    projectModel = new ProjectModel(provider)
+                    {
+                        ProjectName = "Test project name 1",
+                        Description = "ProjectDescr"
+                    };
+                    Assert.IsFalse(projectModel.SaveProject());
+                    Assert.IsTrue(projectModel.ProjectId == 0);
+                    Assert.IsNull(
+                        context.User_Project.FirstOrDefault(
+                            u => u.ID_Project == projectModel.ProjectId),
+                        "User_project is saved");
+                }
+                finally
+                {
+                    if (projectModel != null && projectModel.ProjectId > 0)
+                        provider.DeleteProject(projectModel.ProjectId);
+                }
             }
         }
 
