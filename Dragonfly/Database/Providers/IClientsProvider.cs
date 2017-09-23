@@ -32,6 +32,6 @@ namespace Dragonfly.Database.Providers
         /// Method fetch all flients from the database.
         /// </summary>
         /// <returns>All existing clients.</returns>
-        IEnumerable<ClientModel> GetAllClients();
+        List<ClientModel> GetAllClients();
     }
 }

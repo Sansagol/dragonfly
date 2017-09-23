@@ -107,7 +107,7 @@ namespace Dragonfly.Database.MsSQL
         /// </summary>
         /// <returns>All clients from the DB.</returns>
         /// <exception cref="InvalidOperationException"/>
-        public IEnumerable<ClientModel> GetAllClients()
+        public List<ClientModel> GetAllClients()
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Dragonfly.Database.MsSQL
                 {
                     var clients = (from t in context.Client
                                    select t).ToList();
-                    return clients.Select(t => t.ToClientModel());
+                    return clients.Select(t => t.ToClientModel()).ToList();
                 }
             }
             catch (Exception ex)
