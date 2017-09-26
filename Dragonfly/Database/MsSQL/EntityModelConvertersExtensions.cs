@@ -70,24 +70,6 @@ namespace Dragonfly.Database.MsSQL
                 Type = client.Client_Type.ToClientType()
             };
             return model;
-        }
-
-        public static EUser ToEUser(this User src)
-        {
-            if (src == null)
-                return null;
-            EUser user = new EUser()
-            {
-                Id = src.ID_User,
-                DateOfCreation = src.Date_Creation,
-                EMail = src.E_mail,
-                Login = src.Login,
-                Name = src.Name,
-                Surname = src.Surname,
-                IsLdapUser = src.Is_Ldap_User,
-                IsBlocked = false
-            };
-            return user;
-        }
+        }        
     }
 }

@@ -10,7 +10,7 @@ namespace Dragonfly.Database.Entities
     public class EProjectRole
     {
         public decimal ID { get; set; }
-        public decimal Name { get; set; }
+        public string Name { get; set; }
         /// <summary>Describe the access rules to a project for this role.</summary>
         public ProjectAccessFunction AccessToProject { get; set; }
         public bool IsAdmin { get; set; }        

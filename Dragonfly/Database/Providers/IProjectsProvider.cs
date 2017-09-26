@@ -1,5 +1,5 @@
 ﻿using Dragonfly.Database.Entities;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Dragonfly.Database.Providers
 {
@@ -9,5 +9,7 @@ namespace Dragonfly.Database.Providers
         /// <param name="projectId">ID of the project.</param>
         /// <returns>Found project ot NULL otherwise.</returns>
         EProject GetProject(decimal projectId);
+
+        List<EUserProject> GetUsersForProject(decimal projectId);
     }
 }

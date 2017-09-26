@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.Security;
 using Dragonfly.Database.Entities;
+using Dragonfly.Database.MsSQL.Converters;
 
 namespace Dragonfly.Database.MsSQL
 {

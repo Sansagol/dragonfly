@@ -17,17 +17,18 @@ namespace Dragonfly.Database.MsSQL
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Project_Role()
         {
-            this.Project_Access_Function = new HashSet<Project_Access_Function>();
             this.User_Project = new HashSet<User_Project>();
+            this.Project_Access_Function = new HashSet<Project_Access_Function>();
         }
     
         public decimal ID_Project_Role { get; set; }
         public string Role_Name { get; set; }
         public bool Is_Admin { get; set; }
+        public decimal Role_Access_Functions { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Project_Access_Function> Project_Access_Function { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User_Project> User_Project { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Project_Access_Function> Project_Access_Function { get; set; }
     }
 }

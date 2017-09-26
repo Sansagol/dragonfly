@@ -191,6 +191,7 @@
     <Compile Include="Database\Entities\EProject.cs" />
     <Compile Include="Database\Entities\EUser.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
+    <Compile Include="Database\MsSQL\Converters\UsersEntityConverters.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
     <Compile Include="Database\MsSQL\Converters\ProjectsEntityConverters.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />

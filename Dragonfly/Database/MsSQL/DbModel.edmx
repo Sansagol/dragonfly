@@ -181,6 +181,7 @@
           <Property Name="ID_Project_Role" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Role_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="Is_Admin" Type="bit" Nullable="false" />
+          <Property Name="Role_Access_Functions" Type="numeric" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
         <EntityType Name="Project_Role_Access_Function">
           <Key>
@@ -246,7 +247,6 @@
           <Key>
             <PropertyRef Name="ID_User" />
             <PropertyRef Name="ID_Project" />
-            <PropertyRef Name="ID_Project_Role" />
           </Key>
           <Property Name="ID_User" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="ID_Project" Type="numeric" Precision="18" Scale="0" Nullable="false" />
@@ -742,7 +742,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <EntitySet Name="Notificztion_Task" EntityType="DragonflyModel.Notificztion_Task" />
           <EntitySet Name="Phone" EntityType="DragonflyModel.Phone" />
           <EntitySet Name="Product_License" EntityType="DragonflyModel.Product_License" />
-          <EntitySet Name="Project_Access_Function" EntityType="DragonflyModel.Project_Access_Function" />
           <EntitySet Name="Support_Entitlement" EntityType="DragonflyModel.Support_Entitlement" />
           <EntitySet Name="User_Invitation" EntityType="DragonflyModel.User_Invitation" />
           <AssociationSet Name="FK_Client_Client_Type" Association="DragonflyModel.FK_Client_Client_Type">
@@ -785,22 +784,16 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             <End Role="Access_Function" EntitySet="Access_Function" />
             <End Role="Global_User_Role" EntitySet="Global_User_Role" />
           </AssociationSet>
-          <EntitySet Name="Project_Role" EntityType="DragonflyModel.Project_Role" />
           <EntitySet Name="User" EntityType="DragonflyModel.User" />
           <AssociationSet Name="FK_User_Invitation_User" Association="DragonflyModel.FK_User_Invitation_User">
             <End Role="User" EntitySet="User" />
             <End Role="User_Invitation" EntitySet="User_Invitation" />
-          </AssociationSet>
-          <AssociationSet Name="Project_Role_Access_Function" Association="DragonflyModel.Project_Role_Access_Function">
-            <End Role="Project_Access_Function" EntitySet="Project_Access_Function" />
-            <End Role="Project_Role" EntitySet="Project_Role" />
           </AssociationSet>
           <AssociationSet Name="User_And_His_Role" Association="DragonflyModel.User_And_His_Role">
             <End Role="Global_User_Role" EntitySet="Global_User_Role" />
             <End Role="User" EntitySet="User" />
           </AssociationSet>
           <EntitySet Name="Project" EntityType="DragonflyModel.Project" />
-          <EntitySet Name="User_Project" EntityType="DragonflyModel.User_Project" />
           <AssociationSet Name="FK_E_mail_Notification_Project" Association="DragonflyModel.FK_E_mail_Notification_Project">
             <End Role="Project" EntitySet="Project" />
             <End Role="E_mail_Notification" EntitySet="E_mail_Notification" />
@@ -813,22 +806,29 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             <End Role="Project" EntitySet="Project" />
             <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
           </AssociationSet>
+          <EntitySet Name="User_Access" EntityType="DragonflyModel.User_Access" />
+          <AssociationSet Name="FK_User_Access_User" Association="DragonflyModel.FK_User_Access_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Access" EntitySet="User_Access" />
+          </AssociationSet>
+          <EntitySet Name="User_Project" EntityType="DragonflyModel.User_Project" />
           <AssociationSet Name="FK_User_Project_Project" Association="DragonflyModel.FK_User_Project_Project">
             <End Role="Project" EntitySet="Project" />
-            <End Role="User_Project" EntitySet="User_Project" />
-          </AssociationSet>
-          <AssociationSet Name="FK_User_Project_Project_Role" Association="DragonflyModel.FK_User_Project_Project_Role">
-            <End Role="Project_Role" EntitySet="Project_Role" />
             <End Role="User_Project" EntitySet="User_Project" />
           </AssociationSet>
           <AssociationSet Name="FK_User_Project_User" Association="DragonflyModel.FK_User_Project_User">
             <End Role="User" EntitySet="User" />
             <End Role="User_Project" EntitySet="User_Project" />
           </AssociationSet>
-          <EntitySet Name="User_Access" EntityType="DragonflyModel.User_Access" />
-          <AssociationSet Name="FK_User_Access_User" Association="DragonflyModel.FK_User_Access_User">
-            <End Role="User" EntitySet="User" />
-            <End Role="User_Access" EntitySet="User_Access" />
+          <EntitySet Name="Project_Access_Function" EntityType="DragonflyModel.Project_Access_Function" />
+          <EntitySet Name="Project_Role" EntityType="DragonflyModel.Project_Role" />
+          <AssociationSet Name="FK_User_Project_Project_Role" Association="DragonflyModel.FK_User_Project_Project_Role">
+            <End Role="Project_Role" EntitySet="Project_Role" />
+            <End Role="User_Project" EntitySet="User_Project" />
+          </AssociationSet>
+          <AssociationSet Name="Project_Role_Access_Function" Association="DragonflyModel.Project_Role_Access_Function">
+            <End Role="Project_Access_Function" EntitySet="Project_Access_Function" />
+            <End Role="Project_Role" EntitySet="Project_Role" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Access_Function">
@@ -982,14 +982,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <NavigationProperty Name="License_Type" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="Product_License" ToRole="License_Type" />
           <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Product_License" ToRole="Project" />
         </EntityType>
-        <EntityType Name="Project_Access_Function">
-          <Key>
-            <PropertyRef Name="ID_Role_Access_Function" />
-          </Key>
-          <Property Name="ID_Role_Access_Function" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.Project_Role_Access_Function" FromRole="Project_Access_Function" ToRole="Project_Role" />
-        </EntityType>
         <EntityType Name="Support_Entitlement">
           <Key>
             <PropertyRef Name="ID_Support_Entitlement" />
@@ -1102,16 +1094,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <End Type="DragonflyModel.Access_Function" Role="Access_Function" Multiplicity="*" />
           <End Type="DragonflyModel.Global_User_Role" Role="Global_User_Role" Multiplicity="*" />
         </Association>
-        <EntityType Name="Project_Role">
-          <Key>
-            <PropertyRef Name="ID_Project_Role" />
-          </Key>
-          <Property Name="ID_Project_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Role_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Is_Admin" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Project_Access_Function" Relationship="DragonflyModel.Project_Role_Access_Function" FromRole="Project_Role" ToRole="Project_Access_Function" />
-          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_Project_Role" FromRole="Project_Role" ToRole="User_Project" />
-        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID_User" />
@@ -1126,8 +1108,8 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="Login" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="User_Invitation" Relationship="DragonflyModel.FK_User_Invitation_User" FromRole="User" ToRole="User_Invitation" />
           <NavigationProperty Name="Global_User_Role" Relationship="DragonflyModel.User_And_His_Role" FromRole="User" ToRole="Global_User_Role" />
-          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User" ToRole="User_Project" />
           <NavigationProperty Name="User_Access" Relationship="DragonflyModel.FK_User_Access_User" FromRole="User" ToRole="User_Access" />
+          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User" ToRole="User_Project" />
         </EntityType>
         <Association Name="FK_User_Invitation_User">
           <End Type="DragonflyModel.User" Role="User" Multiplicity="1" />
@@ -1140,10 +1122,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <PropertyRef Name="ID_User_Referrer" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>
-        <Association Name="Project_Role_Access_Function">
-          <End Type="DragonflyModel.Project_Access_Function" Role="Project_Access_Function" Multiplicity="*" />
-          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="*" />
         </Association>
         <Association Name="User_And_His_Role">
           <End Type="DragonflyModel.Global_User_Role" Role="Global_User_Role" Multiplicity="*" />
@@ -1161,19 +1139,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Project" ToRole="Product_License" />
           <NavigationProperty Name="Support_Entitlement" Relationship="DragonflyModel.FK_Support_Entitlement_Project" FromRole="Project" ToRole="Support_Entitlement" />
           <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_Project" FromRole="Project" ToRole="User_Project" />
-        </EntityType>
-        <EntityType Name="User_Project">
-          <Key>
-            <PropertyRef Name="ID_User" />
-            <PropertyRef Name="ID_Project" />
-            <PropertyRef Name="ID_Project_Role" />
-          </Key>
-          <Property Name="ID_User" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="ID_Project_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_User_Project_Project" FromRole="User_Project" ToRole="Project" />
-          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.FK_User_Project_Project_Role" FromRole="User_Project" ToRole="Project_Role" />
-          <NavigationProperty Name="User" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User_Project" ToRole="User" />
         </EntityType>
         <Association Name="FK_E_mail_Notification_Project">
           <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
@@ -1211,48 +1176,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_User_Project_Project">
-          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Project">
-              <PropertyRef Name="ID_Project" />
-            </Principal>
-            <Dependent Role="User_Project">
-              <PropertyRef Name="ID_Project" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_User_Project_Project_Role">
-          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Project_Role">
-              <PropertyRef Name="ID_Project_Role" />
-            </Principal>
-            <Dependent Role="User_Project">
-              <PropertyRef Name="ID_Project_Role" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_User_Project_User">
-          <End Type="DragonflyModel.User" Role="User" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="User">
-              <PropertyRef Name="ID_User" />
-            </Principal>
-            <Dependent Role="User_Project">
-              <PropertyRef Name="ID_User" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="User_Access">
           <Key>
             <PropertyRef Name="ID_User_Access" />
@@ -1277,6 +1200,83 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <PropertyRef Name="ID_User" />
             </Dependent>
           </ReferentialConstraint>
+        </Association>
+        <EntityType Name="User_Project">
+          <Key>
+            <PropertyRef Name="ID_User" />
+            <PropertyRef Name="ID_Project" />
+          </Key>
+          <Property Name="ID_User" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Project_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_User_Project_Project" FromRole="User_Project" ToRole="Project" />
+          <NavigationProperty Name="User" Relationship="DragonflyModel.FK_User_Project_User" FromRole="User_Project" ToRole="User" />
+          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.FK_User_Project_Project_Role" FromRole="User_Project" ToRole="Project_Role" />
+        </EntityType>
+        <Association Name="FK_User_Project_Project">
+          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Project_User">
+          <End Type="DragonflyModel.User" Role="User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID_User" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_User" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Project_Access_Function">
+          <Key>
+            <PropertyRef Name="ID_Role_Access_Function" />
+          </Key>
+          <Property Name="ID_Role_Access_Function" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Project_Role" Relationship="DragonflyModel.Project_Role_Access_Function" FromRole="Project_Access_Function" ToRole="Project_Role" />
+        </EntityType>
+        <EntityType Name="Project_Role">
+          <Key>
+            <PropertyRef Name="ID_Project_Role" />
+          </Key>
+          <Property Name="ID_Project_Role" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Role_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Admin" Type="Boolean" Nullable="false" />
+          <Property Name="Role_Access_Functions" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_Project_Role" FromRole="Project_Role" ToRole="User_Project" />
+          <NavigationProperty Name="Project_Access_Function" Relationship="DragonflyModel.Project_Role_Access_Function" FromRole="Project_Role" ToRole="Project_Access_Function" />
+        </EntityType>
+        <Association Name="FK_User_Project_Project_Role">
+          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DragonflyModel.User_Project" Role="User_Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Role">
+              <PropertyRef Name="ID_Project_Role" />
+            </Principal>
+            <Dependent Role="User_Project">
+              <PropertyRef Name="ID_Project_Role" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Project_Role_Access_Function">
+          <End Type="DragonflyModel.Project_Access_Function" Role="Project_Access_Function" Multiplicity="*" />
+          <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="*" />
         </Association>
         </Schema>
     </edmx:ConceptualModels>
@@ -1428,14 +1428,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Project_Access_Function">
-            <EntityTypeMapping TypeName="DragonflyModel.Project_Access_Function">
-              <MappingFragment StoreEntitySet="Project_Access_Function">
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Support_Entitlement">
             <EntityTypeMapping TypeName="DragonflyModel.Support_Entitlement">
               <MappingFragment StoreEntitySet="Support_Entitlement">
@@ -1491,15 +1483,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <ScalarProperty Name="ID_Access_Function" ColumnName="ID_Access_Function" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="Project_Role">
-            <EntityTypeMapping TypeName="DragonflyModel.Project_Role">
-              <MappingFragment StoreEntitySet="Project_Role">
-                <ScalarProperty Name="Is_Admin" ColumnName="Is_Admin" />
-                <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
-                <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="User">
             <EntityTypeMapping TypeName="DragonflyModel.User">
               <MappingFragment StoreEntitySet="User">
@@ -1514,14 +1497,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="Project_Role_Access_Function" TypeName="DragonflyModel.Project_Role_Access_Function" StoreEntitySet="Project_Role_Access_Function">
-            <EndProperty Name="Project_Role">
-              <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
-            </EndProperty>
-            <EndProperty Name="Project_Access_Function">
-              <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
-            </EndProperty>
-          </AssociationSetMapping>
           <AssociationSetMapping Name="User_And_His_Role" TypeName="DragonflyModel.User_And_His_Role" StoreEntitySet="User_And_His_Role">
             <EndProperty Name="User">
               <ScalarProperty Name="ID_User" ColumnName="ID_User" />
@@ -1540,15 +1515,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="User_Project">
-            <EntityTypeMapping TypeName="DragonflyModel.User_Project">
-              <MappingFragment StoreEntitySet="User_Project">
-                <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
-                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
-                <ScalarProperty Name="ID_User" ColumnName="ID_User" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="User_Access">
             <EntityTypeMapping TypeName="DragonflyModel.User_Access">
               <MappingFragment StoreEntitySet="User_Access">
@@ -1560,6 +1526,41 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="User_Project">
+            <EntityTypeMapping TypeName="DragonflyModel.User_Project">
+              <MappingFragment StoreEntitySet="User_Project">
+                <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+                <ScalarProperty Name="ID_User" ColumnName="ID_User" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project_Access_Function">
+            <EntityTypeMapping TypeName="DragonflyModel.Project_Access_Function">
+              <MappingFragment StoreEntitySet="Project_Access_Function">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project_Role">
+            <EntityTypeMapping TypeName="DragonflyModel.Project_Role">
+              <MappingFragment StoreEntitySet="Project_Role">
+                <ScalarProperty Name="Role_Access_Functions" ColumnName="Role_Access_Functions" />
+                <ScalarProperty Name="Is_Admin" ColumnName="Is_Admin" />
+                <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
+                <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Project_Role_Access_Function" TypeName="DragonflyModel.Project_Role_Access_Function" StoreEntitySet="Project_Role_Access_Function">
+            <EndProperty Name="Project_Role">
+              <ScalarProperty Name="ID_Project_Role" ColumnName="ID_Project_Role" />
+            </EndProperty>
+            <EndProperty Name="Project_Access_Function">
+              <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

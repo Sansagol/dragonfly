@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Dragonfly.Core
 {
+    [Flags]
     public enum ProjectAccessFunction
     {
         None = 0,
@@ -12,8 +13,6 @@ namespace Dragonfly.Core
         ViewClients = 2,
         //Must view the users
         AddDelUserToProject = 5,
-        //Must view the clients
-        AddDeleteClientToProject = 10,
         //Must view the clients
         /// <summary>Do something with the license entitlements</summary>
         AddDeleteEntitlement = 18,

@@ -57,15 +57,9 @@ namespace Dragonfly.Models.Projects.Tests
                     {
                         ProjectName = "Test project name 1",
                         Description = "ProjectDescr"
-                    },
-                    Users = new List<EUserProject>()
-                    {
-                        new EUserProject
-                        {
-                            UserId = userModel.UserDetails.Id
-                        }
-                    }
+                    }                   
                 };
+                projectModel.AddUserToProject(userModel.UserDetails.Id, 0);
                 Assert.IsTrue(projectModel.SaveProject(), "Unable to save project");
                 Assert.IsTrue(
                     projectModel.ProjectDetails.Id > 0,

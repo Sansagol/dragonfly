@@ -11,6 +11,7 @@ using Dragonfly.Tests;
 using Dragonfly.Models;
 using Dragonfly.Models.UserRoleSystem;
 using Dragonfly.Database.Entities;
+using Dragonfly.Database.MsSQL.Converters;
 
 namespace Dragonfly.Database.MsSQL.Tests
 {

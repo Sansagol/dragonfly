@@ -10,7 +10,7 @@
 @if (ViewBag.Logged == true && Model != null)
 {
     <table class="details_table">
-        <col width="20%"/>
+        <col width="20%" />
         <col width="80%" />
         <tr>
             <td class="det_tab_f_cell">
@@ -43,16 +43,62 @@
             </td>
         </tr>
     </table>
+
+    <div>
+        <div>
+            <label>Clients</label>
+            <table>
+                <tr>
+                    <th>Name</th>
+                </tr>
+
+            </table>
+        </div>
+        <div>
+            <label>Users</label>
+            <table class="info_table">
+                <tr>
+                    <th class="info_table_header">Name</th>
+                    <th class="info_table_header">Surname</th>
+                    <th class="info_table_header">Email</th>
+                    <th class="info_table_header">Rights</th>
+                    <th class="info_table_header">Manage</th>
+                </tr>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td class="f-cell i_t_cell">@user.UserDescription.Name</td>
+                        <td class="i_t_cell">@user.UserDescription.Surname</td>
+                        <td class="i_t_cell">@user.UserDescription.EMail</td>
+                        <td class="i_t_cell">
+                            <div>
+                                @if (user.Role.IsAdmin)
+                                {
+                                    <div>Is admin</div>
+                                }
+                                else
+                                {
+                                    if ((user.Role.AccessToProject &
+                                    Dragonfly.Core.ProjectAccessFunction.ViewClients) ==
+                                    Dragonfly.Core.ProjectAccessFunction.ViewClients)
+                                    {
+                                        <div>
+                                            View clients
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td class="l-cell i_t_cell"></td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
 }
 else
 {
-    if (!string.IsNullOrEmpty(ViewBag.InitError))
-    {
-        <div>
-            @ViewBag.InitError;
-        </div>
-    }
-    else
+    if (!string.IsNullOrEmpty(ViewBag.Error))
     {
         <div>
             @ViewBag.Error

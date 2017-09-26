@@ -32,12 +32,9 @@ namespace Dragonfly.Controllers
         {
             _UserStateManager.CheckUserAccess(Request, Response);
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
-            ProjectModel project = new ProjectModel()
-            {
-                Users = new List<EUserProject>() {
-                    new EUserProject { UserId = userId }
-                }
-            };
+            ProjectModel project = new ProjectModel();
+            //TODO change the role id to the loaded from the DB
+            project.AddUserToProject(userId, 0);
             ViewBag.Logged = true;
             return View("CreateProject", project);
         }
@@ -48,11 +45,10 @@ namespace Dragonfly.Controllers
         {
             _UserStateManager.CheckUserAccess(Request, Response);
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
-            IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider();
+            IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider();
             project.DbProvider = provider;
-            project.Users = new List<EUserProject>() {
-                    new EUserProject { UserId = userId }
-            };
+            //TODO change the role id to the loaded from the DB
+            project.AddUserToProject(userId, 0);
             if (project.SaveProject())
                 return RedirectToAction("Index", "Projects");
             return View("CreateProject");

@@ -18,7 +18,18 @@ namespace Dragonfly.Models.Projects
 
         /// <summary>Ids of users which can something do with the project.</summary>
         //public List<decimal> UserIds { get; set; }
-        public List<EUserProject> Users { get; set; }
+        List<EUserProject> _Users = null;
+        public List<EUserProject> Users
+        {
+            get
+            {
+                if (_Users == null)
+                {
+                    InitUsers();
+                }
+                return _Users;
+            }
+        }
 
         public EProject ProjectDetails { get; set; }
 
@@ -37,18 +48,47 @@ namespace Dragonfly.Models.Projects
             get { return _DbProvider; }
             set { _DbProvider = value; }
         }
+        private IProjectsProvider _ProjectsProvider = null;
         #endregion
 
         public ProjectModel()
         {
-            //UserIds = new List<decimal>();
-            Users = new List<EUserProject>();
+            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
         }
 
         public ProjectModel(IDataBaseProvider dbProvider) :
             this()
         {
             _DbProvider = dbProvider;
+        }
+
+        private void InitUsers()
+        {
+            _Users = new List<EUserProject>();
+            if (ProjectDetails?.Id > 0)
+            {
+                RetrieveUsersFromDB();
+            }
+        }
+
+        private void RetrieveUsersFromDB()
+        {
+            var users = _ProjectsProvider.GetUsersForProject(ProjectDetails.Id);
+            _Users.AddRange(users);
+        }
+
+        /// <summary>Add the custom user to the project.</summary>
+        /// <param name="userId">Id of the user.</param>
+        /// <param name="isAdmin">Is Admin flag</param>
+        /// <param name="projectRoleId">Access rights</param>
+        public void AddUserToProject(decimal userId, decimal projectRoleId)
+        {
+            InitUsers();
+            Users.Add(new EUserProject()
+            {
+                UserId = userId,
+                ProjectRoleId = projectRoleId
+            });
         }
 
         public bool SaveProject()

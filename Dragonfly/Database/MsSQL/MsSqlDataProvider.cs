@@ -203,7 +203,7 @@ namespace Dragonfly.Database.MsSQL
             {
                 SaveNewProjectInDB(proj, context);
                 newProject.ProjectDetails.Id = proj.ID_Project;
-
+                //Hardcoded load the admin
                 Project_Role prRole = (from pr in context.Project_Role
                                        where pr.Is_Admin
                                        select pr).FirstOrDefault();
