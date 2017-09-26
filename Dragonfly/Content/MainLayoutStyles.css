@@ -66,12 +66,12 @@ a:hover {
     margin-left: 5px;
 }
 
+/*info table*/
 .info_table {
     border-collapse: collapse;
     width: 95%;
     table-layout: fixed;
 }
-
 .info_table_header {
     border: 2px solid;
 }
@@ -87,4 +87,23 @@ a:hover {
 /*Last cell*/
 .l-cell {
     border-right: 1px solid;
+}
+
+/*details table*/
+.details_table {
+    border-collapse: collapse;
+    width: 95%;
+    table-layout: fixed;
+}
+.details_table_field_head {
+}
+.details_table_field_content {
+    font-weight: normal;
+    margin-left: 5px;
+}
+td.det_tab_f_cell {
+}
+td.det_tab_cell {
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
 }

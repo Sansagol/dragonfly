@@ -55,22 +55,25 @@ namespace Dragonfly.Controllers
 
         [HttpGet]
         [ControllersException]
-        public ActionResult ShowProject(decimal projectId)
+        public ActionResult Index(decimal projectId)
         {
             ProjectModel model = null;
-
-            _UserStateManager.CheckUserAccess(Request, Response);
-            var provider = BaseBindings.DBFactory.CreateProjectsProvider();
-            try
+            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
+            if (ViewBag.Logged)
             {
-                model = provider.GetProject(projectId);
-            }
-            catch (Exception ex)
-            {
-                model = new ProjectModel()
+                var provider = BaseBindings.DBFactory.CreateProjectsProvider();
+                try
                 {
-                    ProjectError = "Id of the project is out of range."
-                };
+                    model = provider.GetProject(projectId);
+                }
+                catch (Exception ex)
+                {
+                    model = new ProjectModel()
+                    {
+                        ProjectName = "<Project is not found>",
+                        ProjectError = ex.GetFullMessage()
+                    };
+                }
             }
             return View("Index", model);
         }

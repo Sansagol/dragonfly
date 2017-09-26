@@ -1,9 +1,62 @@
 ﻿@model Dragonfly.Models.Projects.ProjectModel
 
 @{
-    ViewBag.Title = Model.ProjectName;
+    ViewBag.Title = Model?.ProjectName;
     PageData["Logged"] = ViewBag.Logged;
+    ViewBag.InitError = Model?.ProjectError;
 }
 
-<h2>Project @Model.ProjectName</h2>
+<h3>Project: @Model.ProjectName</h3>
+@if (ViewBag.Logged == true && Model != null)
+{
+    <table class="details_table">
+        <col width="20%"/>
+        <col width="80%" />
+        <tr>
+            <td class="det_tab_f_cell">
+                <label>Name</label>
+            </td>
+            <td class="det_tab_f_cell">
+                <label class="details_table_field_content">
+                    @Model.ProjectName
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td class="det_tab_cell">
+                <label>Description</label>
+            </td>
+            <td class="det_tab_cell">
+                <label class="details_table_field_content">
+                    @Model.Description
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td class="det_tab_cell">
+                <label>Date creation</label>
+            </td>
+            <td class="det_tab_cell">
+                <label class="details_table_field_content">
+                    @Model.DateCreation.ToString("dd.MM.yyyy")
+                </label>
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+    if (!string.IsNullOrEmpty(ViewBag.InitError))
+    {
+        <div>
+            @ViewBag.InitError;
+        </div>
+    }
+    else
+    {
+        <div>
+            @ViewBag.Error
+        </div>
+    }
+}
 
