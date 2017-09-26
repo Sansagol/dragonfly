@@ -21,7 +21,7 @@ namespace Dragonfly.Models.Projects.Tests
         /// <summary>Common method to save a user.</summary>
         /// <param name="provider">DB provider.</param>
         /// <returns>Stored model of user.</returns>
-        private static UserModel SaveANewUser(IDataBaseProvider provider, IUserAccessProvider userProvider)
+        private static EUser SaveANewUser(IDataBaseProvider provider, IUserAccessProvider userProvider)
         {
             SignUpModel userData = new SignUpModel()
             {
@@ -30,9 +30,8 @@ namespace Dragonfly.Models.Projects.Tests
                 Password = "Test user password"
             };
             provider.AddUser(userData);
-            UserModel userModel = userProvider
-                .GetUserByLoginMail("test@mail.mail")
-                .ToUserModel(userProvider);
+            EUser userModel = userProvider
+                .GetUserByLoginMail("test@mail.mail");
             return userModel;
         }
 
@@ -48,30 +47,42 @@ namespace Dragonfly.Models.Projects.Tests
 
             try
             {
-                userModel = SaveANewUser(provider, usProvider);
+                userModel = new UserModel(usProvider)
+                {
+                    UserDetails = SaveANewUser(provider, usProvider)
+                };
                 projectModel = new ProjectModel(provider)
                 {
-                    ProjectName = "Test project name 1",
-                    Description = "ProjectDescr",
-                    UserIds = new List<decimal>() { userModel.Id }
+                    ProjectDetails = new EProject
+                    {
+                        ProjectName = "Test project name 1",
+                        Description = "ProjectDescr"
+                    },
+                    Users = new List<EUserProject>()
+                    {
+                        new EUserProject
+                        {
+                            UserId = userModel.UserDetails.Id
+                        }
+                    }
                 };
                 Assert.IsTrue(projectModel.SaveProject(), "Unable to save project");
                 Assert.IsTrue(
-                    projectModel.ProjectId > 0,
-                    $"Retuen the bad project ID: {projectModel.ProjectId}");
+                    projectModel.ProjectDetails.Id > 0,
+                    $"Retuen the bad project ID: {projectModel.ProjectDetails.Id}");
                 var context = ((DataProvider)provider).GenerateContext();
                 Assert.IsNotNull(
                     context.User_Project.FirstOrDefault(
-                        u => u.ID_Project == projectModel.ProjectId),
+                        u => u.ID_Project == projectModel.ProjectDetails.Id),
                     "User_project is not saved");
             }
             finally
             {
-                if (projectModel != null && projectModel.ProjectId > 0)
-                    provider.DeleteProject(projectModel.ProjectId);
+                if (projectModel != null && projectModel.ProjectDetails.Id > 0)
+                    provider.DeleteProject(projectModel.ProjectDetails.Id);
                 using (var context = ((DataProvider)provider).GenerateContext())
                 {
-                    DeleteUserFromDB(context, userModel?.Login, userModel?.EMail);
+                    DeleteUserFromDB(context, userModel?.UserDetails?.Login, userModel?.UserDetails?.EMail);
                 }
             }
         }
@@ -88,20 +99,23 @@ namespace Dragonfly.Models.Projects.Tests
                 {
                     projectModel = new ProjectModel(provider)
                     {
-                        ProjectName = "Test project name 1",
-                        Description = "ProjectDescr"
+                        ProjectDetails = new EProject
+                        {
+                            ProjectName = "Test project name 1",
+                            Description = "ProjectDescr"
+                        }
                     };
                     Assert.IsFalse(projectModel.SaveProject());
-                    Assert.IsTrue(projectModel.ProjectId == 0);
+                    Assert.IsTrue(projectModel.ProjectDetails.Id == 0);
                     Assert.IsNull(
                         context.User_Project.FirstOrDefault(
-                            u => u.ID_Project == projectModel.ProjectId),
+                            u => u.ID_Project == projectModel.ProjectDetails.Id),
                         "User_project is saved");
                 }
                 finally
                 {
-                    if (projectModel != null && projectModel.ProjectId > 0)
-                        provider.DeleteProject(projectModel.ProjectId);
+                    if (projectModel != null && projectModel.ProjectDetails.Id > 0)
+                        provider.DeleteProject(projectModel.ProjectDetails.Id);
                 }
             }
         }

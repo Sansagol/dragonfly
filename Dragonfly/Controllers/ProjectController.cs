@@ -1,6 +1,7 @@
 ﻿using Dragonfly.Core;
 using Dragonfly.Core.UserAccess;
 using Dragonfly.Database;
+using Dragonfly.Database.Entities;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models.Projects;
 using System;
@@ -33,7 +34,9 @@ namespace Dragonfly.Controllers
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
             ProjectModel project = new ProjectModel()
             {
-                UserIds = new List<decimal>() { userId }
+                Users = new List<EUserProject>() {
+                    new EUserProject { UserId = userId }
+                }
             };
             ViewBag.Logged = true;
             return View("CreateProject", project);
@@ -47,7 +50,9 @@ namespace Dragonfly.Controllers
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
             IDataBaseProvider provider = BaseBindings.GetNewBaseDbProvider();
             project.DbProvider = provider;
-            project.UserIds = new List<decimal>() { userId };
+            project.Users = new List<EUserProject>() {
+                    new EUserProject { UserId = userId }
+            };
             if (project.SaveProject())
                 return RedirectToAction("Index", "Projects");
             return View("CreateProject");
@@ -57,22 +62,22 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult Index(decimal projectId)
         {
-            ProjectModel model = null;
+            ProjectModel model = new ProjectModel();
             ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
             if (ViewBag.Logged)
             {
                 var provider = BaseBindings.DBFactory.CreateProjectsProvider();
                 try
                 {
-                    model = provider.GetProject(projectId);
+                    model.ProjectDetails = provider.GetProject(projectId);
                 }
                 catch (Exception ex)
                 {
-                    model = new ProjectModel()
+                    model.ProjectDetails = new EProject
                     {
                         ProjectName = "<Project is not found>",
-                        ProjectError = ex.GetFullMessage()
                     };
+                    ViewBag.Error = ex.GetFullMessage();
                 }
             }
             return View("Index", model);

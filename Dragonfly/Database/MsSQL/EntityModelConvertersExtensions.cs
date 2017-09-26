@@ -30,12 +30,6 @@ namespace Dragonfly.Database.MsSQL
                 Description = project.Description,
                 DateCreation = project.Date_Create,
             };
-            foreach (var up in project.User_Project)
-            {
-                projMod.UserIds.Add(up.ID_User);
-                projMod.Users.Add(up.User.ToEUser());//.ToUserModel(provider));
-            }
-
             return projMod;
         }
 

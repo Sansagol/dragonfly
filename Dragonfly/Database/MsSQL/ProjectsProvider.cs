@@ -7,6 +7,7 @@ using Dragonfly.Models.Projects;
 using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Core.Settings;
 using Dragonfly.Database.MsSQL.Converters;
+using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -17,7 +18,7 @@ namespace Dragonfly.Database.MsSQL
         {
         }
 
-        public ProjectModel GetProject(decimal projectId)
+        public EProject GetProject(decimal projectId)
         {
             try
             {
@@ -28,7 +29,7 @@ namespace Dragonfly.Database.MsSQL
                                       select p).FirstOrDefault();
                     if (rawProject == null)
                         throw new ArgumentException("Target project is not found.");
-                    ProjectModel model = rawProject?.ToProjectModel();
+                    EProject model = rawProject?.ToProjectModel();
                     return model;
                 }
             }

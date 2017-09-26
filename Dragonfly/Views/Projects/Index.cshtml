@@ -32,16 +32,16 @@ else
             @foreach (var proj in Model.AvailableProjects)
             {
                 <tr>
-                    <td class="f-cell i_t_cell">@proj.ProjectId</td>
-                    <td class="i_t_cell">@proj.ProjectName</td>
+                    <td class="f-cell i_t_cell">@proj.ProjectDetails.Id</td>
+                    <td class="i_t_cell">@proj.ProjectDetails.ProjectName</td>
                     <td class="i_t_cell">@proj.DateCreation.ToString("dd.MM.yyyy")</td>
                     <td class="l-cell i_t_cell">
-                        @string.Join(", ", proj.Users.Select(u => u.Login))
+                        @string.Join(", ", proj.Users.Select(u => u.UserDescription.Login))
                     </td>
                     <td class="l-cell i_t_cell">
                         <a value="D"
                         id="project-details"
-                        href="@Url.Action("Index", "Project", new { projectId = proj.ProjectId })">
+                        href="@Url.Action("Index", "Project", new { projectId = proj.ProjectDetails.Id })">
                         <Span>Details</Span>
                         </a>
                     </td>

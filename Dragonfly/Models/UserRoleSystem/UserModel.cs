@@ -13,14 +13,7 @@ namespace Dragonfly.Models.UserRoleSystem
     {
         private IUserAccessProvider _UserAccessDBProvider = null;
 
-        public string Login { get; set; }
-        public string Name { get; set; }
-        public string EMail { get; set; }
-
-        public decimal Id { get; set; }
-
-        /// <summary>The roles assigned to the user.</summary>
-        List<GlobalUserRoleModel> Roles { get; set; }
+        public EUser UserDetails { get; set; }
 
         public UserModel(IUserAccessProvider provider)
         {
@@ -28,20 +21,12 @@ namespace Dragonfly.Models.UserRoleSystem
                 throw new ArgumentNullException(nameof(provider));
 
             _UserAccessDBProvider = provider;
-
-            Roles = new List<GlobalUserRoleModel>();
         }
 
-        public UserModel GetUserById(decimal userId)
-        {
-            EUser rawUser = _UserAccessDBProvider.GetUserById(userId);
-            return rawUser?.ToUserModel(_UserAccessDBProvider);
-        }
-
-        public UserModel GetUserByEmailLogin(string userLogin)
+        public EUser GetUserByEmailLogin(string userLogin)
         {
             EUser rawUser = _UserAccessDBProvider.GetUserByLoginMail(userLogin);
-            return rawUser?.ToUserModel(_UserAccessDBProvider);
+            return rawUser;
         }
     }
 }

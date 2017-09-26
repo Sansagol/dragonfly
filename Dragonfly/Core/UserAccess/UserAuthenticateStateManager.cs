@@ -119,19 +119,19 @@ namespace Dragonfly.Core.UserAccess
                 IUserAccessProvider uprovider = BaseBindings.DBFactory.CreateUserAccessProvider();
 
                 UserModel user = new UserModel(uprovider);
-                user = user.GetUserByEmailLogin(authParameters.Login);
+                user.UserDetails = user.GetUserByEmailLogin(authParameters.Login);
                 if (user != null)
                 {
-                    string accToken = uprovider.CreateAccessToken(user.Id);
+                    string accToken = uprovider.CreateAccessToken(user.UserDetails.Id);
                     _CookiesManager.SetToCookie(
                         response,
                         CookieType.UserAccessToken, accToken);
                     _CookiesManager.SetToCookie(
                         response,
-                        CookieType.UserId, user.Id.ToString());
+                        CookieType.UserId, user.UserDetails.Id.ToString());
                     _CookiesManager.SetToCookie(
                         response,
-                        CookieType.UserName, user.Name ?? user.Login);
+                        CookieType.UserName, user.UserDetails.Name ?? user.UserDetails.Login);
                     isLogged = true;
                 }
             }

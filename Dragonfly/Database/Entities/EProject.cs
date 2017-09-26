@@ -10,9 +10,8 @@ namespace Dragonfly.Database.Entities
         public decimal Id { get; set; }
 
         /// <summary>Ids of users which can something do with the project.</summary>
-        public List<decimal> UserIds { get; set; }
-
-        public List<EUser> Users { get; set; }
+        //public List<decimal> UserIds { get; set; }
+        //public List<EUser> Users { get; set; }
 
         /// <summary>Name of the project.</summary>
         public string ProjectName { get; set; }
@@ -28,8 +27,8 @@ namespace Dragonfly.Database.Entities
 
         public EProject()
         {
-            UserIds = new List<decimal>();
-            Users = new List<EUser>();
+            //UserIds = new List<decimal>();
+            //Users = new List<EUser>();
         }
     }
 }

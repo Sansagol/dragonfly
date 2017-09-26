@@ -179,6 +179,8 @@
     <Compile Include="Core\ControllersExceptionAttribute.cs" />
     <Compile Include="Core\CookieMananger.cs" />
     <Compile Include="Core\CookieType.cs" />
+    <Compile Include="Core\ProjectAccessFunction.cs" />
+    <Compile Include="Database\Entities\EProjectRole.cs" />
     <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
     <Compile Include="Core\UserAccess\AccessFunction.cs" />
@@ -311,12 +313,11 @@
     <Compile Include="Models\Clients\ClientType.cs" />
     <Compile Include="Models\Clients\CreateClientModel.cs" />
     <Compile Include="Models\LogUpModel.cs" />
-    <Compile Include="Models\Projects\Extensions.cs" />
     <Compile Include="Models\Projects\ProjectModel.cs" />
     <Compile Include="Models\Projects\ProjectsModel.cs" />
-    <Compile Include="Models\UserRoleSystem\Extensions.cs" />
     <Compile Include="Models\UserRoleSystem\GlobalUserRoleModel.cs" />
     <Compile Include="Models\UserRoleSystem\UserModel.cs" />
+    <Compile Include="Database\Entities\EUserProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

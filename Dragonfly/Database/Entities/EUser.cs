@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dragonfly.Models.UserRoleSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -26,5 +27,13 @@ namespace Dragonfly.Database.Entities
 
         /// <summary>Reserved field.</summary>
         public bool IsBlocked { get; set; }
+        
+        /// <summary>The roles assigned to the user.</summary>
+        public List<GlobalUserRoleModel> Roles { get; private set; }
+
+        public EUser()
+        {
+            Roles = new List<GlobalUserRoleModel>();
+        }
     }
 }

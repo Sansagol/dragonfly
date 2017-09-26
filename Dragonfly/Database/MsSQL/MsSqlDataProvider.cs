@@ -18,6 +18,7 @@ using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.Providers;
 using Dragonfly.Models.UserRoleSystem;
 using Dragonfly.Database.Entities;
+using Dragonfly.Database.MsSQL.Converters;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -195,19 +196,13 @@ namespace Dragonfly.Database.MsSQL
         {
             CheckProjectModelArgs(newProject);
 
-            IEnumerable<User> users = GetUsersByIds(newProject.UserIds);
-
-            Project proj = new Project()
-            {
-                Name = newProject.ProjectName,
-                Date_Create = DateTime.Now,
-                Description = newProject.Description
-            };
+            IEnumerable<User> users = GetUsersByIds(newProject.Users.Select(u=> u.UserId));
+            Project proj = newProject.ProjectDetails.ToDbProject();
 
             using (var context = _ContextGenerator.GenerateContext())
             {
                 SaveNewProjectInDB(proj, context);
-                newProject.ProjectId = proj.ID_Project;
+                newProject.ProjectDetails.Id = proj.ID_Project;
 
                 Project_Role prRole = (from pr in context.Project_Role
                                        where pr.Is_Admin
@@ -239,9 +234,9 @@ namespace Dragonfly.Database.MsSQL
         {
             if (newProject == null)
                 throw new ArgumentNullException(nameof(newProject));
-            if (string.IsNullOrWhiteSpace(newProject.ProjectName))
+            if (string.IsNullOrWhiteSpace(newProject.ProjectDetails.ProjectName))
                 throw new ArgumentException("Empty project name", nameof(newProject));
-            if (newProject.UserIds.Count < 1)
+            if (newProject.Users.Count < 1)
                 throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
         }
 
@@ -339,11 +334,11 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
-        public ProjectModel GetProjectById(decimal projectId)
+        public EProject GetProjectById(decimal projectId)
         {
             if (projectId < 1)
                 throw new ArgumentException("Project id can't be less than 1", nameof(projectId));
-            ProjectModel model = null;
+            EProject model = null;
             try
             {
                 using (var context = _ContextGenerator.GenerateContext())
@@ -352,12 +347,7 @@ namespace Dragonfly.Database.MsSQL
                                     where p.ID_Project == projectId
                                     select p).FirstOrDefault();
                     if (proj != null)
-                        model = new ProjectModel(this)
-                        {
-                            Description = proj.Description,
-                            ProjectName = proj.Name,
-                            UserIds = proj.User_Project.Select(u => u.ID_User).ToList()
-                        };
+                        model = proj.ToEProject(); 
                 }
             }
             catch (Exception ex)

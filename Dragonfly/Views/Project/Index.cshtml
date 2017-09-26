@@ -1,12 +1,12 @@
 ﻿@model Dragonfly.Models.Projects.ProjectModel
 
 @{
-    ViewBag.Title = Model?.ProjectName;
+    ViewBag.Title = Model.ProjectDetails.ProjectName;
     PageData["Logged"] = ViewBag.Logged;
     ViewBag.InitError = Model?.ProjectError;
 }
 
-<h3>Project: @Model.ProjectName</h3>
+<h3>Project: @Model.ProjectDetails.ProjectName</h3>
 @if (ViewBag.Logged == true && Model != null)
 {
     <table class="details_table">
@@ -18,7 +18,7 @@
             </td>
             <td class="det_tab_f_cell">
                 <label class="details_table_field_content">
-                    @Model.ProjectName
+                    @Model.ProjectDetails.ProjectName
                 </label>
             </td>
         </tr>
@@ -28,7 +28,7 @@
             </td>
             <td class="det_tab_cell">
                 <label class="details_table_field_content">
-                    @Model.Description
+                    @Model.ProjectDetails.Description
                 </label>
             </td>
         </tr>
