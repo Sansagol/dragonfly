@@ -34,7 +34,7 @@ else
                 <tr>
                     <td class="f-cell i_t_cell">@proj.ProjectDetails.Id</td>
                     <td class="i_t_cell">@proj.ProjectDetails.ProjectName</td>
-                    <td class="i_t_cell">@proj.DateCreation.ToString("dd.MM.yyyy")</td>
+                    <td class="i_t_cell">@proj.ProjectDetails.DateCreation.ToString("dd.MM.yyyy")</td>
                     <td class="l-cell i_t_cell">
                         @string.Join(", ", proj.Users.Select(u => u.UserDescription.Login))
                     </td>
