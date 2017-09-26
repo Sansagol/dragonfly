@@ -74,18 +74,13 @@
                             <div>
                                 @if (user.Role.IsAdmin)
                                 {
-                                    <div>Is admin</div>
+                                    <div>Full access</div>
                                 }
                                 else
                                 {
-                                    if ((user.Role.AccessToProject &
-                                    Dragonfly.Core.ProjectAccessFunction.ViewClients) ==
-                                    Dragonfly.Core.ProjectAccessFunction.ViewClients)
-                                    {
-                                        <div>
-                                            View clients
-                                        </div>
-                                    }
+                                    <div>
+                                        @user.Role.GetFunctionsDescriptions();
+                                    </div>
                                 }
                             </div>
                         </td>

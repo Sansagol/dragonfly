@@ -18,6 +18,9 @@ namespace Dragonfly.Core
         AddDeleteEntitlement = 18,
         //Must view the clients
         /// <summary>Do something with the techsupport</summary>
-        AddDeleteTechsupportEntitlement = 34
+        AddDeleteTechsupportEntitlement = 34,
+        
+        /// <summary>Full access to the project.</summary>
+        FullAccess = 255,
     }
 }
