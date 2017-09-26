@@ -12,6 +12,9 @@ namespace Dragonfly.Models.Projects
     /// <summary>The model-class describe a single project.</summary>
     public class ProjectModel
     {
+        /// <summary>Is project selected in the view.</summary>
+        public bool IsSelected { get; set; }
+
         /// <summary>Id of the project.</summary>
         public decimal ProjectId { get; set; }
 

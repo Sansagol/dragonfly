@@ -35,7 +35,7 @@ namespace Dragonfly.Core
         static BaseBindings()
         {
             SettingsReader = new SettingsLibReader();
-            _DbFactory = new MsSqlFactory();
+            _DbFactory = new MsSqlFactory(SettingsReader.GetDbAccessSettings());
             _CooksManager = new CookieMananger();
             _UsrStateManager = new UserAuthenticateStateManager(_DbFactory, _CooksManager);
 
@@ -57,7 +57,7 @@ namespace Dragonfly.Core
             IDataBaseProvider baseProvider = null;
             try
             {
-                baseProvider = _DbFactory.CreateDBProvider(SettingsReader.GetDbAccessSettings());
+                baseProvider = _DbFactory.CreateDBProvider();
             }
             catch (InvalidOperationException ex)
             {
@@ -77,7 +77,7 @@ namespace Dragonfly.Core
             IUserAccessProvider baseProvider = null;
             try
             {
-                baseProvider = _DbFactory.CreateUserAccessProvider(SettingsReader.GetDbAccessSettings());
+                baseProvider = _DbFactory.CreateUserAccessProvider();
             }
             catch (InvalidOperationException ex)
             {

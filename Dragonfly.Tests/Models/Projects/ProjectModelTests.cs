@@ -40,9 +40,9 @@ namespace Dragonfly.Models.Projects.Tests
         [TestMethod()]
         public void SuccessSaveProjectTest()
         {
-            MsSqlFactory factory = new MsSqlFactory();
-            IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
-            IUserAccessProvider usProvider = factory.CreateUserAccessProvider(Common.Connectionconfig);
+            MsSqlFactory factory = new MsSqlFactory(Common.Connectionconfig);
+            IDataBaseProvider provider = factory.CreateDBProvider();
+            IUserAccessProvider usProvider = factory.CreateUserAccessProvider();
             UserModel userModel = null;
             ProjectModel projectModel = null;
 
@@ -59,7 +59,7 @@ namespace Dragonfly.Models.Projects.Tests
                 Assert.IsTrue(
                     projectModel.ProjectId > 0,
                     $"Retuen the bad project ID: {projectModel.ProjectId}");
-                var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig);
+                var context = ((DataProvider)provider).GenerateContext();
                 Assert.IsNotNull(
                     context.User_Project.FirstOrDefault(
                         u => u.ID_Project == projectModel.ProjectId),
@@ -69,7 +69,7 @@ namespace Dragonfly.Models.Projects.Tests
             {
                 if (projectModel != null && projectModel.ProjectId > 0)
                     provider.DeleteProject(projectModel.ProjectId);
-                using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+                using (var context = ((DataProvider)provider).GenerateContext())
                 {
                     DeleteUserFromDB(context, userModel?.Login, userModel?.EMail);
                 }
@@ -79,9 +79,9 @@ namespace Dragonfly.Models.Projects.Tests
         [TestMethod()]
         public void NoSaveProjectWithoutUsersTest()
         {
-            MsSqlFactory factory = new MsSqlFactory();
-            IDataBaseProvider provider = factory.CreateDBProvider(Common.Connectionconfig);
-            using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+            MsSqlFactory factory = new MsSqlFactory(Common.Connectionconfig);
+            IDataBaseProvider provider = factory.CreateDBProvider();
+            using (var context = ((DataProvider)provider).GenerateContext())
             {
                 ProjectModel projectModel = null;
                 try

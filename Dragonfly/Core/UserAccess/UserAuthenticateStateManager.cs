@@ -55,8 +55,7 @@ namespace Dragonfly.Core.UserAccess
             bool isCorrectAccess = false;
             try
             {
-                var accessProvider = BaseBindings.DBFactory.CreateUserAccessProvider(
-                     BaseBindings.SettingsReader.GetDbAccessSettings());
+                var accessProvider = BaseBindings.DBFactory.CreateUserAccessProvider();
                 isCorrectAccess = accessProvider.CheckAccessToken(userId, accessToken);
             }
             catch (Exception ex)
@@ -92,8 +91,7 @@ namespace Dragonfly.Core.UserAccess
             {
                 if (!string.IsNullOrWhiteSpace(token))
                 {
-                    var ap = BaseBindings.DBFactory.CreateUserAccessProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings());
+                    var ap = BaseBindings.DBFactory.CreateUserAccessProvider();
                     ap.DeleteAccessToken(token);
                 }
             }
@@ -117,10 +115,8 @@ namespace Dragonfly.Core.UserAccess
             bool isLogged = false;
             if (CheckUser(authParameters.Login, authParameters.Password))
             {
-                IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider(
-                         BaseBindings.SettingsReader.GetDbAccessSettings());
-                IUserAccessProvider uprovider = BaseBindings.DBFactory.CreateUserAccessProvider(
-                              BaseBindings.SettingsReader.GetDbAccessSettings());
+                IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider();
+                IUserAccessProvider uprovider = BaseBindings.DBFactory.CreateUserAccessProvider();
 
                 UserModel user = new UserModel(uprovider);
                 user = user.GetUserByEmailLogin(authParameters.Login);
@@ -161,8 +157,7 @@ namespace Dragonfly.Core.UserAccess
             {
                 try
                 {
-                    var ap = BaseBindings.DBFactory.CreateDBProvider(
-                        BaseBindings.SettingsReader.GetDbAccessSettings());
+                    var ap = BaseBindings.DBFactory.CreateDBProvider();
                     isTrueUser = ap.CheckUserCredentials(login, password);
                     if (!isTrueUser)
                         errorOnUserChecking = "Incorrect login or password";

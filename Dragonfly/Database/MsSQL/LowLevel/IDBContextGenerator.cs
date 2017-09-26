@@ -12,6 +12,6 @@ namespace Dragonfly.Database.MsSQL.LowLevel
     /// </summary>
     interface IDBContextGenerator
     {
-        DragonflyEntities GenerateContext(DatabaseAccessConfiguration accessConfigurations);
+        DragonflyEntities GenerateContext();
     }
 }

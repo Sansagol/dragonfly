@@ -31,17 +31,13 @@ namespace Dragonfly.Database.MsSQL
 
         public MsSqlDataProvider(
             IUserDBDataManager userDbDataManage,
-            IDBContextGenerator contextgenerator,
-            DatabaseAccessConfiguration dbConfig) :
+            IDBContextGenerator contextgenerator) :
             base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
-            if (dbConfig == null)
-                throw new ArgumentNullException(nameof(dbConfig));
 
             _UserManager = userDbDataManage;
-            _DatabaseConfig = dbConfig;
         }
 
         /// <summary>
@@ -68,7 +64,7 @@ namespace Dragonfly.Database.MsSQL
                 E_mail = userRegisterData.EMail
             };
 
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 context.User.Add(usr);
                 try
@@ -99,7 +95,7 @@ namespace Dragonfly.Database.MsSQL
         private void CheckExistingUsers(SignUpModel userRegisterData)
         {
             List<ValidationError> validationErrors = new List<ValidationError>();
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 int existsUsersCount = (from u in context.User
                                         where u.Login.Equals(userRegisterData.Login)
@@ -157,7 +153,7 @@ namespace Dragonfly.Database.MsSQL
             User usr = null;
             try
             {
-                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                using (var context = _ContextGenerator.GenerateContext())
                 {
                     usr = (from user in context.User
                            where user.Login.Equals(login) ||
@@ -208,7 +204,7 @@ namespace Dragonfly.Database.MsSQL
                 Description = newProject.Description
             };
 
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 SaveNewProjectInDB(proj, context);
                 newProject.ProjectId = proj.ID_Project;
@@ -324,7 +320,7 @@ namespace Dragonfly.Database.MsSQL
 
             try
             {
-                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                using (var context = _ContextGenerator.GenerateContext())
                 {
                     Project proj = (from p in context.Project
                                     where p.ID_Project == projectId
@@ -350,7 +346,7 @@ namespace Dragonfly.Database.MsSQL
             ProjectModel model = null;
             try
             {
-                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                using (var context = _ContextGenerator.GenerateContext())
                 {
                     Project proj = (from p in context.Project
                                     where p.ID_Project == projectId
@@ -375,7 +371,7 @@ namespace Dragonfly.Database.MsSQL
         {//TODO get projects for a user
             if (offset < 0) offset = 0;
             if (count < 0) count = 1;
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 var projects = (from proj in context.Project
                                 select proj).OrderBy(p => p.ID_Project).Skip(offset).Take(count);

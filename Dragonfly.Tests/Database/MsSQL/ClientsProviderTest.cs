@@ -18,8 +18,8 @@ namespace Dragonfly.Tests.Database.MsSQL
         /// <returns>Initialized provider.</returns>
         private IClientsProvider InitProvider()
         {
-            MsSqlFactory factory = new MsSqlFactory();
-            return factory.CreateClientsProvider(Common.Connectionconfig);
+            MsSqlFactory factory = new MsSqlFactory(Common.Connectionconfig);
+            return factory.CreateClientsProvider();
         }
 
         private void ClearResources(DragonflyEntities context)
@@ -33,7 +33,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CreateClientTypeTest()
         {
             IClientsProvider provider = InitProvider();
-            using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+            using (var context = ((DataProvider)provider).GenerateContext())
             {
                 try
                 {
@@ -57,7 +57,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CreateClientTest()
         {
             var provider = InitProvider();
-            using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+            using (var context = ((DataProvider)provider).GenerateContext())
             {
                 try
                 {
@@ -108,7 +108,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void CreateDoubleClientTest()
         {
             var provider = InitProvider();
-            using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+            using (var context = ((DataProvider)provider).GenerateContext())
             {
                 try
                 {
@@ -140,7 +140,7 @@ namespace Dragonfly.Tests.Database.MsSQL
         public void GetAllAvailableTypesTest()
         {
             var provider = InitProvider();
-            using (var context = ((DataProvider)provider).GenerateContext(Common.Connectionconfig))
+            using (var context = ((DataProvider)provider).GenerateContext())
             {
                 try
                 {

@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -189,6 +190,7 @@
     <Compile Include="Database\Entities\EUser.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
+    <Compile Include="Database\MsSQL\Converters\ProjectsEntityConverters.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />
@@ -203,6 +205,7 @@
     <Compile Include="Database\MsSQL\LowLevel\UserDBDataManager.cs" />
     <Compile Include="Database\MsSQL\ModelConvertersExtensions.cs" />
     <Compile Include="Database\MsSQL\MsSqlFactory.cs" />
+    <Compile Include="Database\MsSQL\ProjectsProvider.cs" />
     <Compile Include="Database\MsSQL\UserAccessProvider.cs" />
     <Compile Include="Database\Providers\IClientsProvider.cs" />
     <Compile Include="Database\Providers\IDataBaseProvider.cs" />
@@ -296,6 +299,7 @@
     </Compile>
     <Compile Include="Database\Providers\IDataProvider.cs" />
     <Compile Include="Database\Providers\IDBFactory.cs" />
+    <Compile Include="Database\Providers\IProjectsProvider.cs" />
     <Compile Include="Database\Providers\IUserAccessProvider.cs" />
     <Compile Include="Database\ValidationError.cs" />
     <Compile Include="Global.asax.cs">
@@ -329,6 +333,7 @@
     <Content Include="Views\Project\CreateProject.cshtml" />
     <Content Include="Views\Client\Add.cshtml" />
     <Content Include="Views\Clients\Index.cshtml" />
+    <Content Include="Views\Project\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

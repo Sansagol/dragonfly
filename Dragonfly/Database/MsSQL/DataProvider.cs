@@ -36,9 +36,9 @@ namespace Dragonfly.Database.MsSQL
         /// </summary>
         /// <param name="accessConfigurations"></param>
         /// <returns></returns>
-        public DragonflyEntities GenerateContext(DatabaseAccessConfiguration accessConfigurations)
+        public DragonflyEntities GenerateContext()
         {
-            return _ContextGenerator.GenerateContext(accessConfigurations);
+            return _ContextGenerator.GenerateContext();
         }
     }
 }

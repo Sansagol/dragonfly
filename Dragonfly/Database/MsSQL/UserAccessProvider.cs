@@ -20,22 +20,16 @@ namespace Dragonfly.Database.MsSQL
         #region Low level interfaces
         IUserDBDataManager _UserManager = null;
         #endregion
-
-        DatabaseAccessConfiguration _DatabaseConfig = null;
-
+       
         public UserAccessProvider(
             IUserDBDataManager userDbDataManage,
-            IDBContextGenerator contextgenerator,
-            DatabaseAccessConfiguration dbConfig) :
+            IDBContextGenerator contextgenerator) :
             base(contextgenerator)
         {
             if (userDbDataManage == null)
                 throw new ArgumentNullException(nameof(userDbDataManage));
-            if (dbConfig == null)
-                throw new ArgumentNullException(nameof(dbConfig));
 
             _UserManager = userDbDataManage;
-            _DatabaseConfig = dbConfig;
         }
 
         /// <summary>
@@ -47,7 +41,7 @@ namespace Dragonfly.Database.MsSQL
         public bool CheckAccessToken(decimal userId, string token)
         {
             DateTime now = DateTime.UtcNow.Date;
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 var userAccesses = (from userAccess in context.User_Access
                                     where DbFunctions.TruncateTime(userAccess.Date_Expiration) >= now &&
@@ -95,7 +89,7 @@ namespace Dragonfly.Database.MsSQL
 
         public void DeleteAccessToken(string token)
         {
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 var accessTokens = (from ua in context.User_Access
                                     where ua.Access_Token.Equals(token)
@@ -113,7 +107,7 @@ namespace Dragonfly.Database.MsSQL
         {
             string token = string.Empty;
             DateTime now = DateTime.UtcNow;
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 DeleteOldUserAccessTokens(userId, now, context);
                 User currentUser = _UserManager.GetUserById(userId);
@@ -190,7 +184,7 @@ namespace Dragonfly.Database.MsSQL
             User usr = null;
             try
             {
-                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                using (var context = _ContextGenerator.GenerateContext())
                 {
                     usr = (from user in context.User
                            where user.Login.Equals(userLogin) ||

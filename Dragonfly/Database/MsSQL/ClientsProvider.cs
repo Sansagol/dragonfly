@@ -18,16 +18,9 @@ namespace Dragonfly.Database.MsSQL
     /// </summary>
     class ClientsProvider : DataProvider, IClientsProvider
     {
-        DatabaseAccessConfiguration _DatabaseConfig = null;
-
-        public ClientsProvider(IDBContextGenerator contextgenerator,
-            DatabaseAccessConfiguration dbConfig) :
+        public ClientsProvider(IDBContextGenerator contextgenerator) :
             base(contextgenerator)
         {
-            if (dbConfig == null)
-                throw new ArgumentNullException(nameof(dbConfig));
-
-            _DatabaseConfig = dbConfig;
         }
 
         public decimal CreateAClientType(string typeName, decimal id)
@@ -39,7 +32,7 @@ namespace Dragonfly.Database.MsSQL
                 Type_Name = typeName,
                 ID_Client_Type = id
             };
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 try
                 {
@@ -75,7 +68,7 @@ namespace Dragonfly.Database.MsSQL
             if (model.Type == null)
                 throw new ArgumentException("Type can not be empty", nameof(model));
             Client client = model.ToClient();
-            using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+            using (var context = _ContextGenerator.GenerateContext())
             {
                 try
                 {
@@ -111,7 +104,7 @@ namespace Dragonfly.Database.MsSQL
         {
             try
             {
-                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                using (var context = _ContextGenerator.GenerateContext())
                 {
                     var clients = (from t in context.Client
                                    select t).ToList();
@@ -129,7 +122,7 @@ namespace Dragonfly.Database.MsSQL
         {
             try
             {
-                using (var context = _ContextGenerator.GenerateContext(_DatabaseConfig))
+                using (var context = _ContextGenerator.GenerateContext())
                 {
                     var types = (from t in context.Client_Type
                                  select t).ToList();

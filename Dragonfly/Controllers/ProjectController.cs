@@ -52,5 +52,27 @@ namespace Dragonfly.Controllers
                 return RedirectToAction("Index", "Projects");
             return View("CreateProject");
         }
+
+        [HttpGet]
+        [ControllersException]
+        public ActionResult ShowProject(decimal projectId)
+        {
+            ProjectModel model = null;
+
+            _UserStateManager.CheckUserAccess(Request, Response);
+            var provider = BaseBindings.DBFactory.CreateProjectsProvider();
+            try
+            {
+                model = provider.GetProject(projectId);
+            }
+            catch (Exception ex)
+            {
+                model = new ProjectModel()
+                {
+                    ProjectError = "Id of the project is out of range."
+                };
+            }
+            return View("Index", model);
+        }
     }
 }

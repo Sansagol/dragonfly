@@ -19,40 +19,45 @@ namespace Dragonfly.Database.MsSQL
         /// <summary>
         /// Base constructor of the MS MQL factory.
         /// </summary>
-        public MsSqlFactory()
+        public MsSqlFactory(DatabaseAccessConfiguration dbConfig)
         {
-            _ContextGenerator = new DBContextGenerator();
+            if (dbConfig == null)
+                throw new ArgumentNullException(nameof(dbConfig));
+            _ContextGenerator = new DBContextGenerator(dbConfig);
             _UserDBDataManager = new UserDBDataManager();
 
         }
 
-        public IDataBaseProvider CreateDBProvider(DatabaseAccessConfiguration dbConfig)
+        public IDataBaseProvider CreateDBProvider()
         {
-            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext(dbConfig));
+            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext());
 
             IDataBaseProvider provider = new MsSqlDataProvider(
                 _UserDBDataManager,
-                _ContextGenerator,
-                dbConfig);
-
+                _ContextGenerator);
             return provider;
         }
 
-        public IUserAccessProvider CreateUserAccessProvider(DatabaseAccessConfiguration dbConfig)
+        public IUserAccessProvider CreateUserAccessProvider()
         {
-            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext(dbConfig));
+            _UserDBDataManager.Initialize(_ContextGenerator.GenerateContext());
 
             IUserAccessProvider provider = new UserAccessProvider(
                 _UserDBDataManager,
-                _ContextGenerator,
-                dbConfig);
+                _ContextGenerator);
             return provider;
         }
 
-        public IClientsProvider CreateClientsProvider(DatabaseAccessConfiguration dbConfig)
+        public IClientsProvider CreateClientsProvider()
         {
-            IClientsProvider provider = new ClientsProvider(_ContextGenerator, dbConfig);
+            IClientsProvider provider = new ClientsProvider(_ContextGenerator);
             return provider;
+        }
+
+        public IProjectsProvider CreateProjectsProvider()
+        {
+            IProjectsProvider projectsProvider = new ProjectsProvider(_ContextGenerator);
+            return projectsProvider;
         }
     }
 }

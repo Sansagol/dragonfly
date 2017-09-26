@@ -20,8 +20,6 @@ namespace Dragonfly.Database.MsSQL.Tests
         [TestMethod()]
         public void ToProjectModelTest()
         {
-            MsSqlFactory factory = new MsSqlFactory();
-
             Project proj = InitializeProject();
 
             EProject model = proj.ToEProject();
@@ -85,9 +83,8 @@ namespace Dragonfly.Database.MsSQL.Tests
         [TestMethod()]
         public void UserToUserModelTest()
         {
-            MsSqlFactory factory = new MsSqlFactory();
-            MsSqlDataProvider provider = factory.CreateDBProvider(
-                Common.Connectionconfig) as MsSqlDataProvider;
+            MsSqlFactory factory = new MsSqlFactory(Common.Connectionconfig);
+            MsSqlDataProvider provider = factory.CreateDBProvider() as MsSqlDataProvider;
 
             User user = InitUser();
 

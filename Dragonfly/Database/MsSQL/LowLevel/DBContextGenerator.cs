@@ -14,17 +14,25 @@ namespace Dragonfly.Database.MsSQL.LowLevel
 {
     public class DBContextGenerator : IDBContextGenerator
     {
+        DatabaseAccessConfiguration _DbConfig = null;
+
+        public DBContextGenerator(DatabaseAccessConfiguration accessConfigurations)
+        {
+            if (accessConfigurations == null)
+                throw new ArgumentNullException(nameof(accessConfigurations));
+            _DbConfig = Clone(accessConfigurations);
+        }
+
         /// <summary>
         /// Method generate a new db context.
         /// </summary>
         /// <param name="accessConfigurations">Settings to db access.</param>
         /// <returns>Db context.</returns>
         /// <exception cref="DbInitializationException"/> 
-        public DragonflyEntities GenerateContext(DatabaseAccessConfiguration accessConfigurations)
+        public DragonflyEntities GenerateContext()
         {
             DragonflyEntities context = null;
-            EntityConnectionStringBuilder connection = UpdateConnectionParameters(
-                Clone(accessConfigurations));
+            EntityConnectionStringBuilder connection = UpdateConnectionParameters(_DbConfig);
             try
             {
                 context = new DragonflyEntities(connection.ToString());
@@ -44,9 +52,10 @@ namespace Dragonfly.Database.MsSQL.LowLevel
         {
             var connection = new EntityConnectionStringBuilder(
                 ConfigurationManager.ConnectionStrings[nameof(DragonflyEntities)].ConnectionString);
-            var builder = new SqlConnectionStringBuilder(connection.ProviderConnectionString);
-
-            builder.ApplicationName = "Dragonfly server";
+            var builder = new SqlConnectionStringBuilder(connection.ProviderConnectionString)
+            {
+                ApplicationName = "Dragonfly server"
+            };
             if (!string.IsNullOrWhiteSpace(accessConfigurations.ServerName))
                 builder.DataSource = accessConfigurations.ServerName;
             if (!string.IsNullOrWhiteSpace(accessConfigurations.DbName))

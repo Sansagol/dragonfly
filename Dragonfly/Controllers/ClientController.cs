@@ -92,8 +92,7 @@ namespace Dragonfly.Controllers
             IEnumerable<ClientType> types = null;
             try
             {
-                var clientsProvider = _DatabaseFactory.CreateClientsProvider(
-                      BaseBindings.SettingsReader.GetDbAccessSettings());
+                var clientsProvider = _DatabaseFactory.CreateClientsProvider();
                 types = clientsProvider.GetAvailableClientTypes();
             }
             catch (Exception ex)
@@ -132,8 +131,7 @@ namespace Dragonfly.Controllers
                 }
                 try
                 {
-                    var clientsProvider = _DatabaseFactory.CreateClientsProvider(
-                         BaseBindings.SettingsReader.GetDbAccessSettings());
+                    var clientsProvider = _DatabaseFactory.CreateClientsProvider();
                     clientsProvider.CreateClient(model.Client);
                     return RedirectToAction("Index", "Clients");
                 }

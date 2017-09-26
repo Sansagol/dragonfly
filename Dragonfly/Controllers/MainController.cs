@@ -49,13 +49,13 @@ namespace Dragonfly.Controllers
         public ActionResult Index()
         {
             ViewBag.Logged = false;
-            _UserStateManager.CheckUserAccess(Request, Response);
-
-            ViewBag.Logged = true;
-            ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
-                Request,
-                CookieType.UserName);
-
+            if (_UserStateManager.CheckUserAccess(Request, Response))
+            {
+                ViewBag.Logged = true;
+                ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
+                    Request,
+                    CookieType.UserName);
+            }
             return View();
         }
 

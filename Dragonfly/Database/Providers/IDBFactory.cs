@@ -15,14 +15,16 @@ namespace Dragonfly.Database.Providers
         /// Method generate a base DB provider.
         /// </summary>
         /// <returns>A base DB provider.</returns>
-        IDataBaseProvider CreateDBProvider(DatabaseAccessConfiguration dbConfig);
+        IDataBaseProvider CreateDBProvider();
 
         /// <summary>
         /// Method generate a DB provider with the user acees operations.
         /// </summary>
         /// <returns>A user access provider.</returns>
-        IUserAccessProvider CreateUserAccessProvider(DatabaseAccessConfiguration dbConfig);
+        IUserAccessProvider CreateUserAccessProvider();
 
-        IClientsProvider CreateClientsProvider(DatabaseAccessConfiguration dbConfig);
+        IClientsProvider CreateClientsProvider();
+
+        IProjectsProvider CreateProjectsProvider();
     }
 }
