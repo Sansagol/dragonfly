@@ -10,6 +10,8 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Data.Entity.Infrastructure;
 using Dragonfly.Core;
+using Dragonfly.Database.Entities;
+using Dragonfly.Database.MsSQL.Converters;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -134,6 +136,105 @@ namespace Dragonfly.Database.MsSQL
                 //TODO log
             }
             return new List<ClientType>();
+        }
+
+        public List<EEntitlement> GetEntitlementsForProject(decimal projectId)
+        {
+            if (projectId < 1)
+                throw new ArgumentException("The project id must be greather than 0.");
+            List<EEntitlement> entitlements = new List<EEntitlement>();
+
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                var dbEntitlements = (from e in context.Product_License
+                                      where e.ID_Project == projectId
+                                      select e).ToList();
+                if (dbEntitlements?.Count > 0)
+                {
+                    var project = (from p in context.Project
+                                   where p.ID_Project == projectId
+                                   select p).First().ToEProject();
+                    IEnumerable<EClient> clients = LoadClients(dbEntitlements);
+                    IEnumerable<EUser> users = LoadCreators(dbEntitlements);
+                    IEnumerable<ELicenseType> licenseTypes = LoadLicenseTypes(dbEntitlements);
+
+                    foreach (var dbEntitlement in dbEntitlements)
+                    {
+                        EEntitlement entitlement = dbEntitlement.ToEEntitlement();
+                        entitlement.Client = clients.FirstOrDefault(c => c.Id == dbEntitlement.ID_Client);
+                        entitlement.Creator = users.FirstOrDefault(c => c.Id == dbEntitlement.ID_User_Creator);
+                        entitlement.LicType = licenseTypes
+                            .FirstOrDefault(c => c.Id == dbEntitlement.ID_Product_License);
+                        entitlement.Project = project;
+                        entitlements.Add(entitlement);
+                    }
+                }
+            }
+            return entitlements;
+        }
+
+        #region Load the client relation data
+        private IEnumerable<EClient> LoadClients(List<Product_License> dbEntitlements)
+        {
+            List<decimal> clientsIds = dbEntitlements.Select(e => e.ID_Client).Distinct().ToList();
+            List<EClient> clients = new List<EClient>();
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                foreach (var dbEnt in dbEntitlements)
+                {
+                    var client = (from l in context.Client
+                                  where l.ID_Client == dbEnt.ID_Client
+                                  select l).First().ToEClient();
+                    if (client != null)
+                        clients.Add(client);
+                }
+            }
+            return clients;
+        }
+
+        private IEnumerable<EUser> LoadCreators(List<Product_License> dbEntitlements)
+        {
+            List<decimal> usersIds = dbEntitlements.Select(e => e.ID_User_Creator).Distinct().ToList();
+            List<EUser> users = new List<EUser>();
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                foreach (var dbEnt in dbEntitlements)
+                {
+                    var user = (from l in context.User
+                                where l.ID_User == dbEnt.ID_User_Creator
+                                select l).First().ToEUser();
+                    if (user != null)
+                        users.Add(user);
+                }
+            }
+            return users;
+        }
+
+        private IEnumerable<ELicenseType> LoadLicenseTypes(List<Product_License> dbEntitlements)
+        {
+            List<decimal> productLicenses = dbEntitlements
+                .Select(e => e.ID_Product_License)
+                .Distinct()
+                .ToList();
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                List<ELicenseType> licenseTypes = new List<ELicenseType>();
+                foreach (var dbEnt in dbEntitlements)
+                {
+                    var licenseType = (from l in context.License_Type
+                                       where l.ID_License_Type == dbEnt.ID_License_Type
+                                       select l).First().ToELicenseType();
+                    if (licenseType != null)
+                        licenseTypes.Add(licenseType);
+                }
+                return licenseTypes;
+            }
+        }
+        #endregion
+
+        public List<EEntitlement> GetEntitlementsForProject(decimal projectId, int offset, int count)
+        {
+            throw new NotImplementedException();
         }
     }
 }

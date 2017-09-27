@@ -22,6 +22,7 @@ namespace Dragonfly.Database.MsSQL
     
         public decimal ID_License_Type { get; set; }
         public string Type_Name { get; set; }
+        public System.DateTime Date_Created { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Product_License> Product_License { get; set; }

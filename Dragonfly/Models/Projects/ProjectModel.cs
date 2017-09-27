@@ -41,6 +41,31 @@ namespace Dragonfly.Models.Projects
         /// </summary>
         public DateTime DateCreation { get; set; }
 
+        List<EClient> _Clients = null;
+        public List<EClient> Clients
+        {
+            get
+            {
+                if (_Clients == null)
+                {
+                    InitClients();
+                }
+                return _Clients;
+            }
+        }
+        List<EEntitlement> _Entitlements = null;
+        public List<EEntitlement> Entitlements
+        {
+            get
+            {
+                if (_Entitlements == null)
+                {
+                    InitClients();
+                }
+                return _Entitlements;
+            }
+        }
+
         #region fields
         IDataBaseProvider _DbProvider = null;
         public IDataBaseProvider DbProvider
@@ -49,11 +74,13 @@ namespace Dragonfly.Models.Projects
             set { _DbProvider = value; }
         }
         private IProjectsProvider _ProjectsProvider = null;
+        private IClientsProvider _ClientsProvider = null;
         #endregion
 
         public ProjectModel()
         {
             _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
+            _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
         }
 
         public ProjectModel(IDataBaseProvider dbProvider) :
@@ -62,6 +89,7 @@ namespace Dragonfly.Models.Projects
             _DbProvider = dbProvider;
         }
 
+        #region Lazy load
         private void InitUsers()
         {
             _Users = new List<EUserProject>();
@@ -76,6 +104,15 @@ namespace Dragonfly.Models.Projects
             var users = _ProjectsProvider.GetUsersForProject(ProjectDetails.Id);
             _Users.AddRange(users);
         }
+
+        private void InitClients()
+        {
+            _Entitlements = new List<EEntitlement>();
+            _Clients = new List<EClient>();
+            _Entitlements.AddRange(_ClientsProvider.GetEntitlementsForProject(ProjectDetails.Id));
+            _Clients.AddRange(_Entitlements.Select(e => e.Client));
+        }
+        #endregion
 
         /// <summary>Add the custom user to the project.</summary>
         /// <param name="userId">Id of the user.</param>

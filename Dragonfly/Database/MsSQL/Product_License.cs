@@ -22,6 +22,8 @@ namespace Dragonfly.Database.MsSQL
         public decimal ID_License_Type { get; set; }
         public decimal License_Count { get; set; }
         public string Details { get; set; }
+        public System.DateTime Date_Created { get; set; }
+        public decimal ID_User_Creator { get; set; }
     
         public virtual Client Client { get; set; }
         public virtual License_Type License_Type { get; set; }

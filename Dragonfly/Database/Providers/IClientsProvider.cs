@@ -1,4 +1,5 @@
 ﻿using Dragonfly.Core.Settings;
+using Dragonfly.Database.Entities;
 using Dragonfly.Models.Clients;
 using System;
 using System.Collections.Generic;
@@ -33,5 +34,16 @@ namespace Dragonfly.Database.Providers
         /// </summary>
         /// <returns>All existing clients.</returns>
         List<ClientModel> GetAllClients();
+
+        /// <summary>Method fetch all entitlements for the current project.</summary>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        List<EEntitlement> GetEntitlementsForProject(decimal projectId);
+        /// <summary>Method fetch entitlement for the project.</summary>
+        /// <param name="projectId"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        List<EEntitlement> GetEntitlementsForProject(decimal projectId, int offset, int count);
     }
 }

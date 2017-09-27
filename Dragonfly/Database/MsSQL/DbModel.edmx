@@ -109,6 +109,7 @@
           </Key>
           <Property Name="ID_License_Type" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Type_Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="Notification_Event">
           <Key>
@@ -157,6 +158,8 @@
           <Property Name="ID_License_Type" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="License_Count" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Details" Type="nvarchar(max)" />
+          <Property Name="Date_Created" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ID_User_Creator" Type="decimal" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -736,21 +739,15 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <EntitySet Name="Global_User_Role" EntityType="DragonflyModel.Global_User_Role" />
           <EntitySet Name="Invitation_User_Settings" EntityType="DragonflyModel.Invitation_User_Settings" />
           <EntitySet Name="LDAP_Settings" EntityType="DragonflyModel.LDAP_Settings" />
-          <EntitySet Name="License_Type" EntityType="DragonflyModel.License_Type" />
           <EntitySet Name="Notification_Event" EntityType="DragonflyModel.Notification_Event" />
           <EntitySet Name="Notification_Morpheme" EntityType="DragonflyModel.Notification_Morpheme" />
           <EntitySet Name="Notificztion_Task" EntityType="DragonflyModel.Notificztion_Task" />
           <EntitySet Name="Phone" EntityType="DragonflyModel.Phone" />
-          <EntitySet Name="Product_License" EntityType="DragonflyModel.Product_License" />
           <EntitySet Name="Support_Entitlement" EntityType="DragonflyModel.Support_Entitlement" />
           <EntitySet Name="User_Invitation" EntityType="DragonflyModel.User_Invitation" />
           <AssociationSet Name="FK_Client_Client_Type" Association="DragonflyModel.FK_Client_Client_Type">
             <End Role="Client_Type" EntitySet="Client_Type" />
             <End Role="Client" EntitySet="Client" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Product_License_Client" Association="DragonflyModel.FK_Product_License_Client">
-            <End Role="Client" EntitySet="Client" />
-            <End Role="Product_License" EntitySet="Product_License" />
           </AssociationSet>
           <AssociationSet Name="FK_Support_Entitlement_Client" Association="DragonflyModel.FK_Support_Entitlement_Client">
             <End Role="Client" EntitySet="Client" />
@@ -759,10 +756,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <AssociationSet Name="FK_E_mail_Notification_Notificztion_Task" Association="DragonflyModel.FK_E_mail_Notification_Notificztion_Task">
             <End Role="Notificztion_Task" EntitySet="Notificztion_Task" />
             <End Role="E_mail_Notification" EntitySet="E_mail_Notification" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Product_License_License_Type" Association="DragonflyModel.FK_Product_License_License_Type">
-            <End Role="License_Type" EntitySet="License_Type" />
-            <End Role="Product_License" EntitySet="Product_License" />
           </AssociationSet>
           <AssociationSet Name="FK_Notificztion_Task_Notification_Event" Association="DragonflyModel.FK_Notificztion_Task_Notification_Event">
             <End Role="Notification_Event" EntitySet="Notification_Event" />
@@ -798,10 +791,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             <End Role="Project" EntitySet="Project" />
             <End Role="E_mail_Notification" EntitySet="E_mail_Notification" />
           </AssociationSet>
-          <AssociationSet Name="FK_Product_License_Project" Association="DragonflyModel.FK_Product_License_Project">
-            <End Role="Project" EntitySet="Project" />
-            <End Role="Product_License" EntitySet="Product_License" />
-          </AssociationSet>
           <AssociationSet Name="FK_Support_Entitlement_Project" Association="DragonflyModel.FK_Support_Entitlement_Project">
             <End Role="Project" EntitySet="Project" />
             <End Role="Support_Entitlement" EntitySet="Support_Entitlement" />
@@ -829,6 +818,20 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <AssociationSet Name="Project_Role_Access_Function" Association="DragonflyModel.Project_Role_Access_Function">
             <End Role="Project_Access_Function" EntitySet="Project_Access_Function" />
             <End Role="Project_Role" EntitySet="Project_Role" />
+          </AssociationSet>
+          <EntitySet Name="License_Type" EntityType="DragonflyModel.License_Type" />
+          <EntitySet Name="Product_License" EntityType="DragonflyModel.Product_License" />
+          <AssociationSet Name="FK_Product_License_Client" Association="DragonflyModel.FK_Product_License_Client">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_License_Type" Association="DragonflyModel.FK_Product_License_License_Type">
+            <End Role="License_Type" EntitySet="License_Type" />
+            <End Role="Product_License" EntitySet="Product_License" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_License_Project" Association="DragonflyModel.FK_Product_License_Project">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="Product_License" EntitySet="Product_License" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="Access_Function">
@@ -861,11 +864,11 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="Inner_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="ID_Address" Type="Decimal" Precision="18" Scale="0" />
           <NavigationProperty Name="Client_Type" Relationship="DragonflyModel.FK_Client_Client_Type" FromRole="Client" ToRole="Client_Type" />
-          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Client" FromRole="Client" ToRole="Product_License" />
           <NavigationProperty Name="Support_Entitlement" Relationship="DragonflyModel.FK_Support_Entitlement_Client" FromRole="Client" ToRole="Support_Entitlement" />
           <NavigationProperty Name="Address" Relationship="DragonflyModel.Client_Address" FromRole="Client" ToRole="Address" />
           <NavigationProperty Name="E_mail" Relationship="DragonflyModel.Client_Email" FromRole="Client" ToRole="E_mail" />
           <NavigationProperty Name="Phone" Relationship="DragonflyModel.Client_Phone" FromRole="Client" ToRole="Phone" />
+          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Client" FromRole="Client" ToRole="Product_License" />
         </EntityType>
         <EntityType Name="Client_Type">
           <Key>
@@ -919,14 +922,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="Domain_Components" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Organizational_Unit" Type="Binary" Nullable="false" MaxLength="255" FixedLength="false" />
         </EntityType>
-        <EntityType Name="License_Type">
-          <Key>
-            <PropertyRef Name="ID_License_Type" />
-          </Key>
-          <Property Name="ID_License_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Type_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="License_Type" ToRole="Product_License" />
-        </EntityType>
         <EntityType Name="Notification_Event">
           <Key>
             <PropertyRef Name="ID_Notification_Event" />
@@ -966,22 +961,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="Phone_Row" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Client" Relationship="DragonflyModel.Client_Phone" FromRole="Phone" ToRole="Client" />
         </EntityType>
-        <EntityType Name="Product_License">
-          <Key>
-            <PropertyRef Name="ID_Product_License" />
-          </Key>
-          <Property Name="ID_Product_License" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="ID_Client" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Date_Begin" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="Date_End" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="ID_License_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="License_Count" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Details" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Client" Relationship="DragonflyModel.FK_Product_License_Client" FromRole="Product_License" ToRole="Client" />
-          <NavigationProperty Name="License_Type" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="Product_License" ToRole="License_Type" />
-          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Product_License" ToRole="Project" />
-        </EntityType>
         <EntityType Name="Support_Entitlement">
           <Key>
             <PropertyRef Name="ID_Support_Entitlement" />
@@ -1018,18 +997,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Product_License_Client">
-          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="1" />
-          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Client">
-              <PropertyRef Name="ID_Client" />
-            </Principal>
-            <Dependent Role="Product_License">
-              <PropertyRef Name="ID_Client" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Support_Entitlement_Client">
           <End Type="DragonflyModel.Client" Role="Client" Multiplicity="1" />
           <End Type="DragonflyModel.Support_Entitlement" Role="Support_Entitlement" Multiplicity="*" />
@@ -1051,18 +1018,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             </Principal>
             <Dependent Role="E_mail_Notification">
               <PropertyRef Name="ID_Notificztion_Task" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Product_License_License_Type">
-          <End Type="DragonflyModel.License_Type" Role="License_Type" Multiplicity="1" />
-          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="License_Type">
-              <PropertyRef Name="ID_License_Type" />
-            </Principal>
-            <Dependent Role="Product_License">
-              <PropertyRef Name="ID_License_Type" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1136,9 +1091,9 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <Property Name="Date_Create" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="Description" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="E_mail_Notification" Relationship="DragonflyModel.FK_E_mail_Notification_Project" FromRole="Project" ToRole="E_mail_Notification" />
-          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Project" ToRole="Product_License" />
           <NavigationProperty Name="Support_Entitlement" Relationship="DragonflyModel.FK_Support_Entitlement_Project" FromRole="Project" ToRole="Support_Entitlement" />
           <NavigationProperty Name="User_Project" Relationship="DragonflyModel.FK_User_Project_Project" FromRole="Project" ToRole="User_Project" />
+          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Project" ToRole="Product_License" />
         </EntityType>
         <Association Name="FK_E_mail_Notification_Project">
           <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
@@ -1148,18 +1103,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <PropertyRef Name="ID_Project" />
             </Principal>
             <Dependent Role="E_mail_Notification">
-              <PropertyRef Name="ID_Project" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Product_License_Project">
-          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
-          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Project">
-              <PropertyRef Name="ID_Project" />
-            </Principal>
-            <Dependent Role="Product_License">
               <PropertyRef Name="ID_Project" />
             </Dependent>
           </ReferentialConstraint>
@@ -1278,6 +1221,69 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
           <End Type="DragonflyModel.Project_Access_Function" Role="Project_Access_Function" Multiplicity="*" />
           <End Type="DragonflyModel.Project_Role" Role="Project_Role" Multiplicity="*" />
         </Association>
+        <EntityType Name="License_Type">
+          <Key>
+            <PropertyRef Name="ID_License_Type" />
+          </Key>
+          <Property Name="ID_License_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type_Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="Product_License" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="License_Type" ToRole="Product_License" />
+        </EntityType>
+        <EntityType Name="Product_License">
+          <Key>
+            <PropertyRef Name="ID_Product_License" />
+          </Key>
+          <Property Name="ID_Product_License" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_Project" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ID_Client" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Date_Begin" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Date_End" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ID_License_Type" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="License_Count" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Details" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ID_User_Creator" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="Client" Relationship="DragonflyModel.FK_Product_License_Client" FromRole="Product_License" ToRole="Client" />
+          <NavigationProperty Name="License_Type" Relationship="DragonflyModel.FK_Product_License_License_Type" FromRole="Product_License" ToRole="License_Type" />
+          <NavigationProperty Name="Project" Relationship="DragonflyModel.FK_Product_License_Project" FromRole="Product_License" ToRole="Project" />
+        </EntityType>
+        <Association Name="FK_Product_License_Client">
+          <End Type="DragonflyModel.Client" Role="Client" Multiplicity="1" />
+          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ID_Client" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_Client" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_License_Type">
+          <End Type="DragonflyModel.License_Type" Role="License_Type" Multiplicity="1" />
+          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="License_Type">
+              <PropertyRef Name="ID_License_Type" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_License_Type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Product_License_Project">
+          <End Type="DragonflyModel.Project" Role="Project" Multiplicity="1" />
+          <End Type="DragonflyModel.Product_License" Role="Product_License" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ID_Project" />
+            </Principal>
+            <Dependent Role="Product_License">
+              <PropertyRef Name="ID_Project" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1367,14 +1373,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="License_Type">
-            <EntityTypeMapping TypeName="DragonflyModel.License_Type">
-              <MappingFragment StoreEntitySet="License_Type">
-                <ScalarProperty Name="Type_Name" ColumnName="Type_Name" />
-                <ScalarProperty Name="ID_License_Type" ColumnName="ID_License_Type" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Notification_Event">
             <EntityTypeMapping TypeName="DragonflyModel.Notification_Event">
               <MappingFragment StoreEntitySet="Notification_Event">
@@ -1411,20 +1409,6 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <MappingFragment StoreEntitySet="Phone">
                 <ScalarProperty Name="Phone_Row" ColumnName="Phone_Row" />
                 <ScalarProperty Name="ID_Phone" ColumnName="ID_Phone" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Product_License">
-            <EntityTypeMapping TypeName="DragonflyModel.Product_License">
-              <MappingFragment StoreEntitySet="Product_License">
-                <ScalarProperty Name="Details" ColumnName="Details" />
-                <ScalarProperty Name="License_Count" ColumnName="License_Count" />
-                <ScalarProperty Name="ID_License_Type" ColumnName="ID_License_Type" />
-                <ScalarProperty Name="Date_End" ColumnName="Date_End" />
-                <ScalarProperty Name="Date_Begin" ColumnName="Date_Begin" />
-                <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
-                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
-                <ScalarProperty Name="ID_Product_License" ColumnName="ID_Product_License" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1561,6 +1545,31 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               <ScalarProperty Name="ID_Role_Access_Function" ColumnName="ID_Role_Access_Function" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="License_Type">
+            <EntityTypeMapping TypeName="DragonflyModel.License_Type">
+              <MappingFragment StoreEntitySet="License_Type">
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Type_Name" ColumnName="Type_Name" />
+                <ScalarProperty Name="ID_License_Type" ColumnName="ID_License_Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Product_License">
+            <EntityTypeMapping TypeName="DragonflyModel.Product_License">
+              <MappingFragment StoreEntitySet="Product_License">
+                <ScalarProperty Name="ID_User_Creator" ColumnName="ID_User_Creator" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Details" ColumnName="Details" />
+                <ScalarProperty Name="License_Count" ColumnName="License_Count" />
+                <ScalarProperty Name="ID_License_Type" ColumnName="ID_License_Type" />
+                <ScalarProperty Name="Date_End" ColumnName="Date_End" />
+                <ScalarProperty Name="Date_Begin" ColumnName="Date_Begin" />
+                <ScalarProperty Name="ID_Client" ColumnName="ID_Client" />
+                <ScalarProperty Name="ID_Project" ColumnName="ID_Project" />
+                <ScalarProperty Name="ID_Product_License" ColumnName="ID_Product_License" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

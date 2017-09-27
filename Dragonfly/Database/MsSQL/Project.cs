@@ -18,9 +18,9 @@ namespace Dragonfly.Database.MsSQL
         public Project()
         {
             this.E_mail_Notification = new HashSet<E_mail_Notification>();
-            this.Product_License = new HashSet<Product_License>();
             this.Support_Entitlement = new HashSet<Support_Entitlement>();
             this.User_Project = new HashSet<User_Project>();
+            this.Product_License = new HashSet<Product_License>();
         }
     
         public decimal ID_Project { get; set; }
@@ -31,10 +31,10 @@ namespace Dragonfly.Database.MsSQL
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<E_mail_Notification> E_mail_Notification { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Product_License> Product_License { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Support_Entitlement> Support_Entitlement { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User_Project> User_Project { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Product_License> Product_License { get; set; }
     }
 }

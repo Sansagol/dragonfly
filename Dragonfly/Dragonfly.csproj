@@ -180,6 +180,9 @@
     <Compile Include="Core\CookieMananger.cs" />
     <Compile Include="Core\CookieType.cs" />
     <Compile Include="Core\ProjectAccessFunction.cs" />
+    <Compile Include="Database\Entities\EClient.cs" />
+    <Compile Include="Database\Entities\EEntitlement.cs" />
+    <Compile Include="Database\Entities\ELicenseType.cs" />
     <Compile Include="Database\Entities\EProjectRole.cs" />
     <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Core\ICookiesManager.cs" />
@@ -191,6 +194,7 @@
     <Compile Include="Database\Entities\EProject.cs" />
     <Compile Include="Database\Entities\EUser.cs" />
     <Compile Include="Database\MsSQL\ClientsProvider.cs" />
+    <Compile Include="Database\MsSQL\Converters\ClientsEntityConverter.cs" />
     <Compile Include="Database\MsSQL\Converters\UsersEntityConverters.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
     <Compile Include="Database\MsSQL\Converters\ProjectsEntityConverters.cs" />

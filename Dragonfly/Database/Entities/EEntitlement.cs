@@ -7,7 +7,7 @@ namespace Dragonfly.Database.Entities
 {
     public class EEntitlement
     {
-        public string Id { get; set; }
+        public decimal Id { get; set; }
 
         /// <summary>When this entitlement was create.</summary>
         public DateTime DateCreated { get; set; }
@@ -19,7 +19,7 @@ namespace Dragonfly.Database.Entities
         /// <summary>End date of the entitlement</summary>
         public DateTime DateEnd { get; set; }
         /// <summary>Count of the sold licenses</summary>
-        public int LicensesCount { get; set; }
+        public decimal LicensesCount { get; set; }
         /// <summary>Some description.</summary>
         public string Details { get; set; }
         /// <summary>Type of the sold license.</summary>

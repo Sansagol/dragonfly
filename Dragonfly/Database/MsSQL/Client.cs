@@ -17,11 +17,11 @@ namespace Dragonfly.Database.MsSQL
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Client()
         {
-            this.Product_License = new HashSet<Product_License>();
             this.Support_Entitlement = new HashSet<Support_Entitlement>();
             this.Address = new HashSet<Address>();
             this.E_mail = new HashSet<E_mail>();
             this.Phone = new HashSet<Phone>();
+            this.Product_License = new HashSet<Product_License>();
         }
     
         public decimal ID_Client { get; set; }
@@ -35,8 +35,6 @@ namespace Dragonfly.Database.MsSQL
     
         public virtual Client_Type Client_Type { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Product_License> Product_License { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Support_Entitlement> Support_Entitlement { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Address> Address { get; set; }
@@ -44,5 +42,7 @@ namespace Dragonfly.Database.MsSQL
         public virtual ICollection<E_mail> E_mail { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Phone> Phone { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Product_License> Product_License { get; set; }
     }
 }
