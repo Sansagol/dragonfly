@@ -30,10 +30,20 @@ namespace Dragonfly.Database.Providers
         IEnumerable<ClientType> GetAvailableClientTypes();
 
         /// <summary>
-        /// Method fetch all flients from the database.
+        /// Method fetch all clients from the database.
         /// </summary>
         /// <returns>All existing clients.</returns>
+        [Obsolete("Use the EClient version")]
         List<ClientModel> GetAllClients();
+
+        /// <summary>Method fetch all clients.</summary>
+        /// <returns></returns>
+        IEnumerable<EClient> GetClients();
+
+        /// <summary>Method retrieve an entitlement by it ID;</summary>
+        /// <param name="entitlementId"></param>
+        /// <returns></returns>
+        EEntitlement GetEntitlement(decimal entitlementId);
 
         /// <summary>Method fetch all entitlements for the current project.</summary>
         /// <param name="projectId"></param>

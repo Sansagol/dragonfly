@@ -17,11 +17,11 @@ else
 {
     <div>
         <table class="info_table">
-            <col width="10%" />
-            <col width="50%" />
-            <col width="20%" />
-            <col width="20%" />
             <col width="5%" />
+            <col width="45%" />
+            <col width="20%" />
+            <col width="20%" />
+            <col width="15%" />
             <tr>
                 <th class="info_table_header">ID</th>
                 <th class="info_table_header">Name</th>
@@ -39,10 +39,26 @@ else
                         @string.Join(", ", proj.Users.Select(u => u.UserDescription.Login))
                     </td>
                     <td class="l-cell i_t_cell">
-                        <a value="D"
-                        id="project-details"
-                        href="@Url.Action("Index", "Project", new { projectId = proj.ProjectDetails.Id })">
-                        <Span>Details</Span>
+                        <a id="project-details"
+                           href="@Url.Action("Index", "Project", new { projectId = proj.ProjectDetails.Id })">
+                            <Span>
+                                <img src="~/Images/Icons/information.png" alt="Details"
+                                     title="Project details"/>
+                            </Span>
+                        </a>
+                        <a id="add-entitlement"
+                           href="@Url.Action("NewEntitlement", "Entitlement", new { projectId = proj.ProjectDetails.Id })">
+                            <Span>
+                                <img src="~/Images/Icons/bag_plus.png" alt="+Entitlement"
+                                     title="Add new entitlement" />
+                            </Span>
+                        </a>
+                        <a id="add-techsupport"
+                           href="@Url.Action("NewTechsupport", "Project", new { projectId = proj.ProjectDetails.Id })">
+                            <Span>
+                                <img src="~/Images/Icons/bug_plus.png" alt="+Techsupport"
+                                     title="Add new techsupport entitlement" />
+                            </Span>
                         </a>
                     </td>
                 </tr>

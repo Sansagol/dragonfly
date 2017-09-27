@@ -120,6 +120,24 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
+        public IEnumerable<EClient> GetClients()
+        {
+            try
+            {
+                using (var context = _ContextGenerator.GenerateContext())
+                {
+                    var clients = (from t in context.Client
+                                   select t).ToList();
+                    return clients.Select(t => t.ToEClient());
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO log
+                throw new InvalidOperationException("Error occured on retrieving clients from DB.");
+            }
+        }
+
         public IEnumerable<ClientType> GetAvailableClientTypes()
         {
             try
@@ -136,6 +154,33 @@ namespace Dragonfly.Database.MsSQL
                 //TODO log
             }
             return new List<ClientType>();
+        }
+
+        public EClient GetClient(decimal clientId)
+        {
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                return (from l in context.Client
+                        where l.ID_Client == clientId
+                        select l).First().ToEClient();
+            }
+        }
+
+        public EEntitlement GetEntitlement(decimal entitlementId)
+        {
+            if (entitlementId < 1)
+                throw new ArgumentException("The entitlement id must be greather than 0.");
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                var dbEntitlement = (from e in context.Product_License
+                                   where e.ID_Product_License == entitlementId
+                                   select e).FirstOrDefault();
+                var entitlement = dbEntitlement.ToEEntitlement();
+                entitlement.Client = GetClient(dbEntitlement.ID_Client);
+                //TODO load license type
+                //Load creator
+                return entitlement;
+            }
         }
 
         public List<EEntitlement> GetEntitlementsForProject(decimal projectId)
@@ -182,9 +227,7 @@ namespace Dragonfly.Database.MsSQL
             {
                 foreach (var dbEnt in dbEntitlements)
                 {
-                    var client = (from l in context.Client
-                                  where l.ID_Client == dbEnt.ID_Client
-                                  select l).First().ToEClient();
+                    var client = GetClient(dbEnt.ID_Client);
                     if (client != null)
                         clients.Add(client);
                 }
