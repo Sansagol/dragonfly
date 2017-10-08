@@ -2,7 +2,42 @@
 
 @{
     ViewBag.Title = "EditEntitlement";
+    PageData["Logged"] = ViewBag.Logged;
+    PageData["UserName"] = ViewBag.UserName;
 }
 
-<h3>EditEntitlement</h3>
+<h3>Edit Entitlement</h3>
+@if (!string.IsNullOrWhiteSpace(ViewBag.Error))
+{
+    <div>
+        @ViewBag.Error
+    </div>
+}
+else
+{
+    using (Html.BeginForm(
+       "SaveEntitlement",
+       "Entitlement",
+       FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <td><label class="edit-row-label">Date begin</label></td>
+                <td>@Html.Partial("Date", Model.EntitlementDetails.DateBegin)</td>
+            </tr>
+            <tr>
+                <td><label class="edit-row-label">Date end</label></td>
+                <td>@Html.Partial("Date", Model.EntitlementDetails.DateEnd)</td>
+            </tr>
+            <tr>
+                <td><label class="edit-row-label">Licenses count</label></td>
+                <td>@Html.TextBox("LicensesCount", Model.EntitlementDetails.LicensesCount)</td>
+            </tr>
+        </table>
+        <div class="text-left body-content">
+            <input class="btn btn-success"
+                   type="submit" value="Save" />
+        </div>
+    }
+}
 

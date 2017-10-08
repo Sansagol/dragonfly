@@ -17,6 +17,10 @@ namespace Dragonfly.Models.Entitlement
 
         public List<EClient> AvailableClients { get; private set; }
 
+        public EditEntitlementModel()
+        {
+        }
+
         public EditEntitlementModel(decimal projectId, decimal entitlementId)
         {
             if (projectId < 0)

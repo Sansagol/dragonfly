@@ -36,5 +36,12 @@ namespace Dragonfly.Controllers
                 return new EntitlementsController().Index();
             }
         }
+
+        [HttpPost]
+        [ControllersException]
+        public ActionResult SaveEntitlement(EditEntitlementModel model)
+        {
+            return View();
+        }
     }
 }
