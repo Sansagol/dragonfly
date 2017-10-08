@@ -3,6 +3,7 @@ using Dragonfly.Database.Entities;
 using Dragonfly.Database.Providers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -15,13 +16,22 @@ namespace Dragonfly.Models.Entitlement
 
         public EEntitlement EntitlementDetails { get; set; }
 
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateBegin { get; set; }
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateEnd { get; set; }
+
         public List<EClient> AvailableClients { get; private set; }
 
         public EditEntitlementModel()
         {
+            DateEnd = DateBegin = DateTime.Now.Date;
         }
 
-        public EditEntitlementModel(decimal projectId, decimal entitlementId)
+        public EditEntitlementModel(decimal projectId, decimal entitlementId):
+            this()
         {
             if (projectId < 0)
                 throw new ArgumentException("the project id must be greather than 0");
