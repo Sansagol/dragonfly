@@ -1,6 +1,7 @@
 ﻿using Dragonfly.SettingsLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 
@@ -48,7 +49,21 @@ namespace Dragonfly.Core.Settings
             if (_Manager == null)
                 throw new InvalidOperationException("Settings manager not loaded.");
 
-            DragonflyConfig fullConfig = _Manager.LoadConfiguration(configPath);
+            DragonflyConfig fullConfig = null;
+            try
+            {
+                fullConfig = _Manager.LoadConfiguration(configPath);
+            }
+            catch (Exception ex)
+            {
+                if (ex is DirectoryNotFoundException || ex is FileNotFoundException)
+                {
+                    fullConfig = new DragonflyConfig();
+                    _Manager.SaveConfiguration(fullConfig);
+                }
+                else
+                    throw;
+            }
             if (fullConfig.DbConfiguration == null)
             {
                 throw new InvalidOperationException(

@@ -11,8 +11,11 @@ namespace Dragonfly.SettingsLib
         /// <summary>Configuration of database access.</summary>
         public DatabaseConfig DbConfiguration { get; set; }
 
+        //TODO make something better.
         /// <summary>Get or set a log directory.</summary>
-        public string LogDirectory { get; set; }
+        public string LogDirectory { get; set; } = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "Dragonfly");
 
         /// <summary>Initialize all properties.</summary>
         public DragonflyConfig()
