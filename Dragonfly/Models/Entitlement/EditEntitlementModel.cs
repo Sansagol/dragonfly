@@ -19,13 +19,15 @@ namespace Dragonfly.Models.Entitlement
 
         public EEntitlement EntitlementDetails { get; set; }
 
+        public int EntitlementId { get; set; }
+
         /// <summary>Date of entitlement starts</summary>
-        [Required]
+        [Required(ErrorMessage ="Invalid date")]
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime DateBegin { get; set; }
         /// <summary>End date of the entitlement</summary>
-        [Required]
+        [Required(ErrorMessage = "Invalid date")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime DateEnd { get; set; }

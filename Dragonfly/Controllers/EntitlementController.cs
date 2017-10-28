@@ -41,7 +41,13 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult SaveEntitlement(EditEntitlementModel model)
         {
-            return View();
+            if (model.DateBegin > model.DateEnd)
+                ModelState.AddModelError("DateEnd", "The end date must be greather then begin date");
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Entitlement", model.EntitlementId);
+            }
+            return View("EditEntitlement", model);
         }
     }
 }
