@@ -1,4 +1,5 @@
-﻿using Dragonfly.Core;
+﻿using Dragonfly.Binders;
+using Dragonfly.Core;
 using Dragonfly.Database.Entities;
 using Dragonfly.Database.Providers;
 using System;
@@ -6,9 +7,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Dragonfly.Models.Entitlement
 {
+    //[ModelBinder(typeof(EntitlementModelBinder))]
     public class EditEntitlementModel
     {
         private IClientsProvider _ClientsProvider = null;
@@ -18,14 +21,14 @@ namespace Dragonfly.Models.Entitlement
 
         /// <summary>Date of entitlement starts</summary>
         [Required]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime? DateBegin { get; set; }
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+        public DateTime DateBegin { get; set; }
         /// <summary>End date of the entitlement</summary>
         [Required]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateTime? DateEnd { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+        public DateTime DateEnd { get; set; }
 
         /// <summary>Count of the sold licenses</summary>
         [Range(1, 100, ErrorMessage = "Please enter a licenses count for this entitlement")]
@@ -49,7 +52,8 @@ namespace Dragonfly.Models.Entitlement
 
         public EditEntitlementModel()
         {
-            DateEnd = DateBegin = DateTime.Now.Date;
+            DateBegin = DateTime.Now.Date;
+            DateEnd = DateBegin.AddDays(1).Date;
         }
 
         public EditEntitlementModel(decimal projectId, decimal entitlementId):

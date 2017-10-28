@@ -74,9 +74,16 @@ namespace Dragonfly.Controllers
             var cookMan = BaseBindings.CookiesManager;
             if (ModelState.IsValid)
             {
-                if (_UserStateManager.LogIn(Response, authParameters))
+                try
                 {
-                    return RedirectToAction(nameof(Index));
+                    if (_UserStateManager.LogIn(Response, authParameters))
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Error = ex.Message;
                 }
             }
             return View(authParameters);

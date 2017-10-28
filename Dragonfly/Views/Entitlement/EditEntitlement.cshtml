@@ -23,11 +23,13 @@ else
         <table>
             <tr>
                 <td><label class="edit-row-label">Date begin</label></td>
-                <td>@Html.Partial("Date", Model.DateBegin)</td>
+                <td>@Html.TextBox("DateBegin", Model.DateBegin.ToString("dd.MM.yyyy"), new { @class = "datefield" })</td>
             </tr>
             <tr>
                 <td><label class="edit-row-label">Date end</label></td>
-                <td>@Html.Partial("Date", Model.DateEnd)</td>
+                <td>
+                    @Html.Partial("Date", Model.DateEnd, new ViewDataDictionary { { "name", "DateEnd" } })
+                </td>
             </tr>
             <tr>
                 <td><label class="edit-row-label">Licenses count</label></td>
