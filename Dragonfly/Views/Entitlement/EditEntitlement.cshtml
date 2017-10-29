@@ -22,6 +22,13 @@ else
     {
         <table>
             <tr>
+                <td><label class="edit-row-label">Project</label></td>
+                <td>
+                    @Html.Label(Model?.Projectname ?? "<Name is empty!!!>")
+                    @Html.HiddenFor(m => m.ProjectId)
+                </td>
+            </tr>
+            <tr>
                 <td><label class="edit-row-label">Date begin</label></td>
                 <td>
                     @Html.TextBox("DateBegin", Model.DateBegin.ToString("dd.MM.yyyy"), new { @class = "datefield" })
@@ -43,12 +50,21 @@ else
                 </td>
             </tr>
             <tr>
-                <td><label class="edit-row-label">LicenseType</label></td>
+                <td><label class="edit-row-label">License Type</label></td>
                 <td>
                     @Html.DropDownListFor(m => m.LicTypeId,
                         Model.AvailableLicanseTypes,
                         "<No type selected>")
                     @Html.ValidationMessageFor(model => model.LicTypeId)
+                </td>
+            </tr>
+            <tr>
+                <td><label class="edit-row-label">Client</label></td>
+                <td>
+                    @Html.DropDownListFor(m => m.ClientId,
+                        Model.AvailableClients,
+                        "<No client selected>")
+                    @Html.ValidationMessageFor(model => model.ClientId)
                 </td>
             </tr>
         </table>

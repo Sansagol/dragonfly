@@ -46,13 +46,14 @@ namespace Dragonfly.Models.Entitlement
 
         /// <summary>Get the project for this entitlement.</summary>
         [Required(ErrorMessage = "Please select a project for this entitlement")]
-        public EProject Project { get; set; }
+        public decimal ProjectId { get; set; }
+        public string Projectname { get; set; }
 
         /// <summary>Client which bougcht the product.</summary>
         [Required(ErrorMessage = "Please select a client for this entitlement")]
         public decimal ClientId { get; set; }
 
-        public IEnumerable<SelectListItem> AvailableClients { get; private set; }
+        public IEnumerable<SelectListItem> AvailableClients { get; set; }
 
         public EditEntitlementModel()
         {
@@ -61,38 +62,14 @@ namespace Dragonfly.Models.Entitlement
 
         }
 
-        public EditEntitlementModel(decimal projectId, decimal entitlementId) :
-            this()
+        public void LoadEntitlement(EEntitlement entitlement)
         {
-            if (projectId < 0)
-                throw new ArgumentException("the project id must be greather than 0");
-
-            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
-            _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
-            _EntitlementsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
-
-            if (entitlementId > 0)
-                LoadEntitlement(entitlementId);
-            else
-            {
-                Project = _ProjectsProvider.GetProject(projectId);
-            }
-        }
-
-       
-        private void LoadEntitlement(decimal entitlementId)
-        {
-            var entitlement = _ClientsProvider.GetEntitlement(entitlementId);
             DateBegin = entitlement.DateBegin;
             DateEnd = entitlement.DateEnd;
             LicensesCount = entitlement.LicensesCount;
             Details = entitlement.Details;
             LicTypeId = entitlement.LicType.Id;
             ClientId = entitlement.Client.Id;
-        }
-
-        public void SaveEntitlement()
-        {
         }
     }
 }

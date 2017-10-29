@@ -18,12 +18,14 @@ namespace Dragonfly.Controllers
         private IUserAuthenticateStateManager _UserStateManager = null;
         private IEntitlementsProvider _EntitlementsProvider;
         private IClientsProvider _ClientsProvider;
+        private IProjectsProvider _ProjectsProvider;
 
         public EntitlementController()
         {
             _UserStateManager = BaseBindings.UsrStateManager;
             _EntitlementsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
             _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
+            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
         }
 
         [HttpGet]
@@ -33,8 +35,12 @@ namespace Dragonfly.Controllers
             ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
             try
             {
-                EditEntitlementModel model = new EditEntitlementModel(projectId, 0);
+                EditEntitlementModel model = new EditEntitlementModel();
                 LoadLicenseTypes(model);
+                LoadClients(model);
+                model.ProjectId = projectId;
+                LoadProject(model);
+
                 return View("EditEntitlement", model);
             }
             catch (Exception ex)
@@ -49,9 +55,16 @@ namespace Dragonfly.Controllers
             var availableLicanseTypes = _EntitlementsProvider.GetLicenseTypes();
             model.AvailableLicanseTypes = availableLicanseTypes.Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
         }
-        private void LoadClients()
+        private void LoadClients(EditEntitlementModel model)
         {
             var availableClients = _ClientsProvider.GetClients();
+            model.AvailableClients = availableClients.Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
+        }
+
+        private void LoadProject(EditEntitlementModel model)
+        {
+            var project = _ProjectsProvider.GetProject(model.ProjectId);
+            model.Projectname = project.ProjectName;
         }
 
         [HttpPost]
@@ -62,9 +75,12 @@ namespace Dragonfly.Controllers
                 ModelState.AddModelError("DateEnd", "The end date must be greather then begin date");
             if (ModelState.IsValid)
             {
+                _UserStateManager.CheckUserAccess(Request, Response);//Check this user before save
                 return RedirectToAction("Index", "Entitlement", model.EntitlementId);
             }
             LoadLicenseTypes(model);
+            LoadClients(model);
+            LoadProject(model);
             return View("EditEntitlement", model);
         }
     }
