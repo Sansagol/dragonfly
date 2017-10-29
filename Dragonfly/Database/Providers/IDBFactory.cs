@@ -26,5 +26,7 @@ namespace Dragonfly.Database.Providers
         IClientsProvider CreateClientsProvider();
 
         IProjectsProvider CreateProjectsProvider();
+
+        IEntitlementsProvider CreateEntitlementsProvider();
     }
 }

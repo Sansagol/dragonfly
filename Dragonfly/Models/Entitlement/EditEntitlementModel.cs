@@ -15,14 +15,15 @@ namespace Dragonfly.Models.Entitlement
     public class EditEntitlementModel
     {
         private IClientsProvider _ClientsProvider = null;
+        private IEntitlementsProvider _EntitlementsProvider;
         private IProjectsProvider _ProjectsProvider = null;
 
-        public EEntitlement EntitlementDetails { get; set; }
+        //public EEntitlement EntitlementDetails { get; set; }
 
         public int EntitlementId { get; set; }
 
         /// <summary>Date of entitlement starts</summary>
-        [Required(ErrorMessage ="Invalid date")]
+        [Required(ErrorMessage = "Invalid date")]
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime DateBegin { get; set; }
@@ -40,7 +41,8 @@ namespace Dragonfly.Models.Entitlement
 
         /// <summary>Type of the sold license.</summary>
         [Required(ErrorMessage = "Please select a license type for this entitlement")]
-        public ELicenseType LicType { get; set; }
+        public decimal LicTypeId { get; set; }
+        public IEnumerable<SelectListItem> AvailableLicanseTypes { get; set; }
 
         /// <summary>Get the project for this entitlement.</summary>
         [Required(ErrorMessage = "Please select a project for this entitlement")]
@@ -48,17 +50,18 @@ namespace Dragonfly.Models.Entitlement
 
         /// <summary>Client which bougcht the product.</summary>
         [Required(ErrorMessage = "Please select a client for this entitlement")]
-        public int ClientId { get; set; }
+        public decimal ClientId { get; set; }
 
-        public List<EClient> AvailableClients { get; private set; }
+        public IEnumerable<SelectListItem> AvailableClients { get; private set; }
 
         public EditEntitlementModel()
         {
             DateBegin = DateTime.Now.Date;
             DateEnd = DateBegin.AddDays(1).Date;
+
         }
 
-        public EditEntitlementModel(decimal projectId, decimal entitlementId):
+        public EditEntitlementModel(decimal projectId, decimal entitlementId) :
             this()
         {
             if (projectId < 0)
@@ -66,29 +69,26 @@ namespace Dragonfly.Models.Entitlement
 
             _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
             _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
-
-            LoadClients();
+            _EntitlementsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
 
             if (entitlementId > 0)
                 LoadEntitlement(entitlementId);
             else
             {
-                EntitlementDetails = new EEntitlement()
-                {
-                };
-                EntitlementDetails.Project = _ProjectsProvider.GetProject(projectId);
+                Project = _ProjectsProvider.GetProject(projectId);
             }
         }
 
-        private void LoadClients()
-        {
-            AvailableClients = new List<EClient>();
-            AvailableClients.AddRange(_ClientsProvider.GetClients());
-        }
-
+       
         private void LoadEntitlement(decimal entitlementId)
         {
-            EntitlementDetails = _ClientsProvider.GetEntitlement(entitlementId);
+            var entitlement = _ClientsProvider.GetEntitlement(entitlementId);
+            DateBegin = entitlement.DateBegin;
+            DateEnd = entitlement.DateEnd;
+            LicensesCount = entitlement.LicensesCount;
+            Details = entitlement.Details;
+            LicTypeId = entitlement.LicType.Id;
+            ClientId = entitlement.Client.Id;
         }
 
         public void SaveEntitlement()

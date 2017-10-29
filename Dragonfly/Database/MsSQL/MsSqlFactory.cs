@@ -59,5 +59,11 @@ namespace Dragonfly.Database.MsSQL
             IProjectsProvider projectsProvider = new ProjectsProvider(_ContextGenerator);
             return projectsProvider;
         }
+
+        public IEntitlementsProvider CreateEntitlementsProvider()
+        {
+            IEntitlementsProvider provider = new EntitlementsProvider(_ContextGenerator);
+            return provider;
+        }
     }
 }

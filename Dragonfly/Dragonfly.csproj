@@ -248,6 +248,7 @@
     <Compile Include="Database\MsSQL\Converters\UsersEntityConverters.cs" />
     <Compile Include="Database\MsSQL\DataProvider.cs" />
     <Compile Include="Database\MsSQL\Converters\ProjectsEntityConverters.cs" />
+    <Compile Include="Database\MsSQL\EntitlementsProvider.cs" />
     <Compile Include="Database\MsSQL\ExceptionHandlers.cs" />
     <Compile Include="Core\Settings\DatabaseAccessConfiguration.cs" />
     <Compile Include="Core\Settings\ISettingsReader.cs" />
@@ -356,6 +357,7 @@
     </Compile>
     <Compile Include="Database\Providers\IDataProvider.cs" />
     <Compile Include="Database\Providers\IDBFactory.cs" />
+    <Compile Include="Database\Providers\IEntitlementsProvider.cs" />
     <Compile Include="Database\Providers\IProjectsProvider.cs" />
     <Compile Include="Database\Providers\IUserAccessProvider.cs" />
     <Compile Include="Database\ValidationError.cs" />

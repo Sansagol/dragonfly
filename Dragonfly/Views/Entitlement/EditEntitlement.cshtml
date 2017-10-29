@@ -42,6 +42,15 @@ else
                     @Html.ValidationMessageFor(model => model.LicensesCount)
                 </td>
             </tr>
+            <tr>
+                <td><label class="edit-row-label">LicenseType</label></td>
+                <td>
+                    @Html.DropDownListFor(m => m.LicTypeId,
+                        Model.AvailableLicanseTypes,
+                        "<No type selected>")
+                    @Html.ValidationMessageFor(model => model.LicTypeId)
+                </td>
+            </tr>
         </table>
         <div class="text-left body-content">
             <input class="btn btn-success"

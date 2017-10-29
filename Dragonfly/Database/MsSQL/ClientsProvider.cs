@@ -109,7 +109,7 @@ namespace Dragonfly.Database.MsSQL
                 using (var context = _ContextGenerator.GenerateContext())
                 {
                     var clients = (from t in context.Client
-                                   select t).ToList();
+                                   select t).ToArray();
                     return clients.Select(t => t.ToClientModel()).ToList();
                 }
             }
