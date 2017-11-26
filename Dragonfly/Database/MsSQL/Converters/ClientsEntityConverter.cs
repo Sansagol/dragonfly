@@ -19,7 +19,11 @@ namespace Dragonfly.Database.MsSQL.Converters
                 DateEnd = license.Date_End,
                 DateCreated = license.Date_Created,
                 LicensesCount = license.License_Count,
-                Details = license.Details
+                Details = license.Details,
+                ClientId = license.ID_Client,
+                ProjectId = license.ID_Project,
+                LicenseTypeId = license.ID_License_Type,
+                UserCreatorId = license.ID_User_Creator
             };
         }
 

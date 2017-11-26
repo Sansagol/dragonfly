@@ -30,16 +30,42 @@ namespace Dragonfly.Controllers
 
         [HttpGet]
         [ControllersException]
+        public ActionResult EditEntitlement(decimal entitlementId)
+        {
+            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
+            if (entitlementId < 1)
+                RedirectToAction("Index", "Entitlements");
+            decimal currentUser = _UserStateManager.GetUserIdFromCookies(Request);
+            var entitlement = _EntitlementsProvider.GetEntitlement(entitlementId);
+            if (entitlement == null)
+                RedirectToAction("Index", "Entitlements");
+            if (entitlement.UserCreatorId == currentUser)//TODO check by project members
+            {
+                EditEntitlementModel model = new EditEntitlementModel();
+                model.LoadEntitlement(entitlement);
+                LoadThirdElementsData(model);
+                return View("EditEntitlement", model);
+            }
+            return RedirectToAction("Index", "Entitlements");
+        }
+
+        private void LoadThirdElementsData(EditEntitlementModel model)
+        {
+            LoadLicenseTypes(model);
+            LoadClients(model);
+            LoadProject(model);
+        }
+
+        [HttpGet]
+        [ControllersException]
         public ActionResult NewEntitlement(decimal projectId)
         {
             ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
             try
             {
                 EditEntitlementModel model = new EditEntitlementModel();
-                LoadLicenseTypes(model);
-                LoadClients(model);
                 model.ProjectId = projectId;
-                LoadProject(model);
+                LoadThirdElementsData(model);
 
                 return View("EditEntitlement", model);
             }
@@ -49,6 +75,7 @@ namespace Dragonfly.Controllers
                 return new EntitlementsController().Index();
             }
         }
+
 
         private void LoadLicenseTypes(EditEntitlementModel model)
         {
@@ -77,11 +104,9 @@ namespace Dragonfly.Controllers
             {
                 _UserStateManager.CheckUserAccess(Request, Response);//Check this user before save
                 _EntitlementsProvider.SaveEntitlement(model.ToEEntitlement(), _UserStateManager.GetUserIdFromCookies(Request));
-                return RedirectToAction("Index", "Entitlement", model.EntitlementId);
+                return RedirectToAction("EditEntitlement", "Entitlement", model.EntitlementId);
             }
-            LoadLicenseTypes(model);
-            LoadClients(model);
-            LoadProject(model);
+            LoadThirdElementsData(model);
             return View("EditEntitlement", model);
         }
     }

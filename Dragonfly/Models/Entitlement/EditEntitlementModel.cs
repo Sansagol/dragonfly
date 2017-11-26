@@ -18,7 +18,7 @@ namespace Dragonfly.Models.Entitlement
         private IEntitlementsProvider _EntitlementsProvider;
         private IProjectsProvider _ProjectsProvider = null;
 
-        public int EntitlementId { get; set; }
+        public decimal EntitlementId { get; set; }
 
         /// <summary>Date of entitlement starts</summary>
         [Required(ErrorMessage = "Invalid date")]
@@ -30,6 +30,10 @@ namespace Dragonfly.Models.Entitlement
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime DateEnd { get; set; }
+
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm:ss}")]
+        public DateTime DateCreated { get; set; }
 
         /// <summary>Count of the sold licenses</summary>
         [Range(1, 100, ErrorMessage = "Please enter a licenses count for this entitlement")]
@@ -61,27 +65,32 @@ namespace Dragonfly.Models.Entitlement
 
         public void LoadEntitlement(EEntitlement entitlement)
         {
+            EntitlementId = entitlement.Id;
             DateBegin = entitlement.DateBegin;
             DateEnd = entitlement.DateEnd;
+            DateCreated = entitlement.DateCreated;
             LicensesCount = entitlement.LicensesCount;
             Details = entitlement.Details;
-            LicTypeId = entitlement.LicType.Id;
-            ClientId = entitlement.Client.Id;
+            LicTypeId = entitlement.LicenseTypeId;
+            ClientId = entitlement.ClientId;
+            ProjectId = entitlement.ProjectId;
         }
 
         public EEntitlement ToEEntitlement()
         {
-            return new EEntitlement()
+            EEntitlement ent = new EEntitlement()
             {
                 Id = this.EntitlementId > 0 ? this.EntitlementId : 0,
                 ClientId = ClientId,
                 DateBegin = this.DateBegin,
                 DateEnd = this.DateEnd,
-                DateCreated = DateTime.Now,
                 LicensesCount = this.LicensesCount,
                 LicenseTypeId = LicTypeId,
                 ProjectId = this.ProjectId
             };
+            if (DateCreated == default(DateTime))
+                ent.DateCreated = DateTime.Now;
+            return ent;
         }
     }
 }

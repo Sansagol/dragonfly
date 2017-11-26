@@ -8,6 +8,7 @@ using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.MsSQL.Converters;
 using System.Data.SqlClient;
 using System.Data;
+using System.Data.Entity.Migrations;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -21,7 +22,20 @@ namespace Dragonfly.Database.MsSQL
 
         public EEntitlement GetEntitlement(decimal entitlementId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var context = _ContextGenerator.GenerateContext())
+                {
+                    var entitlement = (from ent in context.Product_License
+                                       where ent.ID_Product_License == entitlementId
+                                       select ent).FirstOrDefault();
+                    return entitlement.ToEEntitlement();
+                }
+            }
+            catch (Exception ex)
+            {//TODO to log
+                throw new InvalidOperationException("Error occured on retrieving the entitlement from DB.");
+            }
         }
 
         public List<ELicenseType> GetLicenseTypes()
@@ -56,13 +70,18 @@ namespace Dragonfly.Database.MsSQL
             {
                 var license = entitlementToSave.ToProductLicense();
                 license.ID_User_Creator = ownerId;
-                //Product_License dbLicense =
-                //    context.Product_License.FirstOrDefault(l => l.ID_Product_License == license.ID_Product_License) ??
-                //    license;
-                //if (dbLicense.ID_Product_License < 1)
+                Product_License dbLicense =
+                    context.Product_License.FirstOrDefault(l => l.ID_Product_License == license.ID_Product_License);
                 {
-                    //license.ID_Product_License = dbLicense.ID_Product_License;
-                    context.Product_License.Add(license);
+                    if (dbLicense != null)
+                    {
+                        license.Date_Created = dbLicense.Date_Created;
+                        context.Product_License.AddOrUpdate(license);
+                    }
+                    else
+                    {
+                        context.Product_License.Add(license);
+                    }
                     context.SaveChanges();
                 }
             }

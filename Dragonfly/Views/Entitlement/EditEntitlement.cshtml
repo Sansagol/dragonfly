@@ -7,6 +7,7 @@
 }
 
 <h3>Edit Entitlement</h3>
+
 @if (!string.IsNullOrWhiteSpace(ViewBag.Error))
 {
     <div>
@@ -20,14 +21,28 @@ else
        "Entitlement",
        FormMethod.Post))
     {
+        @Html.HiddenFor(m => m.EntitlementId)
         <table>
             <tr>
                 <td><label class="edit-row-label">Project</label></td>
                 <td>
-                    @Html.Label(Model?.Projectname ?? "<Name is empty!!!>")
-                    @Html.HiddenFor(m => m.ProjectId)
+                    <div>
+                        @Html.Label(Model?.Projectname ?? "<Name is empty!!!>")
+                        @Html.HiddenFor(m => m.ProjectId)
+                    </div>
                 </td>
             </tr>
+            @if (Model.DateCreated != default(DateTime))
+            {
+                <tr>
+                    <td><label class="edit-row-label">Project</label></td>
+                    <td>
+                        <div>
+                            @Html.DisplayFor(m => m.DateCreated)
+                        </div>
+                    </td>
+                </tr>
+            }
             <tr>
                 <td><label class="edit-row-label">Date begin</label></td>
                 <td>
