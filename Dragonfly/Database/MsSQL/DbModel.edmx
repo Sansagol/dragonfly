@@ -585,6 +585,9 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="Product_License_Add_New" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="int" Mode="InOut" />
+        </Function>
         <EntityContainer Name="DragonflyModelStoreContainer">
           <EntitySet Name="Access_Function" EntityType="Self.Access_Function" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Address" EntityType="Self.Address" Schema="dbo" store:Type="Tables" />
@@ -833,6 +836,9 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
             <End Role="Project" EntitySet="Project" />
             <End Role="Product_License" EntitySet="Product_License" />
           </AssociationSet>
+          <FunctionImport Name="Product_License_Add_New">
+          <Parameter Name="entId" Mode="InOut" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="Access_Function">
           <Key>
@@ -1570,6 +1576,7 @@ warning 6002: The table/view 'Dragonfly.dbo.User_Role_Access_Function' does not 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="Product_License_Add_New" FunctionName="DragonflyModel.Store.Product_License_Add_New" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

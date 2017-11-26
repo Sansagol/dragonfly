@@ -67,7 +67,7 @@ namespace Dragonfly.Core.UserAccess
             return isCorrectAccess;
         }
 
-        private decimal GetUserIdFromCookies(HttpRequestBase request)
+        public decimal GetUserIdFromCookies(HttpRequestBase request)
         {
             decimal userId = 0;
             string user = _CookiesManager.GetCookieValue(request, CookieType.UserId);

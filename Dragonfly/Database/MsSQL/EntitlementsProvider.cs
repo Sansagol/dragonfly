@@ -6,6 +6,8 @@ using System.Web;
 using Dragonfly.Database.Entities;
 using Dragonfly.Database.MsSQL.LowLevel;
 using Dragonfly.Database.MsSQL.Converters;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace Dragonfly.Database.MsSQL
 {
@@ -39,9 +41,32 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
-        public bool SaveEntitlement(EEntitlement entitlementToSave)
+        /// <summary>Method save the entitlement in the database.</summary>
+        /// <param name="entitlementToSave"></param>
+        /// <param name="ownerId">The user which created the entity.</param>
+        /// <returns></returns>
+        public bool SaveEntitlement(EEntitlement entitlementToSave, decimal ownerId)
         {
-            throw new NotImplementedException();
+            if (entitlementToSave == null)
+                throw new ArgumentNullException(nameof(entitlementToSave));
+            if (ownerId < 1)
+                throw new ArgumentNullException(nameof(ownerId), "Creator_id mut be greather than 0");
+
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                var license = entitlementToSave.ToProductLicense();
+                license.ID_User_Creator = ownerId;
+                //Product_License dbLicense =
+                //    context.Product_License.FirstOrDefault(l => l.ID_Product_License == license.ID_Product_License) ??
+                //    license;
+                //if (dbLicense.ID_Product_License < 1)
+                {
+                    //license.ID_Product_License = dbLicense.ID_Product_License;
+                    context.Product_License.Add(license);
+                    context.SaveChanges();
+                }
+            }
+            return true;
         }
     }
 }

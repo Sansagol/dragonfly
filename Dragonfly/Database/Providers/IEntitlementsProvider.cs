@@ -10,7 +10,7 @@ namespace Dragonfly.Database.Providers
     {
         EEntitlement GetEntitlement(decimal entitlementId);
 
-        bool SaveEntitlement(EEntitlement entitlementToSave);
+        bool SaveEntitlement(EEntitlement entitlementToSave, decimal ownerId);
 
         /// <summary>Retrieve all license types.</summary>
         /// <returns>License types.</returns>

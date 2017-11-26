@@ -15,5 +15,7 @@ namespace Dragonfly.Core.UserAccess
         void LogOut(HttpRequestBase request, HttpResponseBase response);
 
         bool LogIn(HttpResponseBase response, AuthenticateModel authParameters);
+
+        decimal GetUserIdFromCookies(HttpRequestBase request);
     }
 }

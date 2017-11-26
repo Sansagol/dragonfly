@@ -23,6 +23,24 @@ namespace Dragonfly.Database.MsSQL.Converters
             };
         }
 
+        public static Product_License ToProductLicense(this EEntitlement entitlement)
+        {
+            if (entitlement == null)
+                return null;
+            return new Product_License()
+            {
+                ID_Product_License = entitlement.Id >0 ? entitlement.Id : 0,
+                Date_Begin = entitlement.DateBegin,
+                Date_End = entitlement.DateEnd,
+                Date_Created = entitlement.DateCreated,
+                License_Count = entitlement.LicensesCount,
+                Details = entitlement.Details,
+                ID_Client = entitlement.ClientId,
+                ID_License_Type = entitlement.LicenseTypeId,
+                ID_Project = entitlement.ProjectId
+            };
+        }
+
         public static ELicenseType ToELicenseType(this License_Type type)
         {
             if (type == null)

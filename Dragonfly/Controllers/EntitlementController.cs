@@ -76,6 +76,7 @@ namespace Dragonfly.Controllers
             if (ModelState.IsValid)
             {
                 _UserStateManager.CheckUserAccess(Request, Response);//Check this user before save
+                _EntitlementsProvider.SaveEntitlement(model.ToEEntitlement(), _UserStateManager.GetUserIdFromCookies(Request));
                 return RedirectToAction("Index", "Entitlement", model.EntitlementId);
             }
             LoadLicenseTypes(model);

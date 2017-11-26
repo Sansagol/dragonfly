@@ -18,8 +18,6 @@ namespace Dragonfly.Models.Entitlement
         private IEntitlementsProvider _EntitlementsProvider;
         private IProjectsProvider _ProjectsProvider = null;
 
-        //public EEntitlement EntitlementDetails { get; set; }
-
         public int EntitlementId { get; set; }
 
         /// <summary>Date of entitlement starts</summary>
@@ -52,7 +50,6 @@ namespace Dragonfly.Models.Entitlement
         /// <summary>Client which bougcht the product.</summary>
         [Required(ErrorMessage = "Please select a client for this entitlement")]
         public decimal ClientId { get; set; }
-
         public IEnumerable<SelectListItem> AvailableClients { get; set; }
 
         public EditEntitlementModel()
@@ -70,6 +67,21 @@ namespace Dragonfly.Models.Entitlement
             Details = entitlement.Details;
             LicTypeId = entitlement.LicType.Id;
             ClientId = entitlement.Client.Id;
+        }
+
+        public EEntitlement ToEEntitlement()
+        {
+            return new EEntitlement()
+            {
+                Id = this.EntitlementId > 0 ? this.EntitlementId : 0,
+                ClientId = ClientId,
+                DateBegin = this.DateBegin,
+                DateEnd = this.DateEnd,
+                DateCreated = DateTime.Now,
+                LicensesCount = this.LicensesCount,
+                LicenseTypeId = LicTypeId,
+                ProjectId = this.ProjectId
+            };
         }
     }
 }

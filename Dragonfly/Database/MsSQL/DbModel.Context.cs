@@ -12,6 +12,8 @@ namespace Dragonfly.Database.MsSQL
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class DragonflyEntities : DbContext
     {
@@ -48,5 +50,10 @@ namespace Dragonfly.Database.MsSQL
         public virtual DbSet<Project_Role> Project_Role { get; set; }
         public virtual DbSet<License_Type> License_Type { get; set; }
         public virtual DbSet<Product_License> Product_License { get; set; }
+    
+        public virtual int Product_License_Add_New(ObjectParameter entId)
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Product_License_Add_New", entId);
+        }
     }
 }
