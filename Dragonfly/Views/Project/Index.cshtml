@@ -71,6 +71,7 @@
             <label>Users</label>
             <table class="info_table">
                 <tr>
+                    <th class="info_table_header">Login</th>
                     <th class="info_table_header">Name</th>
                     <th class="info_table_header">Surname</th>
                     <th class="info_table_header">Email</th>
@@ -80,19 +81,20 @@
                 @foreach (var user in Model.Users)
                 {
                     <tr>
-                        <td class="f-cell i_t_cell">@user.UserDescription.Name</td>
-                        <td class="i_t_cell">@user.UserDescription.Surname</td>
-                        <td class="i_t_cell">@user.UserDescription.EMail</td>
+                        <td class="f-cell i_t_cell">@user.UserLogin</td>
+                        <td class="i_t_cell">@user.UserName</td>
+                        <td class="i_t_cell">@user.UserSurname</td>
+                        <td class="i_t_cell">@user.UserEMail</td>
                         <td class="i_t_cell">
                             <div>
-                                @if (user.Role.IsAdmin)
+                                @if (user.IsAdmin)
                                 {
                                     <div>Full access</div>
                                 }
                                 else
                                 {
                                     <div>
-                                        @user.Role.GetFunctionsDescriptions();
+                                        @user.RoleTextDescription;
                                     </div>
                                 }
                             </div>

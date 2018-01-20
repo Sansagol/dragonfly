@@ -110,7 +110,7 @@ namespace Dragonfly.Models.Projects
             _Entitlements = new List<EEntitlement>();
             _Clients = new List<EClient>();
             _Entitlements.AddRange(_ClientsProvider.GetEntitlementsForProject(ProjectDetails.Id));
-            _Clients.AddRange(_Entitlements.Select(e => e.Client));
+            _Clients.AddRange(_Entitlements.Select(e => e.Client).Distinct());
         }
         #endregion
 
