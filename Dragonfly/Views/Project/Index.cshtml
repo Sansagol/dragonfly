@@ -47,13 +47,23 @@
     <div>
         <div>
             <label>Clients</label>
-            <table>
+            <table class="info_table">
                 <tr>
-                    <th>Name</th>
+                    <th class="info_table_header">Name</th>
+                    <th class="info_table_header">INN</th>
+                    <th class="info_table_header">OGRN</th>
+                    <th class="info_table_header">KPP</th>
+                    <th class="info_table_header">Inner name</th>
                 </tr>
                 @foreach (var client in Model.Clients)
                 {
-
+                    <tr>
+                        <td class="f-cell i_t_cell">@client.Name</td>
+                        <td class="i_t_cell">@client.INN</td>
+                        <td class="i_t_cell">@client.OGRN</td>
+                        <td class="i_t_cell">@client.KPP</td>
+                        <td class="l-cell i_t_cell">@client.InnerName</td>
+                    </tr>
                 }
             </table>
         </div>
