@@ -13,5 +13,10 @@ namespace Dragonfly.Controllers
         {
             return View();
         }
+
+        public ActionResult ClientEntitlements(decimal clientId, decimal projectId)
+        {
+            return View();
+        }
     }
 }

@@ -53,7 +53,7 @@
     </table>
 
     <div>
-        <div>
+        <div style="margin-top: 15px">
             <label>Clients</label>
             <table class="info_table">
                 <tr>
@@ -62,6 +62,7 @@
                     <th class="info_table_header">OGRN</th>
                     <th class="info_table_header">KPP</th>
                     <th class="info_table_header">Inner name</th>
+                    <th class="info_table_header"></th>
                 </tr>
                 @foreach (var client in Model.Clients)
                 {
@@ -70,12 +71,19 @@
                         <td class="i_t_cell">@client.INN</td>
                         <td class="i_t_cell">@client.OGRN</td>
                         <td class="i_t_cell">@client.KPP</td>
-                        <td class="l-cell i_t_cell">@client.InnerName</td>
+                        <td class="i_t_cell">@client.InnerName</td>
+                        <td class="l-cell i_t_cell">
+                            <a id="add-techsupport"
+                               href="@Url.Action("ClientEntitlements", "Entitlements", new { clientId = client.Id, projectId = Model.Id })"
+                               title="Show entitlements">
+                                <i class="fa fa-money fa-2x" style="color: black;"></i>
+                            </a>
+                        </td>
                     </tr>
                 }
             </table>
         </div>
-        <div>
+        <div style="margin-top: 15px">
             <label>Users</label>
             <table class="info_table">
                 <tr>
