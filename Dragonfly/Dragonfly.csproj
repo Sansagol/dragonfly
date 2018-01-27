@@ -369,10 +369,13 @@
     <Compile Include="Models\Clients\ClientsModel.cs" />
     <Compile Include="Models\Clients\ClientType.cs" />
     <Compile Include="Models\Clients\CreateClientModel.cs" />
+    <Compile Include="Models\EntitiesConverters.cs" />
     <Compile Include="Models\LogUpModel.cs" />
     <Compile Include="Models\Entitlement\EditEntitlementModel.cs" />
+    <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Projects\ProjectModel.cs" />
     <Compile Include="Models\Projects\ProjectsModel.cs" />
+    <Compile Include="Models\UserRoleSystem\UserRoleModel.cs" />
     <Compile Include="Models\UserRoleSystem\GlobalUserRoleModel.cs" />
     <Compile Include="Models\UserRoleSystem\UserModel.cs" />
     <Compile Include="Database\Entities\EUserProject.cs" />

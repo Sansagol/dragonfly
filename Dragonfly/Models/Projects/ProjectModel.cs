@@ -11,23 +11,27 @@ using System.Web;
 namespace Dragonfly.Models.Projects
 {
     /// <summary>The model-class describe a single project.</summary>
-    public class ProjectModel
+    public class ProjectModel : ModelBase
     {
         /// <summary>Is project selected in the view.</summary>
         public bool IsSelected { get; set; }
 
-        public List<EUserProject> Users
+        public List<UserRoleModel> Users
         {
             get
             {
                 if (_Users == null)
                 {
-                    InitUsers();
+                    LoadUsers();
                 }
                 return _Users;
             }
+            set
+            {
+                _Users = value;
+            }
         }
-        List<EUserProject> _Users = null;
+        List<UserRoleModel> _Users = null;
 
         /// <summary>Id of the project.</summary>
         public decimal Id { get; set; }
@@ -74,20 +78,19 @@ namespace Dragonfly.Models.Projects
         }
 
         #region fields
-        IDataBaseProvider _DbProvider = null;
-        public IDataBaseProvider DbProvider
-        {
-            get { return _DbProvider; }
-            set { _DbProvider = value; }
-        }
-        private IProjectsProvider _ProjectsProvider = null;
-        private IClientsProvider _ClientsProvider = null;
+        //IDataBaseProvider _DbProvider = null;
+        //public IDataBaseProvider DbProvider
+        //{
+        //    get { return _DbProvider; }
+        //    set { _DbProvider = value; }
+        //}
+        //private IProjectsProvider _ProjectsProvider = null;
+        //private IClientsProvider _ClientsProvider = null;
         #endregion
 
         public ProjectModel()
         {
-            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
-            _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
+            Users = null;
         }
 
         public ProjectModel(EProject dbProject) :
@@ -96,12 +99,14 @@ namespace Dragonfly.Models.Projects
             FillModel(dbProject);
         }
 
+        [Obsolete]
         public ProjectModel(IDataBaseProvider dbProvider) :
             this()
         {
-            _DbProvider = dbProvider;
+            //_DbProvider = dbProvider;
         }
 
+        [Obsolete]
         public ProjectModel(IDataBaseProvider dbProvider, EProject dbProject) :
             this(dbProvider)
         {
@@ -114,29 +119,41 @@ namespace Dragonfly.Models.Projects
             ProjectName = dbProject.ProjectName;
             Description = dbProject.Description;
             DateCreation = dbProject.DateCreation;
+
+            LoadUsers();
         }
 
-        #region Lazy load
-        private void InitUsers()
+        private void LoadUsers()
         {
-            _Users = new List<EUserProject>();
+            Users = new List<UserRoleModel>();
             if (Id > 0)
             {
-                RetrieveUsersFromDB();
+                List<EUserProject> users = _ProjectsDbProvider.GetUsersForProject(Id);
+                users.ForEach(u => Users.Add(u.ToUserProjectModel()));
             }
         }
 
-        private void RetrieveUsersFromDB()
-        {
-            var users = _ProjectsProvider.GetUsersForProject(Id);
-            _Users.AddRange(users);
-        }
+        #region Lazy load
+        //private void InitUsers()
+        //{
+        //    _Users = new List<EUserProject>();
+        //    if (Id > 0)
+        //    {
+        //        RetrieveUsersFromDB();
+        //    }
+        //}
+
+        //private void RetrieveUsersFromDB()
+        //{
+        //    var users = _ProjectsProvider.GetUsersForProject(Id);
+        //    _Users.AddRange(users);
+        //}
 
         private void InitClients()
         {
             _Entitlements = new List<EEntitlement>();
             _Clients = new List<EClient>();
-            _Entitlements.AddRange(_ClientsProvider.GetEntitlementsForProject(Id));
+            _Entitlements.AddRange(_ClientsDbProvider.GetEntitlementsForProject(Id));
             _Clients.AddRange(_Entitlements.Select(e => e.Client).Distinct());
         }
         #endregion
@@ -150,7 +167,7 @@ namespace Dragonfly.Models.Projects
                 Description = Description,
                 DateCreation = DateCreation
             };
-            dbProject.UserIds.AddRange(Users.Select(u => u.UserId));
+            dbProject.UserIds.AddRange(Users.Select(u => u.Id));
 
             return dbProject;
         }
@@ -161,11 +178,9 @@ namespace Dragonfly.Models.Projects
         /// <param name="projectRoleId">Access rights</param>
         public void AddUserToProject(decimal userId, decimal projectRoleId)
         {
-            InitUsers();
-            Users.Add(new EUserProject()
+            Users.Add(new UserRoleModel()
             {
-                UserId = userId,
-                ProjectRoleId = projectRoleId
+                Id = userId,
             });
         }
 
@@ -176,11 +191,11 @@ namespace Dragonfly.Models.Projects
             {
                 if (Id == 0)
                 {
-                    _DbProvider.CreateProject(this.ToDbProject());
+                    _BaseDbProvider.CreateProject(this.ToDbProject());
                 }
                 else
                 {
-                    _DbProvider.SaveProject(ToDbProject());
+                    _BaseDbProvider.SaveProject(ToDbProject());
                 }
                 saveResult = true;
             }

@@ -31,10 +31,7 @@ namespace Dragonfly.Models.Projects
             var rawProjects = _BasicProvider.GetProjects(offset, count);
             foreach (EProject rawProj in rawProjects)
             {
-                models.Add(new ProjectModel()
-                {
-                    ProjectDetails = rawProj
-                });
+                models.Add(new ProjectModel(rawProj));
             }
             return models;
         }

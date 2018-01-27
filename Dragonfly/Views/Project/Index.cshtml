@@ -89,10 +89,10 @@
                 @foreach (var user in Model.Users)
                 {
                     <tr>
-                        <td class="f-cell i_t_cell">@user.UserLogin</td>
-                        <td class="i_t_cell">@user.UserName</td>
-                        <td class="i_t_cell">@user.UserSurname</td>
-                        <td class="i_t_cell">@user.UserEMail</td>
+                        <td class="f-cell i_t_cell">@user.Login</td>
+                        <td class="i_t_cell">@user.Name</td>
+                        <td class="i_t_cell">@user.Surname</td>
+                        <td class="i_t_cell">@user.EMail</td>
                         <td class="i_t_cell">
                             <div>
                                 @if (user.IsAdmin)
@@ -102,7 +102,7 @@
                                 else
                                 {
                                     <div>
-                                        @user.RoleTextDescription;
+                                        @user.RolsDescription;
                                     </div>
                                 }
                             </div>

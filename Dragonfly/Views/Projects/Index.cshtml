@@ -32,29 +32,29 @@ else
             @foreach (var proj in Model.AvailableProjects)
             {
                 <tr>
-                    <td class="f-cell i_t_cell">@proj.ProjectDetails.Id</td>
-                    <td class="i_t_cell">@proj.ProjectDetails.ProjectName</td>
-                    <td class="i_t_cell">@proj.ProjectDetails.DateCreation.ToString("dd.MM.yyyy")</td>
+                    <td class="f-cell i_t_cell">@proj.Id</td>
+                    <td class="i_t_cell">@proj.ProjectName</td>
+                    <td class="i_t_cell">@proj.DateCreation.ToString("dd.MM.yyyy")</td>
                     <td class="l-cell i_t_cell">
-                        @string.Join(", ", proj.Users.Select(u => u.UserDescription.Login))
+                        @string.Join(", ", proj.Users.Select(u => u.Login))
                     </td>
                     <td class="l-cell i_t_cell">
                         <a id="project-details"
-                           href="@Url.Action("Index", "Project", new { projectId = proj.ProjectDetails.Id })">
+                           href="@Url.Action("Index", "Project", new { projectId = proj.Id })">
                             <Span>
                                 <img src="~/Images/Icons/information.png" alt="Details"
                                      title="Project details"/>
                             </Span>
                         </a>
                         <a id="add-entitlement"
-                           href="@Url.Action("NewEntitlement", "Entitlement", new { projectId = proj.ProjectDetails.Id })">
+                           href="@Url.Action("NewEntitlement", "Entitlement", new { projectId = proj.Id })">
                             <Span>
                                 <img src="~/Images/Icons/bag_plus.png" alt="+Entitlement"
                                      title="Add new entitlement" />
                             </Span>
                         </a>
                         <a id="add-techsupport"
-                           href="@Url.Action("NewTechsupport", "Project", new { projectId = proj.ProjectDetails.Id })">
+                           href="@Url.Action("NewTechsupport", "Project", new { projectId = proj.Id })">
                             <Span>
                                 <img src="~/Images/Icons/bug_plus.png" alt="+Techsupport"
                                      title="Add new techsupport entitlement" />

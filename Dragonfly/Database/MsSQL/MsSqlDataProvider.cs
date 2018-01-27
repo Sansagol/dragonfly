@@ -196,7 +196,7 @@ namespace Dragonfly.Database.MsSQL
         {
             CheckProjectModelArgs(newProject);
 
-            IEnumerable<User> users = GetUsersByIds(newProject.Users.Select(u => u.UserId));
+            IEnumerable<User> users = GetUsersByIds(newProject.Users.Select(u => u.Id));
             Project proj = newProject.ProjectDetails.ToDbProject();
 
             using (var context = _ContextGenerator.GenerateContext())
@@ -227,6 +227,8 @@ namespace Dragonfly.Database.MsSQL
         {
             CheckTheEProjectData(newProject);
             Project proj = newProject.ToDbProject();
+            if (proj.Date_Create == default(DateTime))
+                proj.Date_Create = DateTime.Now;
 
             using (var context = _ContextGenerator.GenerateContext())
             {

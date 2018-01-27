@@ -51,9 +51,6 @@ namespace Dragonfly.Controllers
                 decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
                 project.AddUserToProject(userId, 0);
             }
-
-            IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider();
-            project.DbProvider = provider;
             //TODO change the role id to the loaded from the DB
             if (project.SaveProject())
                 return RedirectToAction("Index", "Projects");
