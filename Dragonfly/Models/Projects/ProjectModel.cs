@@ -16,9 +16,6 @@ namespace Dragonfly.Models.Projects
         /// <summary>Is project selected in the view.</summary>
         public bool IsSelected { get; set; }
 
-        /// <summary>Ids of users which can something do with the project.</summary>
-        //public List<decimal> UserIds { get; set; }
-        List<EUserProject> _Users = null;
         public List<EUserProject> Users
         {
             get
@@ -30,16 +27,26 @@ namespace Dragonfly.Models.Projects
                 return _Users;
             }
         }
+        List<EUserProject> _Users = null;
 
+        /// <summary>Id of the project.</summary>
+        public decimal Id { get; set; }
+
+        /// <summary>Name of the project.</summary>
+        public string ProjectName { get; set; }
+
+        /// <summary>Project description.</summary>
+        public string Description { get; set; }
+
+        /// <summary>Get or set a data, when prodect was creted.</summary>
+        public DateTime DateCreation { get; set; }
+
+        [Obsolete]
         public EProject ProjectDetails { get; set; }
 
         /// <summary>Some errors on project.</summary>
         public string ProjectError { get; set; }
 
-        /// <summary>
-        /// Get or set a data, when prodect was creted.
-        /// </summary>
-        public DateTime DateCreation { get; set; }
 
         List<EClient> _Clients = null;
         public List<EClient> Clients
@@ -83,17 +90,37 @@ namespace Dragonfly.Models.Projects
             _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
         }
 
+        public ProjectModel(EProject dbProject) :
+            this()
+        {
+            FillModel(dbProject);
+        }
+
         public ProjectModel(IDataBaseProvider dbProvider) :
             this()
         {
             _DbProvider = dbProvider;
         }
 
+        public ProjectModel(IDataBaseProvider dbProvider, EProject dbProject) :
+            this(dbProvider)
+        {
+            FillModel(dbProject);
+        }
+
+        private void FillModel(EProject dbProject)
+        {
+            Id = dbProject.Id;
+            ProjectName = dbProject.ProjectName;
+            Description = dbProject.Description;
+            DateCreation = dbProject.DateCreation;
+        }
+
         #region Lazy load
         private void InitUsers()
         {
             _Users = new List<EUserProject>();
-            if (ProjectDetails?.Id > 0)
+            if (Id > 0)
             {
                 RetrieveUsersFromDB();
             }
@@ -101,7 +128,7 @@ namespace Dragonfly.Models.Projects
 
         private void RetrieveUsersFromDB()
         {
-            var users = _ProjectsProvider.GetUsersForProject(ProjectDetails.Id);
+            var users = _ProjectsProvider.GetUsersForProject(Id);
             _Users.AddRange(users);
         }
 
@@ -109,10 +136,24 @@ namespace Dragonfly.Models.Projects
         {
             _Entitlements = new List<EEntitlement>();
             _Clients = new List<EClient>();
-            _Entitlements.AddRange(_ClientsProvider.GetEntitlementsForProject(ProjectDetails.Id));
+            _Entitlements.AddRange(_ClientsProvider.GetEntitlementsForProject(Id));
             _Clients.AddRange(_Entitlements.Select(e => e.Client).Distinct());
         }
         #endregion
+
+        public EProject ToDbProject()
+        {
+            EProject dbProject = new EProject()
+            {
+                Id = Id,
+                ProjectName = ProjectName,
+                Description = Description,
+                DateCreation = DateCreation
+            };
+            dbProject.UserIds.AddRange(Users.Select(u => u.UserId));
+
+            return dbProject;
+        }
 
         /// <summary>Add the custom user to the project.</summary>
         /// <param name="userId">Id of the user.</param>
@@ -131,24 +172,25 @@ namespace Dragonfly.Models.Projects
         public bool SaveProject()
         {
             bool saveResult = false;
-            if (ProjectDetails.Id == 0)
+            try
             {
-                try
+                if (Id == 0)
                 {
-                    _DbProvider.CreateProject(this);
-                    saveResult = true;
+                    _DbProvider.CreateProject(this.ToDbProject());
                 }
-                catch (InvalidOperationException ex)
+                else
                 {
-                    ProjectError = ex.Message;
+                    _DbProvider.SaveProject(ToDbProject());
                 }
-                catch (Exception ex)
-                {
-                    ProjectError = ex.Message;
-                }
+                saveResult = true;
             }
-            else
-            {//TODO Update existing project
+            catch (InvalidOperationException ex)
+            {
+                ProjectError = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                ProjectError = ex.Message;
             }
             return saveResult;
         }

@@ -196,7 +196,7 @@ namespace Dragonfly.Database.MsSQL
         {
             CheckProjectModelArgs(newProject);
 
-            IEnumerable<User> users = GetUsersByIds(newProject.Users.Select(u=> u.UserId));
+            IEnumerable<User> users = GetUsersByIds(newProject.Users.Select(u => u.UserId));
             Project proj = newProject.ProjectDetails.ToDbProject();
 
             using (var context = _ContextGenerator.GenerateContext())
@@ -221,6 +221,45 @@ namespace Dragonfly.Database.MsSQL
                     KeepUserProject(proj.ID_Project, usProj, context);
                 }
             }
+        }
+
+        public void CreateProject(EProject newProject)
+        {
+            CheckTheEProjectData(newProject);
+            Project proj = newProject.ToDbProject();
+
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                SaveNewProjectInDB(proj, context);
+                newProject.Id = proj.ID_Project;
+                //Hardcoded load the admin
+                Project_Role prRole = (from pr in context.Project_Role
+                                       where pr.Is_Admin
+                                       select pr).FirstOrDefault();
+                if (prRole == null)
+                    throw new InvalidOperationException("An admin role for project not found.");
+
+                foreach (decimal userId in newProject.UserIds)
+                {
+                    User_Project usProj = new User_Project()
+                    {
+                        ID_Project = proj.ID_Project,
+                        ID_User = userId,
+                        ID_Project_Role = prRole.ID_Project_Role
+                    };
+                    KeepUserProject(proj.ID_Project, usProj, context);
+                }
+            }
+        }
+
+        private static void CheckTheEProjectData(EProject newProject)
+        {
+            if (newProject == null)
+                throw new ArgumentNullException(nameof(newProject));
+            if (string.IsNullOrWhiteSpace(newProject.ProjectName))
+                throw new ArgumentException("Empty project name", nameof(newProject));
+            if (newProject.UserIds.Count < 1)
+                throw new ArgumentException("Project owner user wasn't set", nameof(newProject));
         }
 
         /// <summary>
@@ -304,6 +343,45 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
+        public void SaveProject(EProject project)
+        {
+            CheckTheEProjectData(project);
+
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                Project proj = RetrieveProjectById(project.Id, context);
+                if (proj == null)
+                {
+                    CreateProject(project);
+                }
+                else
+                {
+                    proj.Name = project.ProjectName;
+                    proj.Description = project.Description;
+                }
+                SaveExistingProjectInDB(proj, context);
+            }
+        }
+
+        private void SaveExistingProjectInDB(Project project, DragonflyEntities context)
+        {
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                context.Project.Remove(project);
+                List<ValidationError> validationErrors = ex.RetrieveValidationsErrors();
+                throw new InsertDbDataException(validationErrors);
+            }
+            catch (DbUpdateException ex)
+            {
+                context.Project.Remove(project);
+                throw new InvalidOperationException("Unable to save project", ex);
+            }
+        }
+
         /// <summary>Method delete a project from a db.</summary>
         /// <param name="projectId">Id of project.</param>
         /// <exception cref="ArgumentException"/>
@@ -343,11 +421,9 @@ namespace Dragonfly.Database.MsSQL
             {
                 using (var context = _ContextGenerator.GenerateContext())
                 {
-                    Project proj = (from p in context.Project
-                                    where p.ID_Project == projectId
-                                    select p).FirstOrDefault();
+                    Project proj = RetrieveProjectById(projectId, context);
                     if (proj != null)
-                        model = proj.ToEProject(); 
+                        model = proj.ToEProject();
                 }
             }
             catch (Exception ex)
@@ -355,6 +431,20 @@ namespace Dragonfly.Database.MsSQL
                 throw new InvalidOperationException("Unable to retrieve a project.", ex);
             }
             return model;
+        }
+
+        private Project RetrieveProjectById(decimal projectId, DragonflyEntities context)
+        {
+            try
+            {
+                return (from p in context.Project
+                        where p.ID_Project == projectId
+                        select p).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unable to retrieve a project.", ex);
+            }
         }
 
         public IEnumerable<EProject> GetProjects(int offset, int count)

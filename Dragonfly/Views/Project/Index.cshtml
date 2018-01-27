@@ -1,12 +1,20 @@
 ﻿@model Dragonfly.Models.Projects.ProjectModel
 
 @{
-    ViewBag.Title = Model.ProjectDetails.ProjectName;
+    ViewBag.Title = Model.ProjectName;
     PageData["Logged"] = ViewBag.Logged;
     ViewBag.InitError = Model?.ProjectError;
 }
 
-<h3>Project: @Model.ProjectDetails.ProjectName</h3>
+<div>
+    <h3 style="float: left">Project: @Model.ProjectName</h3>
+    <div style="position: relative; float: right;">
+        <a href="@Url.Action("Edit", "Project", new { id = Model.Id })"
+           class="manage_btn">edit</a>
+        <a href="@Url.Action("Delete", "Project", new { id = Model.Id })"
+           class="manage_btn">delete</a>
+    </div>
+</div>
 @if (ViewBag.Logged == true && Model != null)
 {
     <table class="details_table">
@@ -18,7 +26,7 @@
             </td>
             <td class="det_tab_f_cell">
                 <label class="details_table_field_content">
-                    @Model.ProjectDetails.ProjectName
+                    @Model.ProjectName
                 </label>
             </td>
         </tr>
@@ -28,7 +36,7 @@
             </td>
             <td class="det_tab_cell">
                 <label class="details_table_field_content">
-                    @Model.ProjectDetails.Description
+                    @Model.Description
                 </label>
             </td>
         </tr>
@@ -38,7 +46,7 @@
             </td>
             <td class="det_tab_cell">
                 <label class="details_table_field_content">
-                    @Model.ProjectDetails.DateCreation.ToString("dd.MM.yyyy")
+                    @Model.DateCreation.ToString("dd.MM.yyyy")
                 </label>
             </td>
         </tr>

@@ -23,7 +23,12 @@ namespace Dragonfly.Database.Providers
 
         decimal AddUser(SignUpModel userRegisterData);
 
+        [Obsolete("Use method with the db type project parameter.")]
         void CreateProject(ProjectModel newProject);
+
+        void CreateProject(EProject newProject);
+
+        void SaveProject(EProject project);
 
         void DeleteProject(decimal projectId);
 

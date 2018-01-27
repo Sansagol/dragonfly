@@ -107,3 +107,10 @@ td.det_tab_cell {
     border-bottom: 1px solid black;
     border-top: 1px solid black;
 }
+
+/*Manage buttons*/
+.manage_btn {
+    float: left;
+    position: relative;
+    padding: 0px 10px;
+}

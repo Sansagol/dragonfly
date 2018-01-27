@@ -18,10 +18,12 @@ namespace Dragonfly.Controllers
         private string _InitializationError = null;
 
         private IUserAuthenticateStateManager _UserStateManager = null;
+        private IProjectsProvider _ProjectsProvider;
 
         public ProjectController()
         {
             _UserStateManager = BaseBindings.UsrStateManager;
+            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
         }
 
         /// <summary>Method run generatig page for add a new project.</summary>
@@ -30,25 +32,29 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult AddProject()
         {
-            _UserStateManager.CheckUserAccess(Request, Response);
+            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
             ProjectModel project = new ProjectModel();
             //TODO change the role id to the loaded from the DB
             project.AddUserToProject(userId, 0);
-            ViewBag.Logged = true;
+            ViewBag.IsNewProject = true;
             return View("CreateProject", project);
         }
 
         [HttpPost]
         [ControllersException]
-        public ActionResult CreateProject(ProjectModel project)
+        public ActionResult SaveProject(ProjectModel project)
         {
             _UserStateManager.CheckUserAccess(Request, Response);
-            decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
+            if (project.Id <= 0)
+            {
+                decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
+                project.AddUserToProject(userId, 0);
+            }
+
             IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider();
             project.DbProvider = provider;
             //TODO change the role id to the loaded from the DB
-            project.AddUserToProject(userId, 0);
             if (project.SaveProject())
                 return RedirectToAction("Index", "Projects");
             return View("CreateProject");
@@ -58,27 +64,33 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult Index(decimal projectId)
         {
-            ProjectModel model = new ProjectModel();
+            ProjectModel model = null;
             ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
-            if (ViewBag.Logged)
+            var provider = BaseBindings.DBFactory.CreateProjectsProvider();
+            try
             {
-                var provider = BaseBindings.DBFactory.CreateProjectsProvider();
-                try
+                model = new ProjectModel(provider.GetProject(projectId));
+            }
+            catch (Exception ex)
+            {
+                model = new ProjectModel
                 {
-                    model.ProjectDetails = provider.GetProject(projectId);
-                }
-                catch (Exception ex)
-                {
-                    model.ProjectDetails = new EProject
-                    {
-                        ProjectName = "<Project is not found>",
-                    };
-                    ViewBag.Error = ex.GetFullMessage();
-                }
+                    ProjectName = "<Project is not found>",
+                };
+                ViewBag.Error = ex.GetFullMessage();
             }
             return View("Index", model);
         }
 
-       
+        [HttpGet]
+        [ControllersException]
+        public ActionResult Edit(decimal id)
+        {
+            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
+            var project = _ProjectsProvider.GetProject(id);
+            ProjectModel model = new ProjectModel(project);
+            ViewBag.IsNewProject = false;
+            return View("CreateProject", model);
+        }
     }
 }

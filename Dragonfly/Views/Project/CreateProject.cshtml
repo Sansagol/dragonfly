@@ -5,21 +5,37 @@
     PageData["Logged"] = ViewBag.Logged;
 }
 
-<h3>New project</h3>
+@if (ViewBag.IsNewProject)
+{
+    <h3>New Project</h3>
+}
+else
+{
+    <h3>Edit Project</h3>
+}
+
 @if (ViewBag.Logged == true && Model != null)
 {
     using (Html.BeginForm(
-        "CreateProject",
+        "SaveProject",
         "Project",
         FormMethod.Post))
     {
         <table>
+            @if (!ViewBag.IsNewProject)
+            {
+                @Html.HiddenFor(model => model.Id);
+                <tr>
+                    <td><label class="edit-row-label">Date creation</label></td>
+                    <td><label class="details_table_field_content">@Model.DateCreation.ToString("dd.MM.yyyy")</label></td>
+                </tr>
+            }
             <tr>
                 <td>
                     <label class="edit-row-label">Name</label>
                 </td>
                 <td>
-                    @Html.TextBoxFor(x => x.ProjectDetails.ProjectName, new { @class = "edit-row-text" })
+                    @Html.TextBoxFor(x => x.ProjectName, new { @class = "edit-row-text" })
                 </td>
             </tr>
             <tr>
@@ -27,7 +43,7 @@
                     <label class="edit-row-label">Description</label>
                 </td>
                 <td>
-                    @Html.TextAreaFor(x => x.ProjectDetails.Description, 5, 55, new { @class = "edit-row-text" })
+                    @Html.TextAreaFor(x => x.Description, 5, 55, new { @class = "edit-row-text" })
                 </td>
             </tr>
         </table>
@@ -35,12 +51,6 @@
             <input class="btn btn-success"
                    type="submit" value="Create" />
         </div>
-        @*<a class="body-button"
-               href="@Url.Action("CreateTask", "Project")">
-                <span>
-                    Create
-                </span>
-            </a>*@
     }
 }
 else

@@ -33,7 +33,7 @@ namespace Dragonfly.Core.UserAccess
         }
 
         /// <summary>
-        /// Method check is user can access to the portal.
+        /// Method check is user can access to the portal. Throw exception, if user doesn't logged.
         /// </summary>
         /// <returns>True - user have an access. False - otherwise.</returns>
         public bool CheckUserAccess(HttpRequestBase request, HttpResponseBase response)
