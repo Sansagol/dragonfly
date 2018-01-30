@@ -63,7 +63,7 @@ namespace Dragonfly.Models.Entitlement
 
         }
 
-        public void LoadEntitlement(EEntitlement entitlement)
+        public EditEntitlementModel LoadEntitlement(EEntitlement entitlement)
         {
             EntitlementId = entitlement.Id;
             DateBegin = entitlement.DateBegin;
@@ -74,6 +74,7 @@ namespace Dragonfly.Models.Entitlement
             LicTypeId = entitlement.LicenseTypeId;
             ClientId = entitlement.ClientId;
             ProjectId = entitlement.ProjectId;
+            return this;
         }
 
         public EEntitlement ToEEntitlement()

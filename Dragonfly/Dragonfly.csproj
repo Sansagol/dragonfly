@@ -407,6 +407,7 @@
     <Content Include="Views\Entitlement\EditEntitlement.cshtml" />
     <Content Include="Views\Shared\Date.cshtml" />
     <Content Include="Scripts\jquery-2.0.0.min.map" />
+    <Content Include="Views\Entitlements\Entitlements.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -416,7 +417,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Entitlements\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
     <Folder Include="Views\Sidebar\" />
   </ItemGroup>
