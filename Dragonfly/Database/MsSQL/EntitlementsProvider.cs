@@ -64,7 +64,7 @@ namespace Dragonfly.Database.MsSQL
             if (entitlementToSave == null)
                 throw new ArgumentNullException(nameof(entitlementToSave));
             if (ownerId < 1)
-                throw new ArgumentNullException(nameof(ownerId), "Creator_id mut be greather than 0");
+                throw new ArgumentNullException(nameof(ownerId), "Creator_id must be greather than 0");
 
             using (var context = _ContextGenerator.GenerateContext())
             {
@@ -86,6 +86,27 @@ namespace Dragonfly.Database.MsSQL
                 }
             }
             return true;
+        }
+
+        public List<EEntitlement> GetEntitlements(decimal clientId, decimal projectId)
+        {
+            List<EEntitlement> entitlements = new List<EEntitlement>();
+            if (clientId < 1)
+                throw new ArgumentNullException(nameof(clientId), "Id of the client must be greather than 0");
+            if (projectId < 1)
+                throw new ArgumentNullException(nameof(projectId), "Id of the project must be greather than 0");
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                var dbEntitlements = (from e in context.Product_License
+                                      where e.ID_Client == clientId &&
+                                      e.ID_Project == projectId
+                                      select e);
+                foreach (Product_License lic in dbEntitlements)
+                {
+                    entitlements.Add(lic.ToEEntitlement());
+                }
+            }
+            return entitlements;
         }
     }
 }

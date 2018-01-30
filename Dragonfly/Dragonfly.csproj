@@ -378,6 +378,7 @@
     <Compile Include="Models\Clients\ClientType.cs" />
     <Compile Include="Models\Clients\CreateClientModel.cs" />
     <Compile Include="Models\EntitiesConverters.cs" />
+    <Compile Include="Models\Entitlement\EntitlementsModel.cs" />
     <Compile Include="Models\LogUpModel.cs" />
     <Compile Include="Models\Entitlement\EditEntitlementModel.cs" />
     <Compile Include="Models\ModelBase.cs" />

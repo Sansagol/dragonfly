@@ -14,8 +14,12 @@ namespace Dragonfly.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult ClientEntitlements(decimal clientId, decimal projectId)
-        {
+        {//TODO check to ajax
+            if (clientId < 0 || projectId < 0)
+                return RedirectToAction("Index", "Projects");
+            
             return View();
         }
     }

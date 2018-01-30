@@ -15,5 +15,7 @@ namespace Dragonfly.Database.Providers
         /// <summary>Retrieve all license types.</summary>
         /// <returns>License types.</returns>
         List<ELicenseType> GetLicenseTypes();
+
+        List<EEntitlement> GetEntitlements(decimal clientId, decimal projectId);
     }
 }
