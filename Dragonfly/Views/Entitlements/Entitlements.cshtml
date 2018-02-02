@@ -2,7 +2,44 @@
 
 @{
     ViewBag.Title = "Entitlements";
+    PageData["Logged"] = ViewBag.Logged;
+    PageData["UserName"] = ViewBag.UserName;
 }
 
 <h2>Entitlements</h2>
 
+@if (ViewBag.Logged == false)
+{
+    <div>
+        <span>No entitlements available. Need to login.</span>
+    </div>
+}
+else
+{
+    <div>
+        @if (Model.ProjectId > 0)
+        {
+            <div>@Model.ProjectName</div>
+        }
+        @if (Model.ClientId > 0)
+        {
+            <div>@Model.ClientInternalName</div>
+        }
+        <table class="info_table">
+            <col width="15%"/>
+            <col width="15%"/>
+            <col width="15%"/>
+            <col width="15%"/>
+            <col width="10%"/>
+            <col width="30%"/>
+            <tr>
+                <th class="info_table_header">Date created</th>
+                <th class="info_table_header">Ent. begin</th>
+                <th class="info_table_header">Ent. end</th>
+                <th class="info_table_header">License type</th>
+                <th class="info_table_header">Licenses count</th>
+                <th class="info_table_header">Details</th>
+            </tr>
+        </table>
+    </div>
+}

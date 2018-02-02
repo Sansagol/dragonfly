@@ -34,7 +34,7 @@ namespace Dragonfly.Database.Entities
 
         /// <summary>Get the project for this entitlement.</summary>
         public EProject Project { get; set; }
-        public decimal ProjectId { get; set; }
+        public decimal ProjectId { get; set; }        
 
         /// <summary>Client which bougcht the product.</summary>
         public EClient Client { get; set; }

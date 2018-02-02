@@ -1,4 +1,5 @@
 ﻿using Dragonfly.Core;
+using Dragonfly.Core.UserAccess;
 using Dragonfly.Database.Entities;
 using Dragonfly.Models.Entitlement;
 using System;
@@ -11,6 +12,13 @@ namespace Dragonfly.Controllers
 {
     public class EntitlementsController : Controller
     {
+        private IUserAuthenticateStateManager _UserStateManager = null;
+
+        public EntitlementsController()
+        {
+            _UserStateManager = BaseBindings.UsrStateManager;
+        }
+
         // GET: Entitlements
         public ActionResult Index()
         {
@@ -18,8 +26,15 @@ namespace Dragonfly.Controllers
         }
 
         [HttpGet]
+        [ControllersException]
         public ActionResult ClientEntitlements(decimal clientId, decimal projectId)
         {//TODO check to ajax
+            _UserStateManager.CheckUserAccess(Request, Response);
+            ViewBag.Logged = true;
+            ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
+                Request,
+                CookieType.UserName);
+
             if (clientId < 0 || projectId < 0)
                 return RedirectToAction("Index", "Projects");
             EntitlementsModel model = new EntitlementsModel();
