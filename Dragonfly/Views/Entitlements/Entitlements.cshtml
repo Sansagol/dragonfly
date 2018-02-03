@@ -40,6 +40,17 @@ else
                 <th class="info_table_header">Licenses count</th>
                 <th class="info_table_header">Details</th>
             </tr>
+            @foreach (var ent in Model.Entitlemens)
+            {
+                <tr>
+                    <td class="f-cell i_t_cell">@ent.DateCreated.ToString("dd.MM.yyyy")</td>
+                    <td class="i_t_cell">@ent.DateBegin.ToString("dd.MM.yyyy")</td>
+                    <td class="i_t_cell">@ent.DateEnd.ToString("dd.MM.yyyy")</td>
+                    <td class="i_t_cell">@ent.LicenseTypeName</td>
+                    <td class="i_t_cell">@ent.LicensesCount</td>
+                    <td class="l-cell i_t_cell">@ent.Details</td>
+                </tr>
+            }
         </table>
     </div>
 }

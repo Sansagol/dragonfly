@@ -40,12 +40,19 @@ namespace Dragonfly.Controllers
             EntitlementsModel model = new EntitlementsModel();
             try
             {
-                List<EEntitlement> entitlements = BaseBindings.DBFactory.CreateEntitlementsProvider()
-                    .GetEntitlements(clientId, projectId);
+                var entsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
+                List<EEntitlement> entitlements = entsProvider.GetEntitlements(clientId, projectId);
+                List<ELicenseType> licTypes = entsProvider.GetLicenseTypes();
+
                 List<EditEntitlementModel> entModels = new List<EditEntitlementModel>();
                 foreach (EEntitlement dbEnt in entitlements)
                 {
-                    entModels.Add(new EditEntitlementModel().LoadEntitlement(dbEnt));
+                    var entModel = new EditEntitlementModel()
+                    {
+                        LicenseTypeName = licTypes.FirstOrDefault(l => l.Id == dbEnt.LicenseTypeId).Name
+                    };
+                    entModels.Add(entModel.LoadEntitlement(dbEnt));
+
                 }
                 model.Entitlemens = entModels;
                 model.ClientId = clientId;

@@ -45,6 +45,7 @@ namespace Dragonfly.Models.Entitlement
         [Required(ErrorMessage = "Please select a license type for this entitlement")]
         public decimal LicTypeId { get; set; }
         public IEnumerable<SelectListItem> AvailableLicanseTypes { get; set; }
+        public string LicenseTypeName { get; set; }
 
         /// <summary>Get the project for this entitlement.</summary>
         [Required(ErrorMessage = "Please select a project for this entitlement")]
