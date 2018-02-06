@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Dragonfly.Controllers
 {
-    public class EntitlementsController : Controller
+    public class EntitlementsController : BaseController
     {
         private IUserAuthenticateStateManager _UserStateManager = null;
 
@@ -57,6 +57,7 @@ namespace Dragonfly.Controllers
                 model.Entitlemens = entModels;
                 model.ClientId = clientId;
                 model.ProjectId = projectId;
+                model.ProjectName = BaseBindings.DBFactory.CreateProjectsProvider().GetProject(projectId).ProjectName;
             }
             catch (Exception ex)
             {//TODO handle
