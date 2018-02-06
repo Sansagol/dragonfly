@@ -17,21 +17,49 @@
 else
 {
     <div>
-        @if (Model.ProjectId > 0)
+        <table class="details_table">
+            @if (Model.ProjectId > 0)
+            {
+                <tr>
+                    <td class="det_tab_f_cell">
+                        <Label class="details_table_field_head">Project</Label>
+                    </td>
+                    <td class="det_tab_cell">
+                        <label class="details_table_field_content">
+                            @Model.ProjectName
+                        </label>
+                    </td>
+                </tr>
+            }
+            @if (Model.ClientId > 0)
+            {
+                <tr>
+                    <td class="det_tab_f_cell">
+                        <label class="details_table_field_head">Client</label>
+                    </td>
+                    <td class="det_tab_cell">
+                        <label class="details_table_field_content">
+                            @Model.ClientInternalName
+                        </label>
+                    </td>
+                </tr>
+            }
+        </table>
+        @*@if (Model.ProjectId > 0)
         {
-            <div>@Model.ProjectName</div>
+            <div>Projtct: @Model.ProjectName</div>
         }
         @if (Model.ClientId > 0)
         {
-            <div>@Model.ClientInternalName</div>
-        }
+            <div>Client: @Model.ClientInternalName</div>
+        }*@
         <table class="info_table">
-            <col width="15%"/>
-            <col width="15%"/>
-            <col width="15%"/>
-            <col width="15%"/>
-            <col width="10%"/>
-            <col width="30%"/>
+            <col width="15%" />
+            <col width="15%" />
+            <col width="15%" />
+            <col width="15%" />
+            <col width="10%" />
+            <col width="30%" />
             <tr>
                 <th class="info_table_header">Date created</th>
                 <th class="info_table_header">Ent. begin</th>
@@ -41,7 +69,7 @@ else
                 <th class="info_table_header">Details</th>
             </tr>
             @foreach (var ent in Model.Entitlemens)
-            {
+                {
                 <tr>
                     <td class="f-cell i_t_cell">@ent.DateCreated.ToString("dd.MM.yyyy")</td>
                     <td class="i_t_cell">@ent.DateBegin.ToString("dd.MM.yyyy")</td>

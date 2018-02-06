@@ -97,6 +97,24 @@ namespace Dragonfly.Database.MsSQL
             }
         }
 
+        public EClient GetClient(decimal clientId)
+        {
+            try
+            {
+                using (var context = _ContextGenerator.GenerateContext())
+                {
+                    var client = (from c in context.Client
+                                  where c.ID_Client == clientId
+                                  select c).FirstOrDefault();
+                    return client.ToEClient();
+                }
+            }
+            catch (Exception ex)
+            {//TODO log
+                throw new InvalidOperationException("Unable to retrieve a client from the DB.");
+            }
+        }
+
         /// <summary>
         /// Method retrieve all clients from the database.
         /// </summary>
@@ -156,16 +174,6 @@ namespace Dragonfly.Database.MsSQL
             return new List<ClientType>();
         }
 
-        public EClient GetClient(decimal clientId)
-        {
-            using (var context = _ContextGenerator.GenerateContext())
-            {
-                return (from l in context.Client
-                        where l.ID_Client == clientId
-                        select l).First().ToEClient();
-            }
-        }
-
         public EEntitlement GetEntitlement(decimal entitlementId)
         {
             if (entitlementId < 1)
@@ -173,8 +181,8 @@ namespace Dragonfly.Database.MsSQL
             using (var context = _ContextGenerator.GenerateContext())
             {
                 var dbEntitlement = (from e in context.Product_License
-                                   where e.ID_Product_License == entitlementId
-                                   select e).FirstOrDefault();
+                                     where e.ID_Product_License == entitlementId
+                                     select e).FirstOrDefault();
                 var entitlement = dbEntitlement.ToEEntitlement();
                 entitlement.Client = GetClient(dbEntitlement.ID_Client);
                 //TODO load license type

@@ -55,5 +55,10 @@ namespace Dragonfly.Database.Providers
         /// <param name="count"></param>
         /// <returns></returns>
         List<EEntitlement> GetEntitlementsForProject(decimal projectId, int offset, int count);
+        
+        /// <summary>Retrieve the client by it's id.</summary>
+        /// <param name="clientId">Client id.</param>
+        /// <returns>Client from the DB or null.</returns>
+        EClient GetClient(decimal clientId);
     }
 }

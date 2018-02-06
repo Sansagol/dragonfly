@@ -56,6 +56,7 @@ namespace Dragonfly.Controllers
                 }
                 model.Entitlemens = entModels;
                 model.ClientId = clientId;
+                model.ClientInternalName = ClientsProvider.GetClient(clientId).Name;
                 model.ProjectId = projectId;
                 model.ProjectName = BaseBindings.DBFactory.CreateProjectsProvider().GetProject(projectId).ProjectName;
             }

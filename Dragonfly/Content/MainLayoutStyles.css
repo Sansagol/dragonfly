@@ -95,14 +95,17 @@ a:hover {
     width: 95%;
     table-layout: fixed;
 }
-/*.details_table_field_head {
-}*/
+.details_table_field_head {
+    font-weight: bold;
+}
 .details_table_field_content {
     font-weight: normal;
     margin-left: 5px;
 }
-/*td.det_tab_f_cell {
-}*/
+td.det_tab_f_cell {
+    width: 15%;
+    white-space: nowrap;
+}
 td.det_tab_cell {
     border-bottom: 1px solid black;
     border-top: 1px solid black;
