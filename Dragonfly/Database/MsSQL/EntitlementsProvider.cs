@@ -83,6 +83,7 @@ namespace Dragonfly.Database.MsSQL
                         context.Product_License.Add(license);
                     }
                     context.SaveChanges();
+                    entitlementToSave.Id = license.ID_Product_License;
                 }
             }
             return true;

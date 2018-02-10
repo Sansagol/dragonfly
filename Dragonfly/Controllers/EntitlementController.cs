@@ -103,8 +103,10 @@ namespace Dragonfly.Controllers
             if (ModelState.IsValid)
             {
                 _UserStateManager.CheckUserAccess(Request, Response);//Check this user before save
-                _EntitlementsProvider.SaveEntitlement(model.ToEEntitlement(), _UserStateManager.GetUserIdFromCookies(Request));
-                return RedirectToAction("EditEntitlement", "Entitlement", model.EntitlementId);
+                EEntitlement ent = model.ToEEntitlement();
+                _EntitlementsProvider.SaveEntitlement(ent, _UserStateManager.GetUserIdFromCookies(Request));
+                model.EntitlementId = ent.Id;
+                return RedirectToAction("EditEntitlement", "Entitlement", new { entitlementId = model.EntitlementId });
             }
             LoadThirdElementsData(model);
             return View("EditEntitlement", model);
