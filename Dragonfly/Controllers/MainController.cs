@@ -13,25 +13,15 @@ using System.Web.Mvc;
 
 namespace Dragonfly.Controllers
 {
-    public class MainController : Controller
+    public class MainController : BaseController
     {
         Logger _Lg = LogManager.GetCurrentClassLogger();
-        private IUserAuthenticateStateManager _UserStateManager = null;
 
         /// <summary>
         /// The default constructor for using in the app.
         /// </summary>
         public MainController()
         {
-            try
-            {
-                _UserStateManager = BaseBindings.UsrStateManager;
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex.GetFullMessage());
-                throw ex;
-            }
         }
 
         /// <summary>The constructor for using in tests.</summary>
@@ -40,7 +30,7 @@ namespace Dragonfly.Controllers
         {
             if (usrStateMngr == null)
                 throw new ArgumentNullException(nameof(usrStateMngr));
-            _UserStateManager = usrStateMngr;
+            UserStateManager = usrStateMngr;
         }
 
         // GET: Main
@@ -49,13 +39,12 @@ namespace Dragonfly.Controllers
         public ActionResult Index()
         {
             ViewBag.Logged = false;
-            if (_UserStateManager.CheckUserAccess(Request, Response))
-            {
-                ViewBag.Logged = true;
-                ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
-                    Request,
-                    CookieType.UserName);
-            }
+
+            CheckUserAuthorization();
+            ViewBag.Logged = true;
+            ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
+                Request,
+                CookieType.UserName);
             return View();
         }
 
@@ -76,7 +65,7 @@ namespace Dragonfly.Controllers
             {
                 try
                 {
-                    if (_UserStateManager.LogIn(Response, authParameters))
+                    if (UserStateManager.LogIn(Response, authParameters))
                     {
                         return RedirectToAction(nameof(Index));
                     }
@@ -91,7 +80,7 @@ namespace Dragonfly.Controllers
 
         public ActionResult LogOut()
         {
-            _UserStateManager.LogOut(Request, Response);
+            UserStateManager.LogOut(Request, Response);
             return RedirectToAction(nameof(Index));
         }
 

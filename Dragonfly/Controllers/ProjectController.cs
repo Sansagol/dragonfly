@@ -13,17 +13,12 @@ using System.Web.Mvc;
 namespace Dragonfly.Controllers
 {
     [ControllersException]
-    public class ProjectController : Controller
+    public class ProjectController : BaseController
     {
         private string _InitializationError = null;
 
-        private IUserAuthenticateStateManager _UserStateManager = null;
-        private IProjectsProvider _ProjectsProvider;
-
         public ProjectController()
         {
-            _UserStateManager = BaseBindings.UsrStateManager;
-            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
         }
 
         /// <summary>Method run generatig page for add a new project.</summary>
@@ -32,7 +27,7 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult AddProject()
         {
-            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
+            CheckUserAuthorization();
             decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
             ProjectModel project = new ProjectModel();
             //TODO change the role id to the loaded from the DB
@@ -45,7 +40,7 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult SaveProject(ProjectModel project)
         {
-            _UserStateManager.CheckUserAccess(Request, Response);
+            CheckUserAuthorization();
             if (project.Id <= 0)
             {
                 decimal userId = BaseBindings.CookiesManager.GetCookieValueDecimal(Request, CookieType.UserId);
@@ -61,8 +56,8 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult Index(decimal projectId)
         {
+            CheckUserAuthorization();
             ProjectModel model = null;
-            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
             var provider = BaseBindings.DBFactory.CreateProjectsProvider();
             try
             {
@@ -83,8 +78,8 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult Edit(decimal id)
         {
-            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
-            var project = _ProjectsProvider.GetProject(id);
+            CheckUserAuthorization();
+            var project = ProjectsProvider.GetProject(id);
             ProjectModel model = new ProjectModel(project);
             ViewBag.IsNewProject = false;
             return View("CreateProject", model);

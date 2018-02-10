@@ -13,30 +13,21 @@ using Dragonfly.Database.Entities;
 
 namespace Dragonfly.Controllers
 {
-    public class EntitlementController : Controller
+    public class EntitlementController : BaseController
     {
-        private IUserAuthenticateStateManager _UserStateManager = null;
-        private IEntitlementsProvider _EntitlementsProvider;
-        private IClientsProvider _ClientsProvider;
-        private IProjectsProvider _ProjectsProvider;
-
         public EntitlementController()
         {
-            _UserStateManager = BaseBindings.UsrStateManager;
-            _EntitlementsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
-            _ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
-            _ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
         }
 
         [HttpGet]
         [ControllersException]
         public ActionResult EditEntitlement(decimal entitlementId)
         {
-            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
+            CheckUserAuthorization();
             if (entitlementId < 1)
                 RedirectToAction("Index", "Entitlements");
-            decimal currentUser = _UserStateManager.GetUserIdFromCookies(Request);
-            var entitlement = _EntitlementsProvider.GetEntitlement(entitlementId);
+            decimal currentUser = UserStateManager.GetUserIdFromCookies(Request);
+            var entitlement = EntitlementsProvider.GetEntitlement(entitlementId);
             if (entitlement == null)
                 RedirectToAction("Index", "Entitlements");
             if (entitlement.UserCreatorId == currentUser)//TODO check by project members
@@ -60,7 +51,7 @@ namespace Dragonfly.Controllers
         [ControllersException]
         public ActionResult NewEntitlement(decimal projectId)
         {
-            ViewBag.Logged = _UserStateManager.CheckUserAccess(Request, Response);
+            CheckUserAuthorization();
             try
             {
                 EditEntitlementModel model = new EditEntitlementModel();
@@ -79,32 +70,32 @@ namespace Dragonfly.Controllers
 
         private void LoadLicenseTypes(EditEntitlementModel model)
         {
-            var availableLicanseTypes = _EntitlementsProvider.GetLicenseTypes();
+            var availableLicanseTypes = EntitlementsProvider.GetLicenseTypes();
             model.AvailableLicanseTypes = availableLicanseTypes.Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
         }
         private void LoadClients(EditEntitlementModel model)
         {
-            var availableClients = _ClientsProvider.GetClients();
+            var availableClients = ClientsProvider.GetClients();
             model.AvailableClients = availableClients.Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
         }
 
         private void LoadProject(EditEntitlementModel model)
         {
-            var project = _ProjectsProvider.GetProject(model.ProjectId);
+            var project = ProjectsProvider.GetProject(model.ProjectId);
             model.Projectname = project.ProjectName;
         }
 
         [HttpPost]
         [ControllersException]
         public ActionResult SaveEntitlement(EditEntitlementModel model)
-        {
+        {            
             if (model.DateBegin > model.DateEnd)
                 ModelState.AddModelError("DateEnd", "The end date must be greather then begin date");
             if (ModelState.IsValid)
             {
-                _UserStateManager.CheckUserAccess(Request, Response);//Check this user before save
+                CheckUserAuthorization();//Check this user before save
                 EEntitlement ent = model.ToEEntitlement();
-                _EntitlementsProvider.SaveEntitlement(ent, _UserStateManager.GetUserIdFromCookies(Request));
+                EntitlementsProvider.SaveEntitlement(ent, UserStateManager.GetUserIdFromCookies(Request));
                 model.EntitlementId = ent.Id;
                 return RedirectToAction("EditEntitlement", "Entitlement", new { entitlementId = model.EntitlementId });
             }

@@ -36,12 +36,12 @@ namespace Dragonfly.Controllers
                 List<EEntitlement> entitlements = null;
                 if (projectId > 0)
                 {
-                    entitlements = EntitiesProvider.GetEntitlements(id, projectId);
+                    entitlements = EntitlementsProvider.GetEntitlements(id, projectId);
                     model.ProjectId = projectId;
                     model.ProjectName = ProjectsProvider.GetProject(projectId).ProjectName;
                 }
                 else
-                    entitlements = EntitiesProvider.GetEntitlementsForClient(id);
+                    entitlements = EntitlementsProvider.GetEntitlementsForClient(id);
 
                 AddEntitlementsToModel(id, model, entitlements);
             }
@@ -53,7 +53,7 @@ namespace Dragonfly.Controllers
 
         private static void AddEntitlementsToModel(decimal clientId, EntitlementsModel model, List<EEntitlement> entitlements)
         {
-            List<ELicenseType> licTypes = EntitiesProvider.GetLicenseTypes();
+            List<ELicenseType> licTypes = EntitlementsProvider.GetLicenseTypes();
             List<EditEntitlementModel> entModels = new List<EditEntitlementModel>();
             foreach (EEntitlement dbEnt in entitlements)
             {

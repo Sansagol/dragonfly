@@ -9,23 +9,32 @@ using System.Web.Mvc;
 
 namespace Dragonfly.Controllers
 {
-    public class BaseController: Controller
+    public class BaseController : Controller
     {
         protected static IDataBaseProvider BaseProvider { get; private set; }
         protected static IClientsProvider ClientsProvider { get; private set; }
-        protected static IEntitlementsProvider EntitiesProvider { get; private set; }
+        protected static IEntitlementsProvider EntitlementsProvider { get; private set; }
         protected static IProjectsProvider ProjectsProvider { get; private set; }
         protected static IUserAccessProvider UserAccessProvider { get; private set; }
 
         private IUserAuthenticateStateManager _UserStateManager = null;
-        protected IUserAuthenticateStateManager UserStateManager { get { return _UserStateManager; } }
+        protected IUserAuthenticateStateManager UserStateManager
+        {
+            get { return _UserStateManager; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException();
+                _UserStateManager = value;
+            }
+        }
 
         /// <summary>Init static members.</summary>
         static BaseController()
         {
             BaseProvider = BaseBindings.DBFactory.CreateDBProvider();
             ClientsProvider = BaseBindings.DBFactory.CreateClientsProvider();
-            EntitiesProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
+            EntitlementsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
             ProjectsProvider = BaseBindings.DBFactory.CreateProjectsProvider();
             UserAccessProvider = BaseBindings.DBFactory.CreateUserAccessProvider();
         }

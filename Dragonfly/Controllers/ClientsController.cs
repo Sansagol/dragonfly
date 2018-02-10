@@ -14,15 +14,13 @@ namespace Dragonfly.Controllers
     /// Controller for pages with clients representation.
     /// </summary>
     [ControllersException]
-    public class ClientsController : Controller
+    public class ClientsController : BaseController
     {
-        private IUserAuthenticateStateManager _UserStateManager = null;
         private ICookiesManager _CookManager = null;
         private IDBFactory _DatabaseFactory = null;
 
         public ClientsController()
         {
-            _UserStateManager = BaseBindings.UsrStateManager;
             _CookManager = BaseBindings.CookiesManager;
             _DatabaseFactory = BaseBindings.DBFactory;
         }
@@ -31,29 +29,31 @@ namespace Dragonfly.Controllers
         public ActionResult Index()
         {
             ClientsModel model = null;
-            if (_UserStateManager.CheckUserAccess(Request, Response))
+            try
             {
-                ViewBag.Logged = true;
-                try
-                {
-                    var clientsProvider = _DatabaseFactory.CreateClientsProvider();
-                    IEnumerable<ClientModel> clients = clientsProvider.GetAllClients();
-                    model = new ClientsModel()
-                    {
-                        Clients = clients.ToList()
-                    };
-                }
-                catch (Exception ex)
-                {
-                    //TODO log
-                    ViewBag.Error = $"Unable to load clients: {ex.Message}";
-                }
+                CheckUserAuthorization();
             }
-            else
+            catch
             {
                 ViewBag.Logged = false;
                 ViewBag.UserName = Session["UserName"];
                 ViewBag.Error = "Access denied. Please log in.";
+                return View(model);
+            }
+
+            ViewBag.Logged = true;
+            try
+            {
+                IEnumerable<ClientModel> clients = ClientsProvider.GetAllClients();
+                model = new ClientsModel()
+                {
+                    Clients = clients.ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                //TODO log
+                ViewBag.Error = $"Unable to load clients: {ex.Message}";
             }
             return View(model);
         }

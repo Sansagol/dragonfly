@@ -17,35 +17,27 @@ namespace Dragonfly.Controllers
     /// for the user.
     /// </summary>
     [ControllersException]
-    public class ProjectsController : Controller
+    public class ProjectsController : BaseController
     {
         private string _InitializationError = null;
 
-        private IUserAuthenticateStateManager _UserStateManager = null;
-
         public ProjectsController()
         {
-            _UserStateManager = BaseBindings.UsrStateManager;
         }
 
-        // GET: Projects
+        [HttpGet]
+        [ControllersException]
         public ActionResult Index()
         {
-            if (_UserStateManager.CheckUserAccess(Request, Response))
-            {
-                ViewBag.Logged = true;
-                ProjectsModel model = null;
-                IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider();
-                model = new ProjectsModel(provider);
-                model.AvailableProjects = model.GetProjects(0, 10);
-                //var projects = provider.GetProjects(0, 10);
-                //model.AvailableProjects = projects.ToList().ForEach(p => p.ToProjectModel());
-                return View(model);
-            }
-            else
-            {
-                ViewBag.Logged = false;
-            }
+            CheckUserAuthorization();
+            ViewBag.Logged = true;
+            ProjectsModel model = null;
+            IDataBaseProvider provider = BaseBindings.DBFactory.CreateDBProvider();
+            model = new ProjectsModel(provider);
+            model.AvailableProjects = model.GetProjects(0, 10);
+            //var projects = provider.GetProjects(0, 10);
+            //model.AvailableProjects = projects.ToList().ForEach(p => p.ToProjectModel());
+            return View(model);
             return View();
         }
     }
