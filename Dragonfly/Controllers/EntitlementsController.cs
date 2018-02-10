@@ -38,7 +38,7 @@ namespace Dragonfly.Controllers
                 {
                     entitlements = EntitiesProvider.GetEntitlements(id, projectId);
                     model.ProjectId = projectId;
-                    model.ProjectName = BaseBindings.DBFactory.CreateProjectsProvider().GetProject(projectId).ProjectName;
+                    model.ProjectName = ProjectsProvider.GetProject(projectId).ProjectName;
                 }
                 else
                     entitlements = EntitiesProvider.GetEntitlementsForClient(id);
@@ -62,6 +62,7 @@ namespace Dragonfly.Controllers
                     LicenseTypeName = licTypes.FirstOrDefault(l => l.Id == dbEnt.LicenseTypeId).Name
                 };
                 entModels.Add(entModel.LoadEntitlement(dbEnt));
+                entModel.Projectname = ProjectsProvider.GetProject(entModel.ProjectId).ProjectName;
             }
             model.Entitlemens = entModels;
             model.ClientId = clientId;

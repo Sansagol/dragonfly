@@ -46,21 +46,35 @@ else
             }
         </table>
         @*@if (Model.ProjectId > 0)
-        {
-            <div>Projtct: @Model.ProjectName</div>
-        }
-        @if (Model.ClientId > 0)
-        {
-            <div>Client: @Model.ClientInternalName</div>
-        }*@
+            {
+                <div>Projtct: @Model.ProjectName</div>
+            }
+            @if (Model.ClientId > 0)
+            {
+                <div>Client: @Model.ClientInternalName</div>
+            }*@
         <table class="info_table">
-            <col width="15%" />
-            <col width="15%" />
-            <col width="15%" />
+            @if (Model.ProjectId < 1)
+            {
+                <col width="15%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="10%" />
+            }
+            else
+            {
+                <col width="15%" />
+                <col width="15%" />
+                <col width="15%" />
+            }
             <col width="15%" />
             <col width="10%" />
             <col width="30%" />
             <tr>
+                @if (Model.ProjectId < 1)
+                {
+                    <th class="info_table_header">Project</th>
+                }
                 <th class="info_table_header">Date created</th>
                 <th class="info_table_header">Ent. begin</th>
                 <th class="info_table_header">Ent. end</th>
@@ -71,7 +85,11 @@ else
             @foreach (var ent in Model.Entitlemens)
                 {
                 <tr>
-                    <td class="f-cell i_t_cell">@ent.DateCreated.ToString("dd.MM.yyyy")</td>
+                    @if (Model.ProjectId < 1)
+                    {
+                        <td class="f-cell i_t_cell">@ent.Projectname</td>
+                    }
+                    <td class="i_t_cell">@ent.DateCreated.ToString("dd.MM.yyyy")</td>
                     <td class="i_t_cell">@ent.DateBegin.ToString("dd.MM.yyyy")</td>
                     <td class="i_t_cell">@ent.DateEnd.ToString("dd.MM.yyyy")</td>
                     <td class="i_t_cell">@ent.LicenseTypeName</td>
