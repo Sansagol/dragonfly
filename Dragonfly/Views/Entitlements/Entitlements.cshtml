@@ -69,7 +69,8 @@ else
             }
             <col width="15%" />
             <col width="10%" />
-            <col width="30%" />
+            <col width="25%" />
+            <col width="5%" />
             <tr>
                 @if (Model.ProjectId < 1)
                 {
@@ -81,6 +82,7 @@ else
                 <th class="info_table_header">License type</th>
                 <th class="info_table_header">Licenses count</th>
                 <th class="info_table_header">Details</th>
+                <th class="info_table_header"></th>
             </tr>
             @foreach (var ent in Model.Entitlemens)
                 {
@@ -94,7 +96,14 @@ else
                     <td class="i_t_cell">@ent.DateEnd.ToString("dd.MM.yyyy")</td>
                     <td class="i_t_cell">@ent.LicenseTypeName</td>
                     <td class="i_t_cell">@ent.LicensesCount</td>
-                    <td class="l-cell i_t_cell">@ent.Details</td>
+                    <td class="i_t_cell">@ent.Details</td>
+                    <td class="l-cell i_t_cell">
+                        <a id="edit-entitlement"
+                           href="@Url.Action("EditEntitlement", "Entitlement", new { entitlementId = ent.EntitlementId })"
+                           title="Edit entitlements">
+                            <i class="fa fa-pencil fa-1x" style="color: black;"></i>
+                        </a>
+                    </td>
                 </tr>
             }
         </table>
