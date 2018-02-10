@@ -17,5 +17,7 @@ namespace Dragonfly.Database.Providers
         List<ELicenseType> GetLicenseTypes();
 
         List<EEntitlement> GetEntitlements(decimal clientId, decimal projectId);
+
+        List<EEntitlement> GetEntitlementsForClient(decimal clientId);
     }
 }

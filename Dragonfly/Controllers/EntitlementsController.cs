@@ -12,11 +12,8 @@ namespace Dragonfly.Controllers
 {
     public class EntitlementsController : BaseController
     {
-        private IUserAuthenticateStateManager _UserStateManager = null;
-
         public EntitlementsController()
         {
-            _UserStateManager = BaseBindings.UsrStateManager;
         }
 
         // GET: Entitlements
@@ -27,43 +24,48 @@ namespace Dragonfly.Controllers
 
         [HttpGet]
         [ControllersException]
-        public ActionResult ClientEntitlements(decimal clientId, decimal projectId)
+        public ActionResult ClientEntitlements(decimal id, decimal projectId = 0)
         {//TODO check to ajax
-            _UserStateManager.CheckUserAccess(Request, Response);
-            ViewBag.Logged = true;
-            ViewBag.UserName = BaseBindings.CookiesManager.GetCookieValue(
-                Request,
-                CookieType.UserName);
+            CheckUserAuthorization();
 
-            if (clientId < 0 || projectId < 0)
+            if (id < 0)
                 return RedirectToAction("Index", "Projects");
             EntitlementsModel model = new EntitlementsModel();
             try
             {
-                var entsProvider = BaseBindings.DBFactory.CreateEntitlementsProvider();
-                List<EEntitlement> entitlements = entsProvider.GetEntitlements(clientId, projectId);
-                List<ELicenseType> licTypes = entsProvider.GetLicenseTypes();
-
-                List<EditEntitlementModel> entModels = new List<EditEntitlementModel>();
-                foreach (EEntitlement dbEnt in entitlements)
+                List<EEntitlement> entitlements = null;
+                if (projectId > 0)
                 {
-                    var entModel = new EditEntitlementModel()
-                    {
-                        LicenseTypeName = licTypes.FirstOrDefault(l => l.Id == dbEnt.LicenseTypeId).Name
-                    };
-                    entModels.Add(entModel.LoadEntitlement(dbEnt));
-
+                    entitlements = EntitiesProvider.GetEntitlements(id, projectId);
+                    model.ProjectId = projectId;
+                    model.ProjectName = BaseBindings.DBFactory.CreateProjectsProvider().GetProject(projectId).ProjectName;
                 }
-                model.Entitlemens = entModels;
-                model.ClientId = clientId;
-                model.ClientInternalName = ClientsProvider.GetClient(clientId).Name;
-                model.ProjectId = projectId;
-                model.ProjectName = BaseBindings.DBFactory.CreateProjectsProvider().GetProject(projectId).ProjectName;
+                else
+                    entitlements = EntitiesProvider.GetEntitlementsForClient(id);
+
+                AddEntitlementsToModel(id, model, entitlements);
             }
             catch (Exception ex)
             {//TODO handle
             }
             return View("Entitlements", model);
+        }
+
+        private static void AddEntitlementsToModel(decimal clientId, EntitlementsModel model, List<EEntitlement> entitlements)
+        {
+            List<ELicenseType> licTypes = EntitiesProvider.GetLicenseTypes();
+            List<EditEntitlementModel> entModels = new List<EditEntitlementModel>();
+            foreach (EEntitlement dbEnt in entitlements)
+            {
+                var entModel = new EditEntitlementModel()
+                {
+                    LicenseTypeName = licTypes.FirstOrDefault(l => l.Id == dbEnt.LicenseTypeId).Name
+                };
+                entModels.Add(entModel.LoadEntitlement(dbEnt));
+            }
+            model.Entitlemens = entModels;
+            model.ClientId = clientId;
+            model.ClientInternalName = ClientsProvider.GetClient(clientId).Name;
         }
     }
 }

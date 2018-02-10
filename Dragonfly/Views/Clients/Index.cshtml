@@ -18,14 +18,16 @@ else
     <div>
         <table class="info_table">
             <col width="10%" />
-            <col width="50%" />
+            <col width="40%" />
             <col width="20%" />
             <col width="20%" />
+            <col width="10%" />
             <tr>
                 <th class="info_table_header">ID</th>
                 <th class="info_table_header">Name</th>
                 <th class="info_table_header">Type</th>
                 <th class="info_table_header">INN</th>
+                <th class="info_table_header"></th>
             </tr>
             @foreach (var client in Model.Clients)
             {
@@ -34,6 +36,13 @@ else
                     <td class="i_t_cell">@client.Name</td>
                     <td class="i_t_cell">@client.Type.TypeName</td>
                     <td class="i_t_cell">@client.INN</td>
+                    <td class="l-cell i_t_cell">
+                        <a id="add-techsupport"
+                           href="@Url.Action("ClientEntitlements", "Entitlements", new { id = client.ID })"
+                           title="Show entitlements">
+                            <i class="fa fa-money fa-2x" style="color: black;"></i>
+                        </a>
+                    </td>
                 </tr>
             }
         </table>

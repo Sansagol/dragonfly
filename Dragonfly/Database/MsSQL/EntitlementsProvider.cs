@@ -90,16 +90,36 @@ namespace Dragonfly.Database.MsSQL
 
         public List<EEntitlement> GetEntitlements(decimal clientId, decimal projectId)
         {
-            List<EEntitlement> entitlements = new List<EEntitlement>();
             if (clientId < 1)
                 throw new ArgumentNullException(nameof(clientId), "Id of the client must be greather than 0");
             if (projectId < 1)
                 throw new ArgumentNullException(nameof(projectId), "Id of the project must be greather than 0");
+
+            List<EEntitlement> entitlements = new List<EEntitlement>();
             using (var context = _ContextGenerator.GenerateContext())
             {
                 var dbEntitlements = (from e in context.Product_License
                                       where e.ID_Client == clientId &&
                                       e.ID_Project == projectId
+                                      select e);
+                foreach (Product_License lic in dbEntitlements)
+                {
+                    entitlements.Add(lic.ToEEntitlement());
+                }
+            }
+            return entitlements;
+        }
+
+        public List<EEntitlement> GetEntitlementsForClient(decimal clientId)
+        {
+            if (clientId < 1)
+                throw new ArgumentNullException(nameof(clientId), "Id of the client must be greather than 0");
+
+            List<EEntitlement> entitlements = new List<EEntitlement>();
+            using (var context = _ContextGenerator.GenerateContext())
+            {
+                var dbEntitlements = (from e in context.Product_License
+                                      where e.ID_Client == clientId
                                       select e);
                 foreach (Product_License lic in dbEntitlements)
                 {
